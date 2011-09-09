@@ -16,6 +16,12 @@ by Cory Crowley (email: cory.ivan@gmail.com) The purpose of this class is not to
 modify and change small things and adding a few field types that i needed to my personal preference. 
 The original author did a great job in writing this class, so all props goes to him.
 
+Usage
+--------
+Take a look at the `class-usage-demo.php` file which can also be tested as a WordPress Plugin. 
+Other options are available for each field which can be see in the 'my-meta-box-class.php' file, 
+Also a repeater field is available but needs to be defined manually (no function yet).
+
 Changelog
 ---------
 = 1.0 =
