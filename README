@@ -1,0 +1,22 @@
+My Wordpress Meta box Class
+=======================
+Contributors: bainternet
+Requires at least: 3.1
+Tested up to: 3.2.1
+
+Description
+-----------
+The Meta Box Class is used by including it in your plugin files and using its methods to 
+create custom meta boxes for custom post types. It is meant to be very simple and 
+straightforward. For name spacing purposes, All Types metabox ( meaning you can do anything with it )
+is used. 
+
+This class is derived from Meta Box script by Rilwis<rilwis@gmail.com> version 3.2. which later was forked 
+by Cory Crowley (email: cory.ivan@gmail.com) The purpose of this class is not to rewrite the script but to 
+modify and change small things and adding a few field types that i needed to my personal preference. 
+The original author did a great job in writing this class, so all props goes to him.
+
+Changelog
+---------
+= 1.0 =
+* First Release
