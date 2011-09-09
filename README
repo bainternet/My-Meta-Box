@@ -20,9 +20,12 @@ Usage
 --------
 Take a look at the `class-usage-demo.php` file which can also be tested as a WordPress Plugin. 
 Other options are available for each field which can be see in the 'my-meta-box-class.php' file, 
-Also a repeater field is available but needs to be defined manually (no function yet).
+
 
 Changelog
 ---------
+= 1.1 =
+* Reapater Implemented and removed debug leftover var_dump
+
 = 1.0 =
 * First Release

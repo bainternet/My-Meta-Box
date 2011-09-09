@@ -40,7 +40,7 @@ if (is_admin()){
 	//text field
 	$my_meta->addTextField($prefix.'text_field_id',array('name'=> 'My Text Field'));
 	//textarea field
-	$my_meta->addTextareaField($prefix.'textarea_field_id',array('name'=> 'My Textarea Field');
+	$my_meta->addTextareaField($prefix.'textarea_field_id',array('name'=> 'My Textarea Field'));
 	//checkbox field
 	$my_meta->addCheckboxField($prefix.'checkbox_field_id',array('name'=> 'My Checkbox Field'));
 	//select field
@@ -64,6 +64,21 @@ if (is_admin()){
 	//posts field
 	$my_meta->addPostsField($prefix.'posts_field_id',array('post_type' => 'post'),array('name'=> 'My Posts Field'));
 	
+	/*
+	 * To Create a reapeater Block first create an array of fields
+	 * use the same functions as above but add true as a last param
+	 */
+	
+	$repeater_fields[] = $my_meta->addTextField($prefix.'text_field_id',array('name'=> 'My Text Field'),true);
+	$repeater_fields[] = $my_meta->addTextareaField($prefix.'textarea_field_id',array('name'=> 'My Textarea Field'),true);
+	$repeater_fields[] = $my_meta->addCheckboxField($prefix.'checkbox_field_id',array('name'=> 'My Checkbox Field'),true);
+	
+	/*
+	 * Then just add the fields to the repeater block
+	 */
+	
+	//repeater block
+	$my_meta->addRepeaterBlock($prefix.'text_field_id',array('name' => 'This is a Repeater Block','fields' => $repeater_fields));
 	
 	/*
 	 * Don't Forget to Close up the meta box decleration

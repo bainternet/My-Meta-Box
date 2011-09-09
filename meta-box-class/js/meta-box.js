@@ -9,6 +9,8 @@
 
 var $ =jQuery.noConflict();
 function update_repeater_fields(){
+		
+			
 		/**
 		 * Datepicker Field.
 		 *
@@ -189,6 +191,15 @@ function update_repeater_fields(){
 	}
 jQuery(document).ready(function($) {
 
+	/**
+	 * repater Field
+	 * @since 1.1
+	 */
+	$( ".at-repeater-item" ).live('click', function() {
+		var $this  = $(this);
+		$this.siblings().toggle();
+	});
+	
 	/**
 	 * Datepicker Field.
 	 *
