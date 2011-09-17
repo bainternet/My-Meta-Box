@@ -76,10 +76,8 @@ if (is_admin()){
 	/*
 	 * Then just add the fields to the repeater block
 	 */
-	
 	//repeater block
-	$my_meta->addRepeaterBlock($prefix.'text_field_id',array('name' => 'This is a Repeater Block','fields' => $repeater_fields));
-	
+	$my_meta->addRepeaterBlock($prefix.'text_field_id',array('inline' => true, 'name' => 'This is a Repeater Block','fields' => $repeater_fields));
 	/*
 	 * Don't Forget to Close up the meta box decleration
 	 */

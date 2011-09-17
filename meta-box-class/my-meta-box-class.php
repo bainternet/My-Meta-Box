@@ -12,7 +12,7 @@
  * modify and change small things and adding a few field types that i needed to my personal preference. 
  * The original author did a great job in writing this class, so all props goes to him.
  * 
- * @version 0.1.1
+ * @version 0.1.2
  * @copyright 2011 
  * @author Ohad Raz (email: admin@bainternet.info)
  * @link http://en.bainternet.info
@@ -362,7 +362,7 @@ class AT_Meta_Box {
 	public function show() {
 		
 		global $post;
-		var_dump($this->_fields);
+		//var_dump($this->_fields);
 		wp_nonce_field( basename(__FILE__), 'at_meta_box_nonce' );
 		echo '<table class="form-table">';
 		foreach ( $this->_fields as $field ) {
@@ -400,6 +400,9 @@ class AT_Meta_Box {
    			foreach ($meta as $me){
    				
    				echo '<div><table class="repeater-table">';
+   				if ($field['inline']){
+   					echo '<tr class="at-inline" VALIGN="top">';
+   				}
 				foreach ($field['fields'] as $f){
 					//reset var $id for repeater
 					$id = '';
@@ -408,11 +411,18 @@ class AT_Meta_Box {
 					$m = ( $m !== '' ) ? $m : $f['std'];
 					$m = is_array( $m) ? array_map( 'esc_attr', $m ) : esc_attr( $m);
 					//set new id for field in array format
-					$f['id'] = $id; 
-					echo '<tr>';
+					$f['id'] = $id;
+					if (!$field['inline']){
+						echo '<tr>';
+					} 
 					call_user_func ( array( &$this, 'show_field_' . $f['type'] ), $f, $m);
-					echo '</tr>';	
+					if (!$field['inline']){
+						echo '</tr>';
+					} 
 				}
+				if ($field['inline']){	
+					echo '</tr>';
+				} 
 				echo '</table><img src="'.$plugin_path.'/images/remove.png" alt="'.__('Remove').'" title="'.__('Remove').'" id="remove-'.$field['id'].'"></div>';
 				$c = $c + 1;
 				//<span id="remove-'.$field['id'].'">Remove</span>
@@ -424,15 +434,25 @@ class AT_Meta_Box {
 		//create all fields once more for js function and catch with object buffer
 		ob_start();
 		echo '<div><table class="repeater-table">';
+		if ($field['inline']){
+			echo '<tr class="at-inline" VALIGN="top">';
+		} 
 		foreach ($field['fields'] as $f){
 			//reset var $id for repeater
 			$id = '';
 			$id = $field['id'].'[CurrentCounter]['.$f['id'].']';
 			$f['id'] = $id; 
-			echo '<tr>';
+			if (!$field['inline']){
+				echo '<tr>';
+			}
 			call_user_func ( array( &$this, 'show_field_' . $f['type'] ), $f, $m);
-			echo '</tr>';	
+			if (!$field['inline']){
+				echo '</tr>';
+			}	
 		}
+		if ($field['inline']){
+			echo '</tr>';
+		} 
 		echo '</table><img src="'.$plugin_path.'/images/remove.png" alt="'.__('Remove').'" id="remove-'.$field['id'].'"></div>';
 		$counter = 'countadd_'.$field['id'];
 		$js_code = ob_get_clean ();		
@@ -1136,6 +1156,20 @@ class AT_Meta_Box {
 	}
 	
 	/**
+	 *  Add Field to meta box (generic function)
+	 *  @author Ohad Raz
+	 *  @since 1.2
+	 *  @access public
+	 *  @param $id string  field id, i.e. the meta key
+	 *  @param $args mixed|array
+	 */
+	public function addField($id,$args){
+		$new_field = array('id'=> $id,'std' => '','desc' => '','style' =>'');
+		$new_field = array_merge($new_field, $args);
+		$this->_fields[] = $new_field;
+	}
+	
+	/**
 	 *  Add Text Field to meta box
 	 *  @author Ohad Raz
 	 *  @since 1.0
@@ -1146,12 +1180,17 @@ class AT_Meta_Box {
 	 *  	'desc' => // field description, string optional
 	 *  	'std' => // default value, string optional
 	 *  	'style' => 	// custom style for field, string optional
-	 *  	'validate_func' => // validate function, string optional 
+	 *  	'validate_func' => // validate function, string optional
+	 *   @param $repeater bool  is this a field inside a repeatr? true|false(default) 
 	 */
-	public function addTextField($id,$args){
+	public function addTextField($id,$args,$repeater=false){
 		$new_field = array('type' => 'text','id'=> $id,'std' => '','desc' => '','style' =>'','name' => 'Text Field');
 		$new_field = array_merge($new_field, $args);
-		$this->_fields[] = $new_field;
+		if(false === $repeater){
+			$this->_fields[] = $new_field;
+		}else{
+			return $new_field;
+		}
 	}
 
 	/**
@@ -1164,12 +1203,17 @@ class AT_Meta_Box {
 	 *  	'name' => // field name/label string optional
 	 *  	'desc' => // field description, string optional
 	 *  	'std' => // default value, string optional
-	 *  	'validate_func' => // validate function, string optional 
+	 *  	'validate_func' => // validate function, string optional
+	 *  @param $repeater bool  is this a field inside a repeatr? true|false(default) 
 	 */
-	public function addCheckboxField($id,$args){
+	public function addCheckboxField($id,$args,$repeater=false){
 		$new_field = array('type' => 'checkbox','id'=> $id,'std' => '','desc' => '','style' =>'','name' => 'Checkbox Field');
 		$new_field = array_merge($new_field, $args);
-		$this->_fields[] = $new_field;
+		if(false === $repeater){
+			$this->_fields[] = $new_field;
+		}else{
+			return $new_field;
+		}
 	}
 
 	/**
@@ -1184,14 +1228,19 @@ class AT_Meta_Box {
 	 *  	'desc' => // field description, string optional
 	 *  	'std' => // default value, string optional
 	 *  	'validate_func' => // validate function, string optional
+	 *  @param $repeater bool  is this a field inside a repeatr? true|false(default)
 	 *  
 	 *   @return : remember to call: $checkbox_list = get_post_meta(get_the_ID(), 'meta_name', false); 
 	 *   which means the last param as false to get the values in an array
 	 */
-	public function addCheckboxListField($id,$options,$args){
+	public function addCheckboxListField($id,$options,$args,$repeater=false){
 		$new_field = array('type' => 'checkbox_list','id'=> $id,'std' => '','desc' => '','style' =>'','name' => 'Checkbox List Field');
 		$new_field = array_merge($new_field, $args);
-		$this->_fields[] = $new_field;
+		if(false === $repeater){
+			$this->_fields[] = $new_field;
+		}else{
+			return $new_field;
+		}
 	}
 	
 	/**
@@ -1205,12 +1254,17 @@ class AT_Meta_Box {
 	 *  	'desc' => // field description, string optional
 	 *  	'std' => // default value, string optional
 	 *  	'style' => 	// custom style for field, string optional
-	 *  	'validate_func' => // validate function, string optional 
+	 *  	'validate_func' => // validate function, string optional
+	 *  @param $repeater bool  is this a field inside a repeatr? true|false(default) 
 	 */
-	public function addTextareaField($id,$args){
+	public function addTextareaField($id,$args,$repeater=false){
 		$new_field = array('type' => 'textarea','id'=> $id,'std' => '','desc' => '','style' =>'','name' => 'Textarea Field');
 		$new_field = array_merge($new_field, $args);
-		$this->_fields[] = $new_field;
+		if(false === $repeater){
+			$this->_fields[] = $new_field;
+		}else{
+			return $new_field;
+		}
 	}
 	
 	/**
@@ -1225,12 +1279,17 @@ class AT_Meta_Box {
 	 *  	'desc' => // field description, string optional
 	 *  	'std' => // default value, (array) optional
 	 *  	'multiple' => // select multiple values, optional. Default is false.
-	 *  	'validate_func' => // validate function, string optional 
+	 *  	'validate_func' => // validate function, string optional
+	 *  @param $repeater bool  is this a field inside a repeatr? true|false(default) 
 	 */
-	public function addSelectField($id,$options,$args){
+	public function addSelectField($id,$options,$args,$repeater=false){
 		$new_field = array('type' => 'select','id'=> $id,'std' => array(),'desc' => '','style' =>'','name' => 'Select Field','multiple' => false,'options' => $options);
 		$new_field = array_merge($new_field, $args);
-		$this->_fields[] = $new_field;
+		if(false === $repeater){
+			$this->_fields[] = $new_field;
+		}else{
+			return $new_field;
+		}
 	}
 	
 	
@@ -1246,11 +1305,16 @@ class AT_Meta_Box {
 	 *  	'desc' => // field description, string optional
 	 *  	'std' => // default value, string optional
 	 *  	'validate_func' => // validate function, string optional 
+	 *  @param $repeater bool  is this a field inside a repeatr? true|false(default)
 	 */
-	public function addRadioField($id,$options,$args){
+	public function addRadioField($id,$options,$args,$repeater=false){
 		$new_field = array('type' => 'radio','id'=> $id,'std' => array(),'desc' => '','style' =>'','name' => 'Radio Field','options' => $options);
 		$new_field = array_merge($new_field, $args);
-		$this->_fields[] = $new_field;
+		if(false === $repeater){
+			$this->_fields[] = $new_field;
+		}else{
+			return $new_field;
+		}
 	}
 
 	/**
@@ -1264,12 +1328,17 @@ class AT_Meta_Box {
 	 *  	'desc' => // field description, string optional
 	 *  	'std' => // default value, string optional
 	 *  	'validate_func' => // validate function, string optional
-	 *  	'format' => // date format, default yy-mm-dd. Optional. Default "'d MM, yy'"  See more formats here: http://goo.gl/Wcwxn 
+	 *  	'format' => // date format, default yy-mm-dd. Optional. Default "'d MM, yy'"  See more formats here: http://goo.gl/Wcwxn
+	 *  @param $repeater bool  is this a field inside a repeatr? true|false(default) 
 	 */
-	public function addDateField($id,$args){
+	public function addDateField($id,$args,$repeater=false){
 		$new_field = array('type' => 'date','id'=> $id,'std' => '','desc' => '','format'=>'d MM, yy','name' => 'Date Field');
 		$new_field = array_merge($new_field, $args);
-		$this->_fields[] = $new_field;
+		if(false === $repeater){
+			$this->_fields[] = $new_field;
+		}else{
+			return $new_field;
+		}
 	}
 
 	/**
@@ -1283,12 +1352,17 @@ class AT_Meta_Box {
 	 *  	'desc' => // field description, string optional
 	 *  	'std' => // default value, string optional
 	 *  	'validate_func' => // validate function, string optional
-	 *  	'format' => // time format, default hh:mm. Optional. See more formats here: http://goo.gl/83woX 
+	 *  	'format' => // time format, default hh:mm. Optional. See more formats here: http://goo.gl/83woX
+	 *  @param $repeater bool  is this a field inside a repeatr? true|false(default) 
 	 */
-	public function addTimeField($id,$args){
+	public function addTimeField($id,$args,$repeater=false){
 		$new_field = array('type' => 'time','id'=> $id,'std' => '','desc' => '','format'=>'hh:mm','name' => 'Time Field');
 		$new_field = array_merge($new_field, $args);
-		$this->_fields[] = $new_field;
+		if(false === $repeater){
+			$this->_fields[] = $new_field;
+		}else{
+			return $new_field;
+		}
 	}
 	
 	/**
@@ -1301,12 +1375,17 @@ class AT_Meta_Box {
 	 *  	'name' => // field name/label string optional
 	 *  	'desc' => // field description, string optional
 	 *  	'std' => // default value, string optional
-	 *  	'validate_func' => // validate function, string optional 
+	 *  	'validate_func' => // validate function, string optional
+	 *  @param $repeater bool  is this a field inside a repeatr? true|false(default) 
 	 */
-	public function addColorField($id,$args){
+	public function addColorField($id,$args,$repeater=false){
 		$new_field = array('type' => 'color','id'=> $id,'std' => '','desc' => '','name' => 'ColorPicker Field');
 		$new_field = array_merge($new_field, $args);
-		$this->_fields[] = $new_field;
+		if(false === $repeater){
+			$this->_fields[] = $new_field;
+		}else{
+			return $new_field;
+		}
 	}
 	
 	/**
@@ -1318,12 +1397,17 @@ class AT_Meta_Box {
 	 *  @param $args mixed|array
 	 *  	'name' => // field name/label string optional
 	 *  	'desc' => // field description, string optional
-	 *  	'validate_func' => // validate function, string optional 
+	 *  	'validate_func' => // validate function, string optional
+	 *  @param $repeater bool  is this a field inside a repeatr? true|false(default) 
 	 */
-	public function addImageField($id,$args){
+	public function addImageField($id,$args,$repeater=false){
 		$new_field = array('type' => 'image','id'=> $id,'desc' => '','name' => 'Image Field');
 		$new_field = array_merge($new_field, $args);
-		$this->_fields[] = $new_field;
+		if(false === $repeater){
+			$this->_fields[] = $new_field;
+		}else{
+			return $new_field;
+		}
 	}
 	
 	/**
@@ -1336,11 +1420,16 @@ class AT_Meta_Box {
 	 *  	'name' => // field name/label string optional
 	 *  	'desc' => // field description, string optional
 	 *  	'validate_func' => // validate function, string optional 
+	 *  @param $repeater bool  is this a field inside a repeatr? true|false(default)
 	 */
-	public function addFileField($id,$args){
+	public function addFileField($id,$args,$repeater=false){
 		$new_field = array('type' => 'file','id'=> $id,'desc' => '','name' => 'File Field');
 		$new_field = array_merge($new_field, $args);
-		$this->_fields[] = $new_field;
+		if(false === $repeater){
+			$this->_fields[] = $new_field;
+		}else{
+			return $new_field;
+		}
 	}
 
 	/**
@@ -1355,11 +1444,16 @@ class AT_Meta_Box {
 	 *  	'std' => // default value, string optional
 	 *  	'style' => 	// custom style for field, string optional Default 'width: 300px; height: 400px'
 	 *  	'validate_func' => // validate function, string optional 
+	 *  @param $repeater bool  is this a field inside a repeatr? true|false(default)
 	 */
-	public function addWysiwygField($id,$args){
+	public function addWysiwygField($id,$args,$repeater=false){
 		$new_field = array('type' => 'wysiwyg','id'=> $id,'std' => '','desc' => '','style' =>'width: 300px; height: 400px','name' => 'WYSIWYG Editor Field');
 		$new_field = array_merge($new_field, $args);
-		$this->_fields[] = $new_field;
+		if(false === $repeater){
+			$this->_fields[] = $new_field;
+		}else{
+			return $new_field;
+		}
 	}
 	
 	/**
@@ -1377,8 +1471,9 @@ class AT_Meta_Box {
 	 *  	'desc' => // field description, string optional
 	 *  	'std' => // default value, string optional
 	 *  	'validate_func' => // validate function, string optional 
+	 *  @param $repeater bool  is this a field inside a repeatr? true|false(default)
 	 */
-	public function addTaxonomyField($id,$options,$args){
+	public function addTaxonomyField($id,$options,$args,$repeater=false){
 		$q = array('hide_empty' => 0);
 		$tax = 'category';
 		$type = 'select';
@@ -1386,7 +1481,11 @@ class AT_Meta_Box {
 		$options = array_merge($temp,$options);
 		$new_field = array('type' => 'taxonomy','id'=> $id,'desc' => '','name' => 'Taxonomy Field','options'=> $options);
 		$new_field = array_merge($new_field, $args);
-		$this->_fields[] = $new_field;
+		if(false === $repeater){
+			$this->_fields[] = $new_field;
+		}else{
+			return $new_field;
+		}
 	}
 
 	/**
@@ -1404,12 +1503,37 @@ class AT_Meta_Box {
 	 *  	'desc' => // field description, string optional
 	 *  	'std' => // default value, string optional
 	 *  	'validate_func' => // validate function, string optional 
+	 *  @param $repeater bool  is this a field inside a repeatr? true|false(default)
 	 */
-	public function addPostsField($id,$options,$args){
+	public function addPostsField($id,$options,$args,$repeater=false){
 		$q = array('posts_per_page' => -1);
 		$temp = array('post_type' =>'post','type'=>'select','args'=>$q);
 		$options = array_merge($temp,$options);
 		$new_field = array('type' => 'posts','id'=> $id,'desc' => '','name' => 'Posts Field','options'=> $options);
+		$new_field = array_merge($new_field, $args);
+		if(false === $repeater){
+			$this->_fields[] = $new_field;
+		}else{
+			return $new_field;
+		}
+	}
+	
+	/**
+	 *  Add repeater Field Block to meta box
+	 *  @author Ohad Raz
+	 *  @since 1.0
+	 *  @access public
+	 *  @param $id string  field id, i.e. the meta key
+	 *  @param $args mixed|array
+	 *  	'name' => // field name/label string optional
+	 *  	'desc' => // field description, string optional
+	 *  	'std' => // default value, string optional
+	 *  	'style' => 	// custom style for field, string optional
+	 *  	'validate_func' => // validate function, string optional
+	 *  	'fields' => //fields to repeater  
+	 */
+	public function addRepeaterBlock($id,$args){
+		$new_field = array('type' => 'repeater','id'=> $id,'name' => 'Reapeater Field','fields' => array(),'inline'=> false);
 		$new_field = array_merge($new_field, $args);
 		$this->_fields[] = $new_field;
 	}
