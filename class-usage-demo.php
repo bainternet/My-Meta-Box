@@ -26,7 +26,8 @@ if (is_admin()){
 		'pages' => array('post', 'page'),			// post types, accept custom post types as well, default is array('post'); optional
 		'context' => 'normal',						// where the meta box appear: normal (default), advanced, side; optional
 		'priority' => 'high',						// order of meta box: high (default), low; optional
-		'fields' => array()							// list of meta fields (can be added by field arrays)
+		'fields' => array(),						// list of meta fields (can be added by field arrays)
+		'local_images' => false									// Use local or hosted images (meta box images for add/remove)
 	);
 	/*
 	 * Initiate your meta box
@@ -45,6 +46,8 @@ if (is_admin()){
 	$my_meta->addCheckboxField($prefix.'checkbox_field_id',array('name'=> 'My Checkbox Field'));
 	//select field
 	$my_meta->addSelectField($prefix.'select_field_id',array('selectkey1'=>'Select Value1','selectkey2'=>'Select Value2'),array('name'=> 'My select Field', 'std'=> array('selectkey2')));
+	//checkboxList
+	$my_meta->addCheckboxListField($prefix.'ch_list_field_id',array('selectkey1'=>'Select Value1','selectkey2'=>'Select Value2'),array('name'=> 'My CheckBox List Field', 'std'=> array('selectkey2')));
 	//radio field
 	$my_meta->addRadioField($prefix.'radio_field_id',array('radiokey1'=>'Radio Value1','radiokey2'=>'Radio Value2'),array('name'=> 'My Radio Filed', 'std'=> array('radionkey2')));
 	//date field

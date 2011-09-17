@@ -66,6 +66,14 @@ class AT_Meta_Box {
 	protected $_fields;
 	
 	/**
+	 * Use local images.
+	 *
+	 * @var bool
+	 * @access protected
+	 */
+	protected $_Local_images;
+	
+	/**
 	 * Constructor
 	 *
 	 * @since 1.0
@@ -83,6 +91,7 @@ class AT_Meta_Box {
 		$this->_meta_box = $meta_box;
 		$this->_prefix = (isset($meta_box['prefix'])) ? $meta_box['prefix'] : ''; 
 		$this->_fields = &$this->_meta_box['fields'];
+		$this->_Local_images = (isset($meta_box['local_images']) && $meta_box['local_images']) ? true : false;
 		$this->add_missed_values();
 		
 		// Add Actions
@@ -423,13 +432,25 @@ class AT_Meta_Box {
 				if ($field['inline']){	
 					echo '</tr>';
 				} 
-				echo '</table><img src="'.$plugin_path.'/images/remove.png" alt="'.__('Remove').'" title="'.__('Remove').'" id="remove-'.$field['id'].'"></div>';
+				echo '</table><img src="';
+				if ($this->_Local_images){
+					echo $plugin_path.'/images/remove.png';
+				}else{
+					echo 'http://i.imgur.com/g8Duj.png';
+				}
+				echo '" alt="'.__('Remove').'" title="'.__('Remove').'" id="remove-'.$field['id'].'"></div>';
 				$c = $c + 1;
-				//<span id="remove-'.$field['id'].'">Remove</span>
+				
     		}
     	}
-		//echo '<span id="add-'.$field['id'].'">'.__('Add').'</span>';
-		echo '<img src="'.$plugin_path.'/images/add.png" alt="'.__('Add').'" title="'.__('Add').'" id="add-'.$field['id'].'"><br/></div>';
+
+		echo '<img src="';
+		if ($this->_Local_images){
+			echo $plugin_path.'/images/add.png';
+		}else{
+			echo 'http://i.imgur.com/w5Tuc.png';
+		}
+		echo '" alt="'.__('Add').'" title="'.__('Add').'" id="add-'.$field['id'].'"><br/></div>';
 		
 		//create all fields once more for js function and catch with object buffer
 		ob_start();
@@ -445,7 +466,7 @@ class AT_Meta_Box {
 			if (!$field['inline']){
 				echo '<tr>';
 			}
-			call_user_func ( array( &$this, 'show_field_' . $f['type'] ), $f, $m);
+			call_user_func ( array( &$this, 'show_field_' . $f['type'] ), $f, '');
 			if (!$field['inline']){
 				echo '</tr>';
 			}	
@@ -453,7 +474,13 @@ class AT_Meta_Box {
 		if ($field['inline']){
 			echo '</tr>';
 		} 
-		echo '</table><img src="'.$plugin_path.'/images/remove.png" alt="'.__('Remove').'" id="remove-'.$field['id'].'"></div>';
+		echo '</table><img src="';
+		if ($this->_Local_images){
+			echo $plugin_path.'/images/remove.png';
+		}else{
+			echo 'http://i.imgur.com/g8Duj.png';
+		}
+		echo '" alt="'.__('Remove').'" title="'.__('Remove').'" id="remove-'.$field['id'].'"></div>';
 		$counter = 'countadd_'.$field['id'];
 		$js_code = ob_get_clean ();		
 		$js_code = str_replace("'","\"",$js_code);
@@ -463,7 +490,6 @@ class AT_Meta_Box {
 					var '.$counter.' = '.$c.';
 					jQuery("#add-'.$field['id'].'").live(\'click\', function() {
 						'.$counter.' = '.$counter.' + 1;
-						//jQuery("#'.$field['id'].'").append(\''.$js_code.'\');
 						jQuery(this).before(\''.$js_code.'\');						
 						update_repeater_fields();
 					});
