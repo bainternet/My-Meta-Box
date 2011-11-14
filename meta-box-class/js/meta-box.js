@@ -199,6 +199,9 @@ jQuery(document).ready(function($) {
 		var $this  = $(this);
 		$this.siblings().toggle();
 	});
+	$(".at-re-toggle").live('click', function() {
+		$(this).prev().toggle('slow');
+	});
 	
 	/**
 	 * Datepicker Field.
