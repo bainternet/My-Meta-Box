@@ -12,7 +12,7 @@
  * modify and change small things and adding a few field types that i needed to my personal preference. 
  * The original author did a great job in writing this class, so all props goes to him.
  * 
- * @version 0.1.4
+ * @version 0.1.5
  * @copyright 2011 
  * @author Ohad Raz (email: admin@bainternet.info)
  * @link http://en.bainternet.info
@@ -696,7 +696,18 @@ class AT_Meta_Box {
 	 */
 	public function show_field_wysiwyg( $field, $meta ) {
 		$this->show_field_begin( $field, $meta );
+		// Add TinyMCE script for WP version < 3.3
+		global $wp_version;
+
+		if ( version_compare( $wp_version, '3.2.1' ) < 1 ) {
 			echo "<textarea class='at-wysiwyg theEditor large-text' name='{$field['id']}' id='{$field['id']}' cols='60' rows='10'>{$meta}</textarea>";
+		}else{
+			// Use new wp_editor() since WP 3.3
+			// Using output buffering because wp_editor() echos directly
+			ob_start( );
+			wp_editor( $meta, $field['id'], array( 'editor_class' => 'at-wysiwyg' ) );
+			return ob_get_clean( );
+		}
 		$this->show_field_end( $field, $meta );
 	}
 	
