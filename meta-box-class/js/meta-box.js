@@ -202,6 +202,10 @@ jQuery(document).ready(function($) {
 	$(".at-re-toggle").live('click', function() {
 		$(this).prev().toggle('slow');
 	});
+	//edit
+	jQuery(".at-repater-block").click(function(){
+		jQuery(this).find('table').toggle();
+	});
 	
 	/**
 	 * Datepicker Field.

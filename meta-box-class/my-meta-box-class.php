@@ -12,7 +12,7 @@
  * modify and change small things and adding a few field types that i needed to my personal preference. 
  * The original author did a great job in writing this class, so all props goes to him.
  * 
- * @version 0.1.5
+ * @version 0.1.6
  * @copyright 2011 
  * @author Ohad Raz (email: admin@bainternet.info)
  * @link http://en.bainternet.info
@@ -405,7 +405,7 @@ class AT_Meta_Box {
 		$c = 0;
 		$meta = get_post_meta($post->ID,$field['id'],true);
 		
-    	if (count($meta) > 0 && is_array($meta)){
+    	if (count($meta) > 0 && is_array($meta) ){
    			foreach ($meta as $me){
    				//for labling toggles
    				$mmm =  $me[$field['fields'][0]['id']];
@@ -696,18 +696,7 @@ class AT_Meta_Box {
 	 */
 	public function show_field_wysiwyg( $field, $meta ) {
 		$this->show_field_begin( $field, $meta );
-		// Add TinyMCE script for WP version < 3.3
-		global $wp_version;
-
-		if ( version_compare( $wp_version, '3.2.1' ) < 1 ) {
 			echo "<textarea class='at-wysiwyg theEditor large-text' name='{$field['id']}' id='{$field['id']}' cols='60' rows='10'>{$meta}</textarea>";
-		}else{
-			// Use new wp_editor() since WP 3.3
-			// Using output buffering because wp_editor() echos directly
-			ob_start( );
-			wp_editor( $meta, $field['id'], array( 'editor_class' => 'at-wysiwyg' ) );
-			return ob_get_clean( );
-		}
 		$this->show_field_end( $field, $meta );
 	}
 	
@@ -965,11 +954,11 @@ class AT_Meta_Box {
 		
 		$post_type_object = get_post_type_object( $post_type );
 
-		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )											// Check Autosave
+		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )								// Check Autosave
 		|| ( ! isset( $_POST['post_ID'] ) || $post_id != $_POST['post_ID'] )				// Check Revision
-		|| ( ! in_array( $post_type, $this->_meta_box['pages'] ) )									// Check if current post type is supported.
-		|| ( ! check_admin_referer( basename( __FILE__ ), 'at_meta_box_nonce') )		// Check nonce - Security
-		|| ( ! current_user_can( $post_type_object->cap->edit_post, $post_id ) ) ) 	// Check permission
+		|| ( ! in_array( $post_type, $this->_meta_box['pages'] ) )							// Check if current post type is supported.
+		|| ( ! check_admin_referer( basename( __FILE__ ), 'at_meta_box_nonce') )			// Check nonce - Security
+		|| ( ! current_user_can( $post_type_object->cap->edit_post, $post_id ) ) ) 			// Check permission
 		{
 			return $post_id;
 		}
@@ -1054,24 +1043,34 @@ class AT_Meta_Box {
 	 * @access public 
 	 */
 	public function save_field_repeater( $post_id, $field, $old, $new ) {
-		
-		foreach ((array)$new as $n){
-			foreach ( $field['fields'] as $f ) {
-				$type = $f['type'];
-				switch($type) {
-					case 'wysiwyg':
-				    	$n[$f['id']] = wpautop( $n[$f['id']] ); 
-				    	break;
-				    case 'file':
-				    	$n[$f['id']] = $this->save_field_file_repeater($post_id,$f,'',$n[$f['id']]);
-				    	break;
-				    default:
-				       	break;
+		if (is_array($new) && count($new) > 0){
+			foreach ($new as $n){
+				foreach ( $field['fields'] as $f ) {
+					$type = $f['type'];
+					switch($type) {
+						case 'wysiwyg':
+					    	$n[$f['id']] = wpautop( $n[$f['id']] ); 
+					    	break;
+					    case 'file':
+					    	$n[$f['id']] = $this->save_field_file_repeater($post_id,$f,'',$n[$f['id']]);
+					    	break;
+					    default:
+					       	break;
+					}
 				}
+				if(!$this->is_array_empty($n))
+					$temp[] = $n;
 			}
-			$temp[] = $n;
+			if (isset($temp) && count($temp) > 0 && !$this->is_array_empty($temp)){
+				update_post_meta($post_id,$field['id'],$temp);
+			}else{
+				//	remove old meta if exists
+				delete_post_meta($post_id,$field['id']);
+			}
+		}else{
+			//	remove old meta if exists
+			delete_post_meta($post_id,$field['id']);
 		}
-		update_post_meta($post_id,$field['id'],$temp);
 	}
 	
 	/**
@@ -1694,6 +1693,31 @@ class AT_Meta_Box {
 		$this->check_field_color();
 		$this->check_field_date();
 		$this->check_field_time();
+	}
+	
+	/**
+	 * Helper function to check for empty arrays
+	 * @author Ohad Raz
+	 * @since 1.5
+	 * @access public
+	 * @param $args mixed|array
+	 */
+	public function is_array_empty($array){
+		if (!is_array($array))
+			return true;
+		
+		foreach ($array as $a){
+			if (is_array($a)){
+				foreach ($a as $sub_a){
+					if (!empty($sub_a) && $sub_a != '')
+						return false;
+				}
+			}else{
+				if (!empty($a) && $a != '')
+					return false;
+			}
+		}
+		return true;
 	}
 	
 } // End Class

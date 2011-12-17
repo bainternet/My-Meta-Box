@@ -2,7 +2,7 @@ My Wordpress Meta box Class
 =======================
 Contributors: bainternet
 Requires at least: 3.1
-Tested up to: 3.3 beta 4
+Tested up to: 3.3
 
 Description
 -----------
@@ -24,6 +24,9 @@ Other options are available for each field which can be see in the 'my-meta-box-
 
 Changelog
 ---------
+= 1.6 =
+* Fixed repeater dynamic editing
+
 = 1.5 =
 * Fixed Wysiwyg for version 3.3
 
