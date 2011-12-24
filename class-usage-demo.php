@@ -8,6 +8,7 @@ Author: Bainternet, Ohad Raz
 Author URI: http://en.bainternet.info
 */
 
+//include the main class file
 require_once("meta-box-class/my-meta-box-class.php");
 if (is_admin()){
 	/* 
@@ -27,7 +28,7 @@ if (is_admin()){
 		'context' => 'normal',						// where the meta box appear: normal (default), advanced, side; optional
 		'priority' => 'high',						// order of meta box: high (default), low; optional
 		'fields' => array(),						// list of meta fields (can be added by field arrays)
-		'local_images' => false						// Use local or hosted images (meta box images for add/remove)
+		'local_images' => false,					// Use local or hosted images (meta box images for add/remove)
 		'use_with_theme' => false					//change path if used with theme set to true, false for a plugin or anything else for a custom path(default false).
 	);
 	/*
