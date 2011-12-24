@@ -74,6 +74,15 @@ class AT_Meta_Box {
 	protected $_Local_images;
 	
 	/**
+	 * SelfPath to allow themes as well as plugins.
+	 *
+	 * @var string
+	 * @access protected
+	 * $since 1.6
+	 */
+	protected $SelfPath;
+	
+	/**
 	 * Constructor
 	 *
 	 * @since 1.0
@@ -93,6 +102,20 @@ class AT_Meta_Box {
 		$this->_fields = &$this->_meta_box['fields'];
 		$this->_Local_images = (isset($meta_box['local_images'])) ? true : false;
 		$this->add_missed_values();
+		if (isset($meta_box['use_with_theme']))
+			if ($meta_box['use_with_theme'] == true){
+				$this->SelfPath = get_stylesheet_directory_uri() . '/meta-box-class';
+			}elseif($meta_box['use_with_theme'] == false){
+				$this->SelfPath = plugins_url( 'meta-box-class', plugin_basename( dirname( __FILE__ ) ) );
+			}else{
+				$this->SelfPath = $meta_box['use_with_theme'];
+			}
+		else{
+			$this->SelfPath = plugins_url( 'meta-box-class', plugin_basename( dirname( __FILE__ ) ) );
+		}
+		
+		
+			
 		
 		// Add Actions
 		add_action( 'add_meta_boxes', array( &$this, 'add' ) );
@@ -120,7 +143,7 @@ class AT_Meta_Box {
 	public function load_scripts_styles() {
 		
 		// Get Plugin Path
-		$plugin_path = plugins_url( 'meta-box-class', plugin_basename( dirname( __FILE__ ) ) );
+		$plugin_path = $this->SelfPath;
 		
 		// Enqueue Meta Box Style
 		wp_enqueue_style( 'at-meta-box', $plugin_path . '/css/meta-box.css' );
@@ -210,7 +233,7 @@ class AT_Meta_Box {
 			$li 	 = "<li id='item_{$attachment_id}'>";
 			$li 	.= "<img src='{$attachment['url']}' alt='image_{$attachment_id}' />";
 			//$li 	.= "<a title='" . __( 'Delete this image' ) . "' class='at-delete-file' href='#' rel='{$nonce}|{$post_id}|{$id}|{$attachment_id}'>" . __( 'Delete' ) . "</a>";
-			$li 	.= "<a title='" . __( 'Delete this image' ) . "' class='at-delete-file' href='#' rel='{$nonce}|{$post_id}|{$id}|{$attachment_id}'><img src='" . plugins_url( 'meta-box-class/images/delete-16.png' , dirname( __FILE__ ) ) . "' alt='" . __( 'Delete' ) . "' /></a>";
+			$li 	.= "<a title='" . __( 'Delete this image' ) . "' class='at-delete-file' href='#' rel='{$nonce}|{$post_id}|{$id}|{$attachment_id}'><img src='" . $this->SelfPath. "/images/delete-16.png' alt='" . __( 'Delete' ) . "' /></a>";
 			$li 	.= "<input type='hidden' name='{$id}[]' value='{$attachment_id}' />";
 			$li 	.= "</li>";
 			$html .= $li;
@@ -398,7 +421,7 @@ class AT_Meta_Box {
 	public function show_field_repeater( $field, $meta ) {
 		global $post;	
 		// Get Plugin Path
-		$plugin_path = plugins_url( 'meta-box-class', plugin_basename( dirname( __FILE__ ) ) );
+		$plugin_path = $this->SelfPath;
 		$this->show_field_begin( $field, $meta );
 		echo "<div class='at-repeat' id='{$field['id']}'>";
 		
@@ -783,7 +806,7 @@ class AT_Meta_Box {
 
 			echo "<li id='item_{$image}'>";
 				echo "<img src='{$src}' alt='image_{$image}' />";
-				echo "<a title='" . __( 'Delete this image' ) . "' class='at-delete-file' href='#' rel='{$nonce_delete}|{$post->ID}|{$field['id']}|{$image}'><img src='" . plugins_url( 'meta-box-class/images/delete-16.png' , dirname( __FILE__ ) ) . "' alt='" . __( 'Delete' ) . "' width='16' height='16' /></a>";
+				echo "<a title='" . __( 'Delete this image' ) . "' class='at-delete-file' href='#' rel='{$nonce_delete}|{$post->ID}|{$field['id']}|{$image}'><img src='" . $this->SelfPath ."/images/delete-16.png' alt='" . __( 'Delete' ) . "' width='16' height='16' /></a>";
 				//echo "<a title='" . __( 'Delete this image' ) . "' class='at-delete-file' href='#' rel='{$nonce_delete}|{$post->ID}|{$field['id']}|{$image}'>" . __( 'Delete' ) . "</a>";
 				echo "<input type='hidden' name='{$field['id']}[]' value='{$image}' />";
 			echo "</li>";

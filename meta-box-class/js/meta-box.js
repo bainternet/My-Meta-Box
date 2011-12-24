@@ -195,17 +195,20 @@ jQuery(document).ready(function($) {
 	 * repater Field
 	 * @since 1.1
 	 */
-	$( ".at-repeater-item" ).live('click', function() {
+	/*$( ".at-repeater-item" ).live('click', function() {
 		var $this  = $(this);
 		$this.siblings().toggle();
 	});
-	$(".at-re-toggle").live('click', function() {
-		$(this).prev().toggle('slow');
-	});
-	//edit
 	jQuery(".at-repater-block").click(function(){
 		jQuery(this).find('table').toggle();
 	});
+	
+	*/
+	//edit
+	$(".at-re-toggle").live('click', function() {
+		$(this).prev().toggle('slow');
+	});
+	
 	
 	/**
 	 * Datepicker Field.

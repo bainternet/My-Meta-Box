@@ -25,6 +25,7 @@ Other options are available for each field which can be see in the 'my-meta-box-
 Changelog
 ---------
 = 1.6 =
+* Added an option to set path for themes.
 * Fixed repeater dynamic editing
 
 = 1.5 =
