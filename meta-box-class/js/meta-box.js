@@ -387,5 +387,101 @@ jQuery(document).ready(function($) {
 		return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
 			
 	}
+	
+	//new image upload field
+	function load_images_muploader(){
+		jQuery(".mupload_img_holder").each(function(i,v){
+			if (jQuery(this).next().next().val() != ''){
+				jQuery(this).append('<img src="' + jQuery(this).next().next().val() + '" style="height: 150px;width: 150px;" />');
+				jQuery(this).next().next().next().val("Delete");
+				jQuery(this).next().next().next().removeClass('at-upload_image_button').addClass('at-selete_image_button');
+			}
+		});
+	}
+	
+	load_images_muploader();
+	//delete img button
+	jQuery('#at-delete_image_button').click(function(e){
+		var field_id = jQuery(this).attr("rel");
+		var at_id = jQuery(this).prev().prev();
+		var at_src = jQuery(this).prev();
+		var t_button = jQuery(this);
+		data = {
+				action: 'at_delete_mupload',
+				_wpnonce: $('#nonce-delete-mupload_' + field_id).val(),
+				post_id: jQuery('#post_ID').val(),
+				field_id: field_id,
+				attachment_id: jQuery(at_id).val()
+		};
+	
+		$.getJSON(ajaxurl, data, function(response) {
+			console.log(response);
+			if ('success' == response.status){
+				jQuery(t_button).val("Upload Image");
+				jQuery(t_button).removeClass('at-delete_image_button').addClass('at-upload_image_button');
+				//clear html values
+				jQuery(at_id).val('');
+				jQuery(at_src).val('');
+				jQuery(at_id).prev().html('');
+				load_images_muploader();
+			}else{
+				alert(response.message);
+			}
+		});
+	
+		return false;
+	});
+	
 
+	//upload button
+		var formfield1;
+		var formfield2;
+		jQuery('#at-upload_image_button').click(function(e){
+			formfield1 = jQuery(this).prev();
+			formfield2 = jQuery(this).prev().prev();			
+			tb_show('', 'media-upload.php?post_id='+ jQuery('#post_ID').val() + '&type=image&amp;TB_iframe=true');
+			//store old send to editor function
+			window.restore_send_to_editor = window.send_to_editor;
+			//overwrite send to editor function
+			window.send_to_editor = function(html) {
+				imgurl = jQuery('img',html).attr('src');
+				img_calsses = jQuery('img',html).attr('class').split(" ");
+				att_id = '';
+				jQuery.each(img_calsses,function(i,val){
+					if (val.indexOf("wp-image") != -1){
+						att_id = val.replace('wp-image-', "");
+					}
+				});
+
+				jQuery(formfield2).val(att_id);
+				jQuery(formfield1).val(imgurl);
+				load_images_muploader();
+				tb_remove();
+				//restore old send to editor function
+				window.send_to_editor = window.restore_send_to_editor;
+			}
+			return false;
+		});
+
+
+		//store old send to editor function
+		window.restore_send_to_editor = window.send_to_editor;
+		//overwrite send to editor function
+		window.send_to_editor = function(html) {
+			imgurl = jQuery('img',html).attr('src');
+			img_calsses = jQuery('img',html).attr('class').split(" ");
+			att_id = '';
+			jQuery.each(img_calsses,function(i,val){
+				if (val.indexOf("wp-image") != -1){
+					att_id = val.replace('wp-image-', "");
+				}
+			});
+
+			jQuery(formfield2).val(att_id);
+			jQuery(formfield1).val(imgurl);
+			load_images_muploader();
+			tb_remove();
+			//restore old send to editor function
+			window.send_to_editor = window.restore_send_to_editor;
+		}
 });

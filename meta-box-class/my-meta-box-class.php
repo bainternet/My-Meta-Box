@@ -12,7 +12,7 @@
  * modify and change small things and adding a few field types that i needed to my personal preference. 
  * The original author did a great job in writing this class, so all props goes to him.
  * 
- * @version 0.1.6
+ * @version 0.1.7
  * @copyright 2011 
  * @author Ohad Raz (email: admin@bainternet.info)
  * @link http://en.bainternet.info
@@ -113,8 +113,6 @@ class AT_Meta_Box {
 		else{
 			$this->SelfPath = plugins_url( 'meta-box-class', plugin_basename( dirname( __FILE__ ) ) );
 		}
-		
-		
 			
 		
 		// Add Actions
@@ -182,7 +180,8 @@ class AT_Meta_Box {
 		// Delete all attachments when delete custom post type.
 		add_action( 'wp_ajax_at_delete_file', 		array( &$this, 'delete_file' ) );
 		add_action( 'wp_ajax_at_reorder_images', 	array( &$this, 'reorder_images' ) );
-		
+		// Delete file via Ajax
+		add_action( 'wp_ajax_at_delete_mupload', array( $this, 'wp_ajax_delete_image' ) );
 	}
 	
 	/**
@@ -290,6 +289,31 @@ class AT_Meta_Box {
 		die( '0' );
 	
 	}
+	/**
+	* Ajax callback for deleting files.
+	* Modified from a function used by "Verve Meta Boxes" plugin (http://goo.gl/LzYSq)
+	* @since 1.7
+	* @access public
+	*/
+	public function wp_ajax_delete_image() {
+		$post_id = isset( $_GET['post_id'] ) ? intval( $_GET['post_id'] ) : 0;
+		$field_id = isset( $_GET['field_id'] ) ? $_GET['field_id'] : 0;
+		$attachment_id = isset( $_GET['attachment_id'] ) ? intval( $_GET['attachment_id'] ) : 0;
+		
+		check_admin_referer( "at-delete-mupload_{$field_id}" );
+		
+
+		$ok = delete_post_meta( $post_id, $field_id );
+		$ok = $ok && wp_delete_attachment( $attachment_id );
+		
+		if ( $ok ){
+			echo json_encode( array('status' => 'success' ));
+			die();
+		}else{
+			echo json_encode(array('message' => __( 'Cannot delete file. Something\'s wrong.')));
+			die();
+		}
+	}
 	
 	/**
 	 * Ajax callback for reordering Images.
@@ -364,7 +388,7 @@ class AT_Meta_Box {
 			// Enqueu JQuery UI, use proper version.
 			wp_enqueue_style( 'at-jquery-ui-css', 'http://ajax.googleapis.com/ajax/libs/jqueryui/' . $this->get_jqueryui_ver() . '/themes/base/jquery-ui.css' );
 			wp_enqueue_script( 'at-jquery-ui', 'https://ajax.googleapis.com/ajax/libs/jqueryui/' . $this->get_jqueryui_ver() . '/jquery-ui.min.js', array( 'jquery' ) );
-			wp_enqueue_script( 'at-timepicker', 'https://github.com/trentrichardson/jQuery-Timepicker-Addon/raw/master/jquery-ui-timepicker-addon.js', array( 'at-jquery-ui' ) );
+			wp_enqueue_script( 'at-timepicker', 'https://github.com/trentrichardson/jQuery-Timepicker-Addon/raw/master/jquery-ui-timepicker-addon.js', array( 'at-jquery-ui' ),true );
 		
 		}
 		
@@ -400,7 +424,8 @@ class AT_Meta_Box {
 		foreach ( $this->_fields as $field ) {
 			$meta = get_post_meta( $post->ID, $field['id'], !$field['multiple'] );
 			$meta = ( $meta !== '' ) ? $meta : $field['std'];
-			$meta = is_array( $meta ) ? array_map( 'esc_attr', $meta ) : esc_attr( $meta );
+			if ('image' != $field['type'])
+				$meta = is_array( $meta ) ? array_map( 'esc_attr', $meta ) : esc_attr( $meta );
 			echo '<tr>';
 		
 			// Call Separated methods for displaying each type of field.
@@ -572,7 +597,7 @@ class AT_Meta_Box {
 	 * @since 1.0
 	 * @access public 
 	 */
-	public function show_field_end( $field, $meta ,$group = false) {
+	public function show_field_end( $field, $meta = NULL ,$group = false) {
 		if (isset($field['group'])){
 			if ($group == 'end'){
 				if ( $field['desc'] != '' ) {
@@ -719,7 +744,14 @@ class AT_Meta_Box {
 	 */
 	public function show_field_wysiwyg( $field, $meta ) {
 		$this->show_field_begin( $field, $meta );
+		// Add TinyMCE script for WP version < 3.3
+		global $wp_version;
+		if ( version_compare( $wp_version, '3.2.1' ) < 1 ) {
 			echo "<textarea class='at-wysiwyg theEditor large-text' name='{$field['id']}' id='{$field['id']}' cols='60' rows='10'>{$meta}</textarea>";
+		}else{
+			// Use new wp_editor() since WP 3.3
+			wp_editor( html_entity_decode($meta), $field['id'], array( 'editor_class' => 'at-wysiwyg' ) );
+		}
 		$this->show_field_end( $field, $meta );
 	}
 	
@@ -768,53 +800,27 @@ class AT_Meta_Box {
 	/**
 	 * Show Image Field.
 	 *
-	 * @param string $field 
-	 * @param string $meta 
+	 * @param array $field 
+	 * @param mixed $meta 
 	 * @since 1.0
 	 * @access public
 	 */
 	public function show_field_image( $field, $meta ) {
-		
-		global $wpdb, $post;
-
-		if ( ! is_array( $meta ) ) 
-			$meta = (array) $meta;
-
 		$this->show_field_begin( $field, $meta );
-		
-		echo "{$field['desc']}<br />";
-
-		$nonce_delete = wp_create_nonce( 'at_ajax_delete' );
-		$nonce_sort = wp_create_nonce( 'at_ajax_reorder' );
-
-		echo "<input type='hidden' class='at-images-data' value='{$post->ID}|{$field['id']}|{$nonce_sort}' />";
-		echo "<ul class='at--images at-upload' id='at-images-{$field['id']}'>";
-
-		// re-arrange images with 'menu_order', thanks Onur
-		$meta = ($meta) ? implode( ',', $meta ) : 1;
-		$images = $wpdb->get_col("
-			SELECT ID FROM $wpdb->posts
-			WHERE post_type = 'attachment'
-			AND post_parent = $post->ID
-			AND ID in ($meta)
-			ORDER BY menu_order ASC
-		");
-		
-		foreach ( $images as $image ) {
-			$src = wp_get_attachment_image_src( $image );
-			$src = $src[0];
-
-			echo "<li id='item_{$image}'>";
-				echo "<img src='{$src}' alt='image_{$image}' />";
-				echo "<a title='" . __( 'Delete this image' ) . "' class='at-delete-file' href='#' rel='{$nonce_delete}|{$post->ID}|{$field['id']}|{$image}'><img src='" . $this->SelfPath ."/images/delete-16.png' alt='" . __( 'Delete' ) . "' width='16' height='16' /></a>";
-				//echo "<a title='" . __( 'Delete this image' ) . "' class='at-delete-file' href='#' rel='{$nonce_delete}|{$post->ID}|{$field['id']}|{$image}'>" . __( 'Delete' ) . "</a>";
-				echo "<input type='hidden' name='{$field['id']}[]' value='{$image}' />";
-			echo "</li>";
+		$html = wp_nonce_field( "at-delete-mupload_{$field['id']}", "nonce-delete-mupload_{$field['id']}", false, false );
+		if (is_array($meta) && !empty($meta[0])){
+			$html .= "<span class='mupload_img_holder'><img src='{$meta['src']}' style='height: 150px;width: 150px;' /></span>
+			<input type='hidden' name='{$field['id']}[id]' id='{$field['id']}[id]' value='{$meta[0]['id']}' />
+			<input type='hidden' name='{$field['id']}[src]' id='{$field['id']}[src]' value='{$meta[0]['src']}' />
+			<input id='at-delete_image_button' type='button' rel='{$field['id']}' value='Delete Image' />";
+		}else{
+			$html .= "<span class='mupload_img_holder'></span>
+			<input type='hidden' name='{$field['id']}[id]' id='{$field['id']}[id]' value='{$meta[0]['id']}' />
+			<input type='hidden' name='{$field['id']}[src]' id='{$field['id']}[src]' value='{$meta[0]['src']}' />
+			<input id='at-upload_image_button' type='button' rel='{$field['id']}' value='Upload Image' />";
 		}
+		echo $html;
 		
-		echo '</ul>';
-
-		echo "<a href='#' class='at-upload-button button' rel='{$post->ID}|{$field['id']}'>" . __( 'Add more images' ) . "</a>";
 	}
 	
 	/**
@@ -1038,6 +1044,26 @@ class AT_Meta_Box {
 		} else {
 			update_post_meta( $post_id, $name, $new );
 		}
+		
+	}
+	
+	/**
+	 * function for saving image field.
+	 *
+	 * @param string $post_id 
+	 * @param string $field 
+	 * @param string $old 
+	 * @param string|mixed $new 
+	 * @since 1.7
+	 * @access public
+	 */
+	public function save_field_image( $post_id, $field, $old, $new ) {
+		$name = $field['id'];
+		delete_post_meta( $post_id, $name );
+		if ( $new === '' || $new === array() ) 
+			return;
+		
+		update_post_meta( $post_id, $name, $new );
 	}
 	
 	/**
@@ -1051,8 +1077,7 @@ class AT_Meta_Box {
 	 * @access public 
 	 */
 	public function save_field_wysiwyg( $post_id, $field, $old, $new ) {
-		$new = wpautop( $new );
-		$this->save_field( $post_id, $field, $old, $new );
+		$this->save_field( $post_id, $field, $old, wpautop($new) );
 	}
 	
 	/**
