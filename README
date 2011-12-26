@@ -24,6 +24,11 @@ Other options are available for each field which can be see in the 'my-meta-box-
 
 Changelog
 ---------
+= 1.7 =
+* Fixed demo plugi file with new function names.
+* Fixed Wysiwyg for version 3.3 once more, (which should work now).
+* Fixed image upload field.
+
 = 1.6 =
 * Added an option to set path for themes.
 * Fixed repeater dynamic editing
