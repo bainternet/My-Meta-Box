@@ -2,7 +2,7 @@ My Wordpress Meta box Class
 =======================
 Contributors: bainternet
 Requires at least: 3.1
-Tested up to: 3.3
+Tested up to: 3.3.1
 
 Description
 -----------
@@ -24,6 +24,11 @@ Other options are available for each field which can be see in the 'my-meta-box-
 
 Changelog
 ---------
+= 1.8 =
+* fixed multiple image upload issue.
+* cleaned js file from unused function.
+
+
 = 1.7 =
 * Fixed demo plugi file with new function names.
 * Fixed Wysiwyg for version 3.3 once more, (which should work now).

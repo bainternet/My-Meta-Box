@@ -3,7 +3,7 @@
 Plugin Name: Demo MetaBox
 Plugin URI: http://en.bainternet.info
 Description: My Meta Box Class usage demo
-Version: 1.7
+Version: 1.8
 Author: Bainternet, Ohad Raz
 Author URI: http://en.bainternet.info
 */

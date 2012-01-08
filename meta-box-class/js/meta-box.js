@@ -45,15 +45,7 @@ function update_repeater_fields(){
 		 * @since 1.0
 		 */
 		/*
-		$('.at-color-picker').each( function() {
-			
-			var $this = $(this);
-			var id = $this.attr('rel');
-	
-			$this.farbtastic( '#' + id );
-			//$(this).focus.siblings('.at-color-picker').toggle();
-		});
-		*/
+		
 		
 		
 		/**
@@ -150,44 +142,8 @@ function update_repeater_fields(){
 			return false;
 		});
 	
-		/**
-		 * Add checkboxes to select images to add.
-		 *
-		 * @since 1.0
-		 */
-		$('#media-items .new').each( function() {
-			var id = $(this).parent().attr('id').split('-')[2];
-			$(this).prepend('<input type="checkbox" class="item_selection" id="attachments[' + id + '][selected]" name="attachments[' + id + '][selected]" value="selected" /> ');
-		});
+		
 	
-		/**
-		 * Add checkboxes to select images to add.
-		 *
-		 * @since 1.0
-		 */
-		$('.ml-submit').live('mouseenter',function() {
-			
-			$('#media-items .new').each(function() {
-				var id = $(this).parent().children('input[value="image"]').attr('id');
-				if (!id) return;
-				id = id.split('-')[2];
-				$(this).not(':has("input")').prepend('<input type="checkbox" class="item_selection" id="attachments[' + id + '][selected]" name="attachments[' + id + '][selected]" value="selected" /> ');
-			});
-			
-		});
-	
-		/**
-		 * Add 'Insert selected Images' Button
-		 *
-		 * We need to pull out the 'field_id' from the url as the
-		 * media uploader is an iframe.
-		 *
-		 * @since 1.0
-		 */
-		/*
-		var field_id = get_query_var( 'field_id' );
-		$('.ml-submit:first').append('<input type="hidden" name="field_id" value="' + field_id + '" /> <input type="submit" class="button" name="at-insert" value="Insert selected images" />');
-		*/
 	}
 jQuery(document).ready(function($) {
 
@@ -285,29 +241,7 @@ jQuery(document).ready(function($) {
 	
 	});
 
-	/**
-	 * Reorder Images.
-	 *
-	 * @since 1.0
-	 */
-	$('.at-images').each( function() {
 		
-		var $this = $(this), order, data;
-		
-		$this.sortable( {
-			placeholder: 'ui-state-highlight',
-			update: function (){
-				order = $this.sortable('serialize');
-				data 	= order + '|' + $this.siblings('.at-images-data').val();
-
-				$.post(ajaxurl, {action: 'at_reorder_images', data: data}, function(response){
-					response == '0' ? alert( 'Order saved!' ) : alert( "You don't have permission to reorder images." );
-				});
-			}
-		});
-		
-	});
-	
 	/**
 	 * Thickbox Upload
 	 *
@@ -337,43 +271,7 @@ jQuery(document).ready(function($) {
 		return false;
 	});
 
-	/**
-	 * Add checkboxes to select images to add.
-	 *
-	 * @since 1.0
-	 */
-	$('#media-items .new').each( function() {
-		var id = $(this).parent().attr('id').split('-')[2];
-		$(this).prepend('<input type="checkbox" class="item_selection" id="attachments[' + id + '][selected]" name="attachments[' + id + '][selected]" value="selected" /> ');
-	});
-
-	/**
-	 * Add checkboxes to select images to add.
-	 *
-	 * @since 1.0
-	 */
-	$('.ml-submit').live('mouseenter',function() {
 		
-		$('#media-items .new').each(function() {
-			var id = $(this).parent().children('input[value="image"]').attr('id');
-			if (!id) return;
-			id = id.split('-')[2];
-			$(this).not(':has("input")').prepend('<input type="checkbox" class="item_selection" id="attachments[' + id + '][selected]" name="attachments[' + id + '][selected]" value="selected" /> ');
-		});
-		
-	});
-
-	/**
-	 * Add 'Insert selected Images' Button
-	 *
-	 * We need to pull out the 'field_id' from the url as the
-	 * media uploader is an iframe.
-	 *
-	 * @since 1.0
-	 */
-	var field_id = get_query_var( 'field_id' );
-	$('.ml-submit:first').append('<input type="hidden" name="field_id" value="' + field_id + '" /> <input type="submit" class="button" name="at-insert" value="Insert selected images" />');
-	
 	/**
 	 * Helper Function
 	 *
@@ -392,16 +290,18 @@ jQuery(document).ready(function($) {
 	function load_images_muploader(){
 		jQuery(".mupload_img_holder").each(function(i,v){
 			if (jQuery(this).next().next().val() != ''){
-				jQuery(this).append('<img src="' + jQuery(this).next().next().val() + '" style="height: 150px;width: 150px;" />');
-				jQuery(this).next().next().next().val("Delete");
-				jQuery(this).next().next().next().removeClass('at-upload_image_button').addClass('at-selete_image_button');
+				if (!jQuery(this).children().size() > 0){
+					jQuery(this).append('<img src="' + jQuery(this).next().next().val() + '" style="height: 150px;width: 150px;" />');
+					jQuery(this).next().next().next().val("Delete");
+					jQuery(this).next().next().next().removeClass('at-upload_image_button').addClass('at-delete_image_button');
+				}
 			}
 		});
 	}
 	
 	load_images_muploader();
 	//delete img button
-	jQuery('#at-delete_image_button').click(function(e){
+	jQuery('.at-delete_image_button').live('click', function(e){
 		var field_id = jQuery(this).attr("rel");
 		var at_id = jQuery(this).prev().prev();
 		var at_src = jQuery(this).prev();
@@ -436,7 +336,7 @@ jQuery(document).ready(function($) {
 	//upload button
 		var formfield1;
 		var formfield2;
-		jQuery('#at-upload_image_button').click(function(e){
+		jQuery('.at-upload_image_button').live('click',function(e){
 			formfield1 = jQuery(this).prev();
 			formfield2 = jQuery(this).prev().prev();			
 			tb_show('', 'media-upload.php?post_id='+ jQuery('#post_ID').val() + '&type=image&amp;TB_iframe=true');

@@ -12,7 +12,7 @@
  * modify and change small things and adding a few field types that i needed to my personal preference. 
  * The original author did a great job in writing this class, so all props goes to him.
  * 
- * @version 0.1.7
+ * @version 0.1.8
  * @copyright 2011 
  * @author Ohad Raz (email: admin@bainternet.info)
  * @link http://en.bainternet.info
@@ -113,6 +113,8 @@ class AT_Meta_Box {
 		else{
 			$this->SelfPath = plugins_url( 'meta-box-class', plugin_basename( dirname( __FILE__ ) ) );
 		}
+		
+		
 			
 		
 		// Add Actions
@@ -143,11 +145,20 @@ class AT_Meta_Box {
 		// Get Plugin Path
 		$plugin_path = $this->SelfPath;
 		
-		// Enqueue Meta Box Style
-		wp_enqueue_style( 'at-meta-box', $plugin_path . '/css/meta-box.css' );
 		
-		// Enqueue Meta Box Scripts
-		wp_enqueue_script( 'at-meta-box', $plugin_path . '/js/meta-box.js', array( 'jquery' ), null, true );
+		//only load styles and js when needed
+		/* 
+		 * since 1.8
+		 */
+		global $typenow;
+		if (in_array($typenow,$this->_meta_box['pages'])){
+			// Enqueue Meta Box Style
+			wp_enqueue_style( 'at-meta-box', $plugin_path . '/css/meta-box.css' );
+			
+			// Enqueue Meta Box Scripts
+			wp_enqueue_script( 'at-meta-box', $plugin_path . '/js/meta-box.js', array( 'jquery' ), null, true );
+		
+		}
 		
 	}
 	
@@ -388,7 +399,7 @@ class AT_Meta_Box {
 			// Enqueu JQuery UI, use proper version.
 			wp_enqueue_style( 'at-jquery-ui-css', 'http://ajax.googleapis.com/ajax/libs/jqueryui/' . $this->get_jqueryui_ver() . '/themes/base/jquery-ui.css' );
 			wp_enqueue_script( 'at-jquery-ui', 'https://ajax.googleapis.com/ajax/libs/jqueryui/' . $this->get_jqueryui_ver() . '/jquery-ui.min.js', array( 'jquery' ) );
-			wp_enqueue_script( 'at-timepicker', 'https://github.com/trentrichardson/jQuery-Timepicker-Addon/raw/master/jquery-ui-timepicker-addon.js', array( 'at-jquery-ui' ),true );
+			wp_enqueue_script( 'at-timepicker', 'https://github.com/trentrichardson/jQuery-Timepicker-Addon/raw/master/jquery-ui-timepicker-addon.js', array( 'at-jquery-ui' ),false,true );
 		
 		}
 		
@@ -597,7 +608,7 @@ class AT_Meta_Box {
 	 * @since 1.0
 	 * @access public 
 	 */
-	public function show_field_end( $field, $meta = NULL ,$group = false) {
+	public function show_field_end( $field, $meta=NULL ,$group = false) {
 		if (isset($field['group'])){
 			if ($group == 'end'){
 				if ( $field['desc'] != '' ) {
@@ -746,6 +757,7 @@ class AT_Meta_Box {
 		$this->show_field_begin( $field, $meta );
 		// Add TinyMCE script for WP version < 3.3
 		global $wp_version;
+
 		if ( version_compare( $wp_version, '3.2.1' ) < 1 ) {
 			echo "<textarea class='at-wysiwyg theEditor large-text' name='{$field['id']}' id='{$field['id']}' cols='60' rows='10'>{$meta}</textarea>";
 		}else{
@@ -801,26 +813,25 @@ class AT_Meta_Box {
 	 * Show Image Field.
 	 *
 	 * @param array $field 
-	 * @param mixed $meta 
+	 * @param array $meta 
 	 * @since 1.0
 	 * @access public
 	 */
 	public function show_field_image( $field, $meta ) {
 		$this->show_field_begin( $field, $meta );
 		$html = wp_nonce_field( "at-delete-mupload_{$field['id']}", "nonce-delete-mupload_{$field['id']}", false, false );
-		if (is_array($meta) && !empty($meta[0])){
+		if (is_array($meta) && isset($meta['src']) && $meta['src'] != ''){
 			$html .= "<span class='mupload_img_holder'><img src='{$meta['src']}' style='height: 150px;width: 150px;' /></span>
 			<input type='hidden' name='{$field['id']}[id]' id='{$field['id']}[id]' value='{$meta[0]['id']}' />
 			<input type='hidden' name='{$field['id']}[src]' id='{$field['id']}[src]' value='{$meta[0]['src']}' />
-			<input id='at-delete_image_button' type='button' rel='{$field['id']}' value='Delete Image' />";
+			<input class='at-delete_image_button' type='button' rel='{$field['id']}' value='Delete Image' />";
 		}else{
 			$html .= "<span class='mupload_img_holder'></span>
 			<input type='hidden' name='{$field['id']}[id]' id='{$field['id']}[id]' value='{$meta[0]['id']}' />
 			<input type='hidden' name='{$field['id']}[src]' id='{$field['id']}[src]' value='{$meta[0]['src']}' />
-			<input id='at-upload_image_button' type='button' rel='{$field['id']}' value='Upload Image' />";
+			<input class='at-upload_image_button' type='button' rel='{$field['id']}' value='Upload Image' />";
 		}
 		echo $html;
-		
 	}
 	
 	/**
@@ -1018,7 +1029,6 @@ class AT_Meta_Box {
 			}
 			
 		} // End foreach
-		
 	}
 	
 	/**
@@ -1032,7 +1042,6 @@ class AT_Meta_Box {
 	 * @access public
 	 */
 	public function save_field( $post_id, $field, $old, $new ) {
-		
 		$name = $field['id'];
 		delete_post_meta( $post_id, $name );
 		if ( $new === '' || $new === array() ) 
@@ -1044,8 +1053,7 @@ class AT_Meta_Box {
 		} else {
 			update_post_meta( $post_id, $name, $new );
 		}
-		
-	}
+	}	
 	
 	/**
 	 * function for saving image field.
@@ -1060,13 +1068,13 @@ class AT_Meta_Box {
 	public function save_field_image( $post_id, $field, $old, $new ) {
 		$name = $field['id'];
 		delete_post_meta( $post_id, $name );
-		if ( $new === '' || $new === array() ) 
+		if ( $new === '' || $new === array() || $new['id'] == '' || $new['src'] == '') 
 			return;
 		
 		update_post_meta( $post_id, $name, $new );
 	}
 	
-	/**
+	/*
 	 * Save Wysiwyg Field.
 	 *
 	 * @param string $post_id 
@@ -1077,7 +1085,7 @@ class AT_Meta_Box {
 	 * @access public 
 	 */
 	public function save_field_wysiwyg( $post_id, $field, $old, $new ) {
-		$this->save_field( $post_id, $field, $old, wpautop($new) );
+		$this->save_field( $post_id, $field, $old, $new );
 	}
 	
 	/**
@@ -1167,7 +1175,6 @@ class AT_Meta_Box {
 	
 	/**
 	 * Save repeater File Field.
-	 *
 	 * @param string $post_id 
 	 * @param string $field 
 	 * @param string $old 
