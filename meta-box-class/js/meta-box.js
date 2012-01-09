@@ -315,7 +315,6 @@ jQuery(document).ready(function($) {
 		};
 	
 		$.getJSON(ajaxurl, data, function(response) {
-			console.log(response);
 			if ('success' == response.status){
 				jQuery(t_button).val("Upload Image");
 				jQuery(t_button).removeClass('at-delete_image_button').addClass('at-upload_image_button');

@@ -12,7 +12,7 @@
  * modify and change small things and adding a few field types that i needed to my personal preference. 
  * The original author did a great job in writing this class, so all props goes to him.
  * 
- * @version 0.1.8
+ * @version 0.1.9
  * @copyright 2011 
  * @author Ohad Raz (email: admin@bainternet.info)
  * @link http://en.bainternet.info
@@ -310,12 +310,26 @@ class AT_Meta_Box {
 		$post_id = isset( $_GET['post_id'] ) ? intval( $_GET['post_id'] ) : 0;
 		$field_id = isset( $_GET['field_id'] ) ? $_GET['field_id'] : 0;
 		$attachment_id = isset( $_GET['attachment_id'] ) ? intval( $_GET['attachment_id'] ) : 0;
-		
-		check_admin_referer( "at-delete-mupload_{$field_id}" );
-		
+		$ok = false;
+		if (strpos($field_id, '[') === false){
+			check_admin_referer( "at-delete-mupload_".urldecode($field_id));
+			$ok = delete_post_meta( $post_id, $field_id );
+			$ok = $ok && wp_delete_attachment( $attachment_id );
+		}else{
+			$f = explode('[',urldecode($field_id));
+			$f_fiexed = array();
+			foreach ($f as $k => $v){
+				$f[$k] = str_replace(']','',$v);
+			}
+			$saved = get_post_meta($post_id,$f[0],true);
+			if (isset($saved[$f[1]][$f[2]])){
+				unset($saved[$f[1]][$f[2]]);
+				$ok = update_post_meta($post_id,$f[0],$saved);
+				$ok = $ok && wp_delete_attachment( $attachment_id );
+			}
+		}
 
-		$ok = delete_post_meta( $post_id, $field_id );
-		$ok = $ok && wp_delete_attachment( $attachment_id );
+		
 		
 		if ( $ok ){
 			echo json_encode( array('status' => 'success' ));
@@ -435,7 +449,7 @@ class AT_Meta_Box {
 		foreach ( $this->_fields as $field ) {
 			$meta = get_post_meta( $post->ID, $field['id'], !$field['multiple'] );
 			$meta = ( $meta !== '' ) ? $meta : $field['std'];
-			if ('image' != $field['type'])
+			if ('image' != $field['type'] && $field['type'] != 'repeater')
 				$meta = is_array( $meta ) ? array_map( 'esc_attr', $meta ) : esc_attr( $meta );
 			echo '<tr>';
 		
@@ -478,7 +492,8 @@ class AT_Meta_Box {
 					$id = $field['id'].'['.$c.']['.$f['id'].']';
 					$m = $me[$f['id']];
 					$m = ( $m !== '' ) ? $m : $f['std'];
-					$m = is_array( $m) ? array_map( 'esc_attr', $m ) : esc_attr( $m);
+					if ('image' != $f['type'] && $f['type'] != 'repeater')
+						$m = is_array( $m) ? array_map( 'esc_attr', $m ) : esc_attr( $m);
 					//set new id for field in array format
 					$f['id'] = $id;
 					if (!$field['inline']){
@@ -819,17 +834,21 @@ class AT_Meta_Box {
 	 */
 	public function show_field_image( $field, $meta ) {
 		$this->show_field_begin( $field, $meta );
-		$html = wp_nonce_field( "at-delete-mupload_{$field['id']}", "nonce-delete-mupload_{$field['id']}", false, false );
+		$html = wp_nonce_field( "at-delete-mupload_{$field['id']}", "nonce-delete-mupload_".$field['id'], false, false );
+		if (is_array($meta)){
+			if(isset($meta[0]) && is_array($meta[0]))
+			$meta = $meta[0];
+		}
 		if (is_array($meta) && isset($meta['src']) && $meta['src'] != ''){
-			$html .= "<span class='mupload_img_holder'><img src='{$meta['src']}' style='height: 150px;width: 150px;' /></span>
-			<input type='hidden' name='{$field['id']}[id]' id='{$field['id']}[id]' value='{$meta[0]['id']}' />
-			<input type='hidden' name='{$field['id']}[src]' id='{$field['id']}[src]' value='{$meta[0]['src']}' />
-			<input class='at-delete_image_button' type='button' rel='{$field['id']}' value='Delete Image' />";
+			$html .= "<span class='mupload_img_holder'><img src='".$meta['src']."' style='height: 150px;width: 150px;' /></span>";
+			$html .= "<input type='hidden' name='".$field['id']."[id]' id='".$field['id']."[id]' value='".$meta['id']."' />";
+			$html .= "<input type='hidden' name='".$field['id']."[src]' id='".$field['id']."[src]' value='".$meta['src']."' />";
+			$html .= "<input class='at-delete_image_button' type='button' rel='".$field['id']."' value='Delete Image' />";
 		}else{
-			$html .= "<span class='mupload_img_holder'></span>
-			<input type='hidden' name='{$field['id']}[id]' id='{$field['id']}[id]' value='{$meta[0]['id']}' />
-			<input type='hidden' name='{$field['id']}[src]' id='{$field['id']}[src]' value='{$meta[0]['src']}' />
-			<input class='at-upload_image_button' type='button' rel='{$field['id']}' value='Upload Image' />";
+			$html .= "<span class='mupload_img_holder'></span>";
+			$html .= "<input type='hidden' name='".$field['id']."[id]' id='".$field['id']."[id]' value='' />";
+			$html .= "<input type='hidden' name='".$field['id']."[src]' id='".$field['id']."[src]' value='' />";
+			$html .= "<input class='at-upload_image_button' type='button' rel='".$field['id']."' value='Upload Image' />";
 		}
 		echo $html;
 	}
