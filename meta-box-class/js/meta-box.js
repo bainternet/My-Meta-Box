@@ -361,26 +361,4 @@ jQuery(document).ready(function($) {
 			}
 			return false;
 		});
-
-
-		//store old send to editor function
-		window.restore_send_to_editor = window.send_to_editor;
-		//overwrite send to editor function
-		window.send_to_editor = function(html) {
-			imgurl = jQuery('img',html).attr('src');
-			img_calsses = jQuery('img',html).attr('class').split(" ");
-			att_id = '';
-			jQuery.each(img_calsses,function(i,val){
-				if (val.indexOf("wp-image") != -1){
-					att_id = val.replace('wp-image-', "");
-				}
-			});
-
-			jQuery(formfield2).val(att_id);
-			jQuery(formfield1).val(imgurl);
-			load_images_muploader();
-			tb_remove();
-			//restore old send to editor function
-			window.send_to_editor = window.restore_send_to_editor;
-		}
 });

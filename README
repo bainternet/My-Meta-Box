@@ -24,6 +24,9 @@ Other options are available for each field which can be see in the 'my-meta-box-
 
 Changelog
 ---------
+= 2.0 =
+* Fixed Insert To Post bug
+
 = 1.9 = 
 * Fixed Image field functions in repeater block.
 
