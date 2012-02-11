@@ -55,3 +55,8 @@
 /* inline */
 .at-inline label{font-size: 12px !important;}
 .at-inline textarea{height: 130px;width: 200px;}
+
+/* code Editor */
+.CodeMirror{
+	background-color: #fff;
+}

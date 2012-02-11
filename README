@@ -22,8 +22,16 @@ Take a look at the `class-usage-demo.php` file which can also be tested as a Wor
 Other options are available for each field which can be see in the 'my-meta-box-class.php' file, 
 
 
+Known Issues and Limitations
+-------------
+Reapater field can't handle WYSIWYG, Code Editor
+
+
 Changelog
 ---------
+= 2.1 = 
+Added Code Editor with syntax highlighting (php,css,html,javascript) using CodeMirror.
+
 = 2.0 =
 * Fixed Insert To Post bug
 

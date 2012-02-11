@@ -3,7 +3,7 @@
 Plugin Name: Demo MetaBox
 Plugin URI: http://en.bainternet.info
 Description: My Meta Box Class usage demo
-Version: 2.0
+Version: 2.1
 Author: Bainternet, Ohad Raz
 Author URI: http://en.bainternet.info
 */
@@ -68,6 +68,8 @@ if (is_admin()){
 	$my_meta->addTaxonomy($prefix.'taxonomy_field_id',array('taxonomy' => 'category'),array('name'=> 'My Taxonomy '));
 	//posts field
 	$my_meta->addPosts($prefix.'posts_field_id',array('post_type' => 'post'),array('name'=> 'My Posts '));
+	//add Code editor field
+	$my_meta->addCode($prefix.'code_field_id',array('name'=> 'Code editor Field', 'syntax' => 'php','theme' => 'light'));
 	
 	/*
 	 * To Create a reapeater Block first create an array of fields

@@ -148,18 +148,63 @@ function update_repeater_fields(){
 jQuery(document).ready(function($) {
 
 	/**
+	 * Code Editor Field
+	 * @since 2.1
+	 */
+	$(".code_text").each(function() {
+		var lang = $(this).attr("data-lang");
+		//php application/x-httpd-php
+		//css text/css
+		//html text/html
+		//javascript text/javascript
+		switch(lang){
+			case 'php':
+				lang = 'application/x-httpd-php';
+				break;
+			case 'css':
+				lang = 'text/css';
+				break;
+			case 'html':
+				lang = 'text/html';
+				break;
+			case 'javascript':
+				lang = 'text/javascript';
+				break;
+			default:
+				lang = 'application/x-httpd-php';
+		}
+		var theme  = $(this).attr("data-theme");
+		switch(theme){
+			case 'default':
+				theme = 'default';
+				break;
+			case 'light':
+				theme = 'solarizedLight';
+				break;
+			case 'dark':
+				theme = 'solarizedDark';;
+				break;
+			default:
+				theme = 'default';
+		}
+		
+		var editor = CodeMirror.fromTextArea(document.getElementById($(this).attr('id')), {
+			lineNumbers: true,
+			matchBrackets: true,
+			mode: lang,
+			indentUnit: 4,
+			indentWithTabs: true,
+			enterMode: "keep",
+			tabMode: "shift"
+		}); 
+		editor.setOption("theme", theme);
+	});
+	
+	 
+	/**
 	 * repater Field
 	 * @since 1.1
 	 */
-	/*$( ".at-repeater-item" ).live('click', function() {
-		var $this  = $(this);
-		$this.siblings().toggle();
-	});
-	jQuery(".at-repater-block").click(function(){
-		jQuery(this).find('table').toggle();
-	});
-	
-	*/
 	//edit
 	$(".at-re-toggle").live('click', function() {
 		$(this).prev().toggle('slow');

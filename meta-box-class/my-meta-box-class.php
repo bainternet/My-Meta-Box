@@ -12,7 +12,7 @@
  * modify and change small things and adding a few field types that i needed to my personal preference. 
  * The original author did a great job in writing this class, so all props goes to him.
  * 
- * @version 2.0
+ * @version 2.1
  * @copyright 2011 
  * @author Ohad Raz (email: admin@bainternet.info)
  * @link http://en.bainternet.info
@@ -127,6 +127,7 @@ class AT_Meta_Box {
 		$this->check_field_color();
 		$this->check_field_date();
 		$this->check_field_time();
+		$this->check_field_code();
 		
 		// Load common js, css files
 		// Must enqueue for all pages as we need js for the media upload, too.
@@ -420,6 +421,30 @@ class AT_Meta_Box {
 	}
 	
 	/**
+	 * Check Field code editor
+	 *
+	 * @since 2.1
+	 * @access public
+	 */
+	public function check_field_code() {
+		
+		if ( $this->has_field( 'code' ) && $this->is_edit_page() ) {
+			$plugin_path = $this->SelfPath;
+			// Enqueu codemirror js and css
+			wp_enqueue_style( 'at-code-css', $plugin_path .'/js/codemirror/codemirror.css',array(),null);
+			wp_enqueue_style( 'at-code-css-dark', $plugin_path .'/js/codemirror/solarizedDark.css',array(),null);
+			wp_enqueue_style( 'at-code-css-light', $plugin_path .'/js/codemirror/solarizedLight.css',array(),null);
+			wp_enqueue_script('at-code-js',$plugin_path .'/js/codemirror/codemirror.js',array('jquery'),false,true);
+			wp_enqueue_script('at-code-js-xml',$plugin_path .'/js/codemirror/xml.js',array('jquery'),false,true);
+			wp_enqueue_script('at-code-js-javascript',$plugin_path .'/js/codemirror/javascript.js',array('jquery'),false,true);
+			wp_enqueue_script('at-code-js-css',$plugin_path .'/js/codemirror/css.js',array('jquery'),false,true);
+			wp_enqueue_script('at-code-js-clike',$plugin_path .'/js/codemirror/clike.js',array('jquery'),false,true);
+			wp_enqueue_script('at-code-js-php',$plugin_path .'/js/codemirror/php.js',array('jquery'),false,true);
+			
+		}
+	}
+	
+	/**
 	 * Add Meta Box for multiple post types.
 	 *
 	 * @since 1.0
@@ -660,6 +685,22 @@ class AT_Meta_Box {
 		echo "<input type='text' class='at-text' name='{$field['id']}' id='{$field['id']}' value='{$meta}' size='30' />";
 		$this->show_field_end( $field, $meta );
 	}
+	
+	/**
+	 * Show Field code editor.
+	 *
+	 * @param string $field 
+	 * @author Ohad Raz
+	 * @param string $meta 
+	 * @since 2.1
+	 * @access public
+	 */
+	public function show_field_code( $field, $meta) {
+		$this->show_field_begin( $field, $meta );
+		echo "<textarea class='code_text' name='{$field['id']}' id='{$field['id']}' data-lang='{$field['syntax']}' data-theme='{$field['theme']}'>{$meta}</textarea>";
+		$this->show_field_end( $field, $meta );
+	}
+	
 	
 	/**
 	 * Show Field hidden.
@@ -1366,6 +1407,32 @@ class AT_Meta_Box {
 			return $new_field;
 		}
 	}
+	
+	/**
+	 *  Add code Editor to meta box
+	 *  @author Ohad Raz
+	 *  @since 2.1
+	 *  @access public
+	 *  @param $id string  field id, i.e. the meta key
+	 *  @param $args mixed|array
+	 *  	'name' => // field name/label string optional
+	 *  	'desc' => // field description, string optional
+	 *  	'std' => // default value, string optional
+	 *  	'style' => 	// custom style for field, string optional
+	 *  	'syntax' => 	// syntax language to use in editor (php,javascript,css,html)
+	 *  	'validate_func' => // validate function, string optional
+	 *   @param $repeater bool  is this a field inside a repeatr? true|false(default) 
+	 */
+	public function addCode($id,$args,$repeater=false){
+		$new_field = array('type' => 'code','id'=> $id,'std' => '','desc' => '','style' =>'','name' => 'Code Editor Field','syntax' => 'php');
+		$new_field = array_merge($new_field, $args);
+		if(false === $repeater){
+			$this->_fields[] = $new_field;
+		}else{
+			return $new_field;
+		}
+	}
+	
 	/**
 	 *  Add Hidden Field to meta box
 	 *  @author Ohad Raz
@@ -1767,6 +1834,7 @@ class AT_Meta_Box {
 		$this->check_field_color();
 		$this->check_field_date();
 		$this->check_field_time();
+		$this->check_field_code();
 	}
 	
 	/**
