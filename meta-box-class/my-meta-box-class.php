@@ -1282,7 +1282,7 @@ class AT_Meta_Box {
 	public function add_missed_values() {
 		
 		// Default values for meta box
-		$this->_meta_box = array_merge( array( 'context' => 'normal', 'priority' => 'high', 'pages' => array( 'post' ) ), $this->_meta_box );
+		$this->_meta_box = array_merge( array( 'context' => 'normal', 'priority' => 'high', 'pages' => array( 'post' ) ), (array)$this->_meta_box );
 
 		// Default values for fields
 		foreach ( $this->_fields as &$field ) {
@@ -1424,7 +1424,7 @@ class AT_Meta_Box {
 	 *   @param $repeater bool  is this a field inside a repeatr? true|false(default) 
 	 */
 	public function addCode($id,$args,$repeater=false){
-		$new_field = array('type' => 'code','id'=> $id,'std' => '','desc' => '','style' =>'','name' => 'Code Editor Field','syntax' => 'php');
+		$new_field = array('type' => 'code','id'=> $id,'std' => '','desc' => '','style' =>'','name' => 'Code Editor Field','syntax' => 'php','theme' => 'defualt');
 		$new_field = array_merge($new_field, $args);
 		if(false === $repeater){
 			$this->_fields[] = $new_field;

@@ -145,12 +145,14 @@ function update_repeater_fields(){
 		
 	
 	}
+var Ed_array = Array;
 jQuery(document).ready(function($) {
 
 	/**
 	 * Code Editor Field
 	 * @since 2.1
 	 */
+	 var e_d_count = 0;
 	$(".code_text").each(function() {
 		var lang = $(this).attr("data-lang");
 		//php application/x-httpd-php
@@ -196,11 +198,17 @@ jQuery(document).ready(function($) {
 			indentWithTabs: true,
 			enterMode: "keep",
 			tabMode: "shift"
-		}); 
+		});
 		editor.setOption("theme", theme);
+		$(editor.getScrollerElement()).width(100); // set this low enough
+		width = $(editor.getScrollerElement()).parent().width();
+		$(editor.getScrollerElement()).width(width); // set it to
+		editor.refresh();
+		Ed_array[e_d_count] = editor;
+		e_d_count++;
 	});
 	
-	 
+	
 	/**
 	 * repater Field
 	 * @since 1.1
@@ -406,4 +414,16 @@ jQuery(document).ready(function($) {
 			}
 			return false;
 		});
+		
+	//editor rezise fix
+	$(window).resize(function() {
+		$.each(Ed_array, function() {
+			var ee = this;
+			$(ee.getScrollerElement()).width(100); // set this low enough
+			width = $(ee.getScrollerElement()).parent().width();
+			$(ee.getScrollerElement()).width(width); // set it to
+			ee.refresh();
+		});
+	});
 });
+
