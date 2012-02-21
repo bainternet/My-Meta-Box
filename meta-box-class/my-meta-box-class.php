@@ -12,7 +12,7 @@
  * modify and change small things and adding a few field types that i needed to my personal preference. 
  * The original author did a great job in writing this class, so all props goes to him.
  * 
- * @version 2.1
+ * @version 2.2
  * @copyright 2011 
  * @author Ohad Raz (email: admin@bainternet.info)
  * @link http://en.bainternet.info
@@ -103,9 +103,9 @@ class AT_Meta_Box {
 		$this->_Local_images = (isset($meta_box['local_images'])) ? true : false;
 		$this->add_missed_values();
 		if (isset($meta_box['use_with_theme']))
-			if ($meta_box['use_with_theme'] == true){
+			if ($meta_box['use_with_theme'] === true){
 				$this->SelfPath = get_stylesheet_directory_uri() . '/meta-box-class';
-			}elseif($meta_box['use_with_theme'] == false){
+			}elseif($meta_box['use_with_theme'] === false){
 				$this->SelfPath = plugins_url( 'meta-box-class', plugin_basename( dirname( __FILE__ ) ) );
 			}else{
 				$this->SelfPath = $meta_box['use_with_theme'];

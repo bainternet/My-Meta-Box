@@ -29,8 +29,11 @@ Reapater field can't handle WYSIWYG, Code Editor
 
 Changelog
 ---------
+= 2.2 = 
+* Fixed use with theme on custom path
+
 = 2.1 = 
-Added Code Editor with syntax highlighting (php,css,html,javascript) using CodeMirror.
+* Added Code Editor with syntax highlighting (php,css,html,javascript) using CodeMirror.
 
 = 2.0 =
 * Fixed Insert To Post bug
