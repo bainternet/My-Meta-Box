@@ -12,7 +12,7 @@
  * modify and change small things and adding a few field types that i needed to my personal preference. 
  * The original author did a great job in writing this class, so all props goes to him.
  * 
- * @version 2.2
+ * @version 2.3
  * @copyright 2011 
  * @author Ohad Raz (email: admin@bainternet.info)
  * @link http://en.bainternet.info
@@ -967,7 +967,8 @@ class AT_Meta_Box {
 	 */
 	public function show_field_time( $field, $meta ) {
 		$this->show_field_begin( $field, $meta );
-			echo "<input type='text' class='at-time' name='{$field['id']}' id='{$field['id']}' rel='{$field['format']}' value='{$meta}' size='30' />";
+			$ampm = ($field['ampm'])? 'true' : 'false';
+			echo "<input type='text' class='at-time' name='{$field['id']}' id='{$field['id']}' data-ampm='{$ampm}' rel='{$field['format']}' value='{$meta}' size='30' />";
 		$this->show_field_end( $field, $meta );
 	}
 	
@@ -1639,7 +1640,7 @@ class AT_Meta_Box {
 	 *  @param $repeater bool  is this a field inside a repeatr? true|false(default) 
 	 */
 	public function addTime($id,$args,$repeater=false){
-		$new_field = array('type' => 'time','id'=> $id,'std' => '','desc' => '','format'=>'hh:mm','name' => 'Time Field');
+		$new_field = array('type' => 'time','id'=> $id,'std' => '','desc' => '','format'=>'hh:mm','name' => 'Time Field', 'ampm' => false);
 		$new_field = array_merge($new_field, $args);
 		if(false === $repeater){
 			$this->_fields[] = $new_field;

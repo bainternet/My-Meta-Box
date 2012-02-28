@@ -33,9 +33,14 @@ function update_repeater_fields(){
 		$('.at-time').each( function() {
 			
 			var $this 	= $(this),
-				  format 	= $this.attr('rel');
-	
-			$this.timepicker( { showSecond: true, timeFormat: format } );
+				  format 	= $this.attr('rel'),
+				  aampm		= $this.attr('data-ampm');
+			if ('true' == aampm)
+				aampm = true;
+			else
+				aampm = false;
+
+			$this.timepicker( { showSecond: true, timeFormat: format, ampm: aampm } );
 			
 		});
 	
@@ -241,9 +246,14 @@ jQuery(document).ready(function($) {
 	$('.at-time').each( function() {
 		
 		var $this 	= $(this),
-			  format 	= $this.attr('rel');
+				  format 	= $this.attr('rel'),
+				  aampm		= $this.attr('data-ampm');
+			if ('true' == aampm)
+				aampm = true;
+			else
+				aampm = false;
 
-		$this.timepicker( { showSecond: true, timeFormat: format } );
+			$this.timepicker( { showSecond: true, timeFormat: format, ampm: aampm } );
 		
 	});
 

@@ -29,6 +29,9 @@ Reapater field can't handle WYSIWYG, Code Editor
 
 Changelog
 ---------
+= 2.3 = 
+* added AMPM param to addTime to show time field with am/pm option
+
 = 2.2 = 
 * Fixed use with theme on custom path
 
