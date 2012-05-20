@@ -29,6 +29,9 @@ Reapater field can't handle WYSIWYG, Code Editor
 
 Changelog
 ---------
+= 2.4 =
+Fixed WP_DEBUG errors, and taxonomy field args notice.
+
 = 2.3 = 
 * added AMPM param to addTime to show time field with am/pm option
 

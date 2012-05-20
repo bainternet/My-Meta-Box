@@ -12,8 +12,8 @@
  * modify and change small things and adding a few field types that i needed to my personal preference. 
  * The original author did a great job in writing this class, so all props goes to him.
  * 
- * @version 2.3
- * @copyright 2011 
+ * @version 2.4
+ * @copyright 2011 - 2012
  * @author Ohad Raz (email: admin@bainternet.info)
  * @link http://en.bainternet.info
  * 
@@ -26,7 +26,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
- * @package All Types Meta Box
+ * @package MY Meta Box Class
  */
 
 if ( ! class_exists( 'AT_Meta_Box') ) :
@@ -124,10 +124,6 @@ class AT_Meta_Box {
 		
 		// Check for special fields and add needed actions for them.
 		$this->check_field_upload();
-		$this->check_field_color();
-		$this->check_field_date();
-		$this->check_field_time();
-		$this->check_field_code();
 		
 		// Load common js, css files
 		// Must enqueue for all pages as we need js for the media upload, too.
@@ -158,7 +154,23 @@ class AT_Meta_Box {
 			
 			// Enqueue Meta Box Scripts
 			wp_enqueue_script( 'at-meta-box', $plugin_path . '/js/meta-box.js', array( 'jquery' ), null, true );
-		
+
+			// Make upload feature work event when custom post type doesn't support 'editor'
+			if ($this->has_field('image') || $this->has_field('file')){
+				wp_enqueue_script( 'media-upload' );
+				add_thickbox();
+				wp_enqueue_script( 'jquery-ui-core' );
+				wp_enqueue_script( 'jquery-ui-sortable' );
+			}
+			//check for color field
+			$this->check_field_color();
+			//check for date field
+			$this->check_field_date();
+			//check for time field
+			$this->check_field_time();
+			//check for code editor field
+			$this->check_field_code();
+
 		}
 		
 	}
@@ -177,12 +189,6 @@ class AT_Meta_Box {
 		
 		// Add data encoding type for file uploading.	
 		add_action( 'post_edit_form_tag', array( &$this, 'add_enctype' ) );
-		
-		// Make upload feature work event when custom post type doesn't support 'editor'
-		wp_enqueue_script( 'media-upload' );
-		add_thickbox();
-		wp_enqueue_script( 'jquery-ui-core' );
-		wp_enqueue_script( 'jquery-ui-sortable' );
 		
 		// Add filters for media upload.
 		add_filter( 'media_upload_gallery', array( &$this, 'insert_images' ) );
@@ -1748,8 +1754,8 @@ class AT_Meta_Box {
 	 *  @param $id string  field id, i.e. the meta key
 	 *  @param $options mixed|array options of taxonomy field
 	 *  	'taxonomy' =>    // taxonomy name can be category,post_tag or any custom taxonomy default is category
-			'type' =>  // how to show taxonomy? 'select' (default) or 'checkbox_list'
-			'args' =>  // arguments to query taxonomy, see http://goo.gl/uAANN default ('hide_empty' => false)  
+	 *		'type' =>  // how to show taxonomy? 'select' (default) or 'checkbox_list'
+	 *		'args' =>  // arguments to query taxonomy, see http://goo.gl/uAANN default ('hide_empty' => false)  
 	 *  @param $args mixed|array
 	 *  	'name' => // field name/label string optional
 	 *  	'desc' => // field description, string optional
@@ -1758,10 +1764,10 @@ class AT_Meta_Box {
 	 *  @param $repeater bool  is this a field inside a repeatr? true|false(default)
 	 */
 	public function addTaxonomy($id,$options,$args,$repeater=false){
-		$q = array('hide_empty' => 0);
-		$tax = 'category';
-		$type = 'select';
-		$temp = array($tax,$type,$q);
+		$temp = array(
+			'args' => array('hide_empty' => 0),
+			'tax' => 'category',
+			'type' => 'select');
 		$options = array_merge($temp,$options);
 		$new_field = array('type' => 'taxonomy','id'=> $id,'desc' => '','name' => 'Taxonomy Field','options'=> $options);
 		$new_field = array_merge($new_field, $args);
@@ -1780,8 +1786,8 @@ class AT_Meta_Box {
 	 *  @param $id string  field id, i.e. the meta key
 	 *  @param $options mixed|array options of taxonomy field
 	 *  	'post_type' =>    // post type name, 'post' (default) 'page' or any custom post type
-			'type' =>  // how to show posts? 'select' (default) or 'checkbox_list'
-			'args' =>  // arguments to query posts, see http://goo.gl/is0yK default ('posts_per_page' => -1)  
+	 *		'type' =>  // how to show posts? 'select' (default) or 'checkbox_list'
+	 *		'args' =>  // arguments to query posts, see http://goo.gl/is0yK default ('posts_per_page' => -1)  
 	 *  @param $args mixed|array
 	 *  	'name' => // field name/label string optional
 	 *  	'desc' => // field description, string optional
@@ -1831,11 +1837,11 @@ class AT_Meta_Box {
 	 */
 	public function Finish() {
 		$this->add_missed_values();
-		$this->check_field_upload();
+		/*$this->check_field_upload();
 		$this->check_field_color();
 		$this->check_field_date();
 		$this->check_field_time();
-		$this->check_field_code();
+		$this->check_field_code();*/
 	}
 	
 	/**
