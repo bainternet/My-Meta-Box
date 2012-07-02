@@ -2,7 +2,7 @@ My Wordpress Meta box Class
 =======================
 Contributors: bainternet
 Requires at least: 3.1
-Tested up to: 3.3.1
+Tested up to: 3.4.1
 
 Description
 -----------
@@ -24,11 +24,15 @@ Other options are available for each field which can be see in the 'my-meta-box-
 
 Known Issues and Limitations
 -------------
-Reapater field can't handle WYSIWYG, Code Editor
+Reapater field can't handle WYSIWYG, Code Editor, Posts and Taxonomy for now
 
 
 Changelog
 ---------
+= 2.5 = 
+Fixed Issue #11.
+Added Sortable option to repeater field.
+
 = 2.4 =
 Fixed WP_DEBUG errors, and taxonomy field args notice.
 
