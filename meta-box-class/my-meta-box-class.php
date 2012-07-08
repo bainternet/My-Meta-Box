@@ -12,7 +12,7 @@
  * modify and change small things and adding a few field types that i needed to my personal preference. 
  * The original author did a great job in writing this class, so all props goes to him.
  * 
- * @version 2.5
+ * @version 2.6
  * @copyright 2011 - 2012
  * @author Ohad Raz (email: admin@bainternet.info)
  * @link http://en.bainternet.info
@@ -482,8 +482,7 @@ class AT_Meta_Box {
       $meta = ( $meta !== '' ) ? $meta : $field['std'];
       if ('image' != $field['type'] && $field['type'] != 'repeater')
         $meta = is_array( $meta ) ? array_map( 'esc_attr', $meta ) : esc_attr( $meta );
-      echo '<tr>';
-    
+      echo '<tr>';    
       // Call Separated methods for displaying each type of field.
       call_user_func ( array( &$this, 'show_field_' . $field['type'] ), $field, $meta );
       echo '</tr>';
@@ -583,7 +582,10 @@ class AT_Meta_Box {
       if (!$field['inline']){
         echo '<tr>';
       }
-      call_user_func ( array( &$this, 'show_field_' . $f['type'] ), $f, '');
+      if ($f['type'] != 'wysiwyg')
+        call_user_func ( array( &$this, 'show_field_' . $f['type'] ), $f, '');
+      else
+        call_user_func ( array( &$this, 'show_field_' . $f['type'] ), $f, '',true);
       if (!$field['inline']){
         echo '</tr>';
       }  
@@ -599,7 +601,9 @@ class AT_Meta_Box {
     }
     echo '" alt="'.__('Remove').'" title="'.__('Remove').'" id="remove-'.$field['id'].'"></div>';
     $counter = 'countadd_'.$field['id'];
-    $js_code = ob_get_clean ();    
+    $js_code = ob_get_clean ();
+    $js_code = str_replace("\n","",$js_code);
+    $js_code = str_replace("\r","",$js_code);
     $js_code = str_replace("'","\"",$js_code);
     $js_code = str_replace("CurrentCounter","' + ".$counter." + '",$js_code);
     echo '<script>
@@ -818,14 +822,15 @@ class AT_Meta_Box {
    * @since 1.0
    * @access public
    */
-  public function show_field_wysiwyg( $field, $meta ) {
+  public function show_field_wysiwyg( $field, $meta,$in_repeater = false ) {
     $this->show_field_begin( $field, $meta );
+    
     // Add TinyMCE script for WP version < 3.3
     global $wp_version;
-
-    if ( version_compare( $wp_version, '3.2.1' ) < 1 ) {
+    
+    if ( version_compare( $wp_version, '3.2.1' ) < 1 ||$in_repeater )
       echo "<textarea class='at-wysiwyg theEditor large-text' name='{$field['id']}' id='{$field['id']}' cols='60' rows='10'>{$meta}</textarea>";
-    }else{
+    else{
       // Use new wp_editor() since WP 3.3
       wp_editor( html_entity_decode($meta), $field['id'], array( 'editor_class' => 'at-wysiwyg' ) );
     }
@@ -1799,8 +1804,9 @@ class AT_Meta_Box {
    *  @param $repeater bool  is this a field inside a repeatr? true|false(default)
    */
   public function addPosts($id,$options,$args,$repeater=false){
-    $q = array('posts_per_page' => -1);
-    $temp = array('post_type' =>'post','type'=>'select','args'=>$q);
+    $post_type = isset($option['post_type'])? $option['post_type']: (isset($args['post_type']) ? $args['post_type']: 'post');
+    $q = array('posts_per_page' => -1, 'post_type' => $post_type);
+    $temp = array('post_type' =>$post_type,'type'=>'select','args'=>$q);
     $options = array_merge($temp,$options);
     $new_field = array('type' => 'posts','id'=> $id,'desc' => '','name' => 'Posts Field','options'=> $options);
     $new_field = array_merge($new_field, $args);
@@ -1871,7 +1877,6 @@ class AT_Meta_Box {
     }
     return true;
   }
-  
 } // End Class
 
 endif; // End Check Class Exists

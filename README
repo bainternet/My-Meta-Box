@@ -29,6 +29,10 @@ Reapater field can't handle WYSIWYG, Code Editor, Posts and Taxonomy for now
 
 Changelog
 ---------
+= 2.6 =
+Fixed issue #13.
+Fixed issue #14.
+
 = 2.5 = 
 Fixed Issue #11.
 Added Sortable option to repeater field.
