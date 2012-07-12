@@ -12,7 +12,7 @@
  * modify and change small things and adding a few field types that i needed to my personal preference. 
  * The original author did a great job in writing this class, so all props goes to him.
  * 
- * @version 2.6
+ * @version 2.7
  * @copyright 2011 - 2012
  * @author Ohad Raz (email: admin@bainternet.info)
  * @link http://en.bainternet.info
@@ -148,7 +148,7 @@ class AT_Meta_Box {
      * since 1.8
      */
     global $typenow;
-    if (in_array($typenow,$this->_meta_box['pages'])){
+    if (in_array($typenow,$this->_meta_box['pages']) && $this->is_edit_page()){
       // Enqueue Meta Box Style
       wp_enqueue_style( 'at-meta-box', $plugin_path . '/css/meta-box.css' );
       

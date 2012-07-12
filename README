@@ -29,6 +29,9 @@ Reapater field can't handle WYSIWYG, Code Editor, Posts and Taxonomy for now
 
 Changelog
 ---------
+= 2.7 =
+Fixed Load js on edit pages only.
+
 = 2.6 =
 Fixed issue #13.
 Fixed issue #14.
