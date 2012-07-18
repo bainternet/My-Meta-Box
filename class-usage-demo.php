@@ -3,7 +3,7 @@
 Plugin Name: Demo MetaBox
 Plugin URI: http://en.bainternet.info
 Description: My Meta Box Class usage demo
-Version: 2.7
+Version: 2.8
 Author: Bainternet, Ohad Raz
 Author URI: http://en.bainternet.info
 */
@@ -23,7 +23,7 @@ if (is_admin()){
    */
   $config = array(
     'id' => 'demo_meta_box',          // meta box id, unique per meta box
-    'title' => 'Demo Meta Box',          // meta box title
+    'title' => 'Simple Meta Box fields',          // meta box title
     'pages' => array('post', 'page'),      // post types, accept custom post types as well, default is array('post'); optional
     'context' => 'normal',            // where the meta box appear: normal (default), advanced, side; optional
     'priority' => 'high',            // order of meta box: high (default), low; optional
@@ -52,45 +52,77 @@ if (is_admin()){
   $my_meta->addSelect($prefix.'select_field_id',array('selectkey1'=>'Select Value1','selectkey2'=>'Select Value2'),array('name'=> 'My select ', 'std'=> array('selectkey2')));
   //radio field
   $my_meta->addRadio($prefix.'radio_field_id',array('radiokey1'=>'Radio Value1','radiokey2'=>'Radio Value2'),array('name'=> 'My Radio Filed', 'std'=> array('radionkey2')));
-  //add checkboxes list 
-  $my_meta->addCheckboxList($prefix.'CheckboxList_field_id',array('checkboxkey1'=>'checkbox Value1','checkboxkey2'=>'checkbox Value2'),array('name'=> 'My checkbox list ', 'std'=> array('checkboxkey2')));
-  //date field
-  $my_meta->addDate($prefix.'date_field_id',array('name'=> 'My Date '));
-  //Time field
-  $my_meta->addTime($prefix.'time_field_id',array('name'=> 'My Time '));
-  //Color field
-  $my_meta->addColor($prefix.'color_field_id',array('name'=> 'My Color '));
   //Image field
   $my_meta->addImage($prefix.'image_field_id',array('name'=> 'My Image '));
   //file upload field
   $my_meta->addFile($prefix.'file_field_id',array('name'=> 'My File '));
+  /*
+   * Don't Forget to Close up the meta box decleration
+   */
+  //Finish Meta Box Decleration
+  $my_meta->Finish();
+
+  /**
+   * Create a second metabox
+   */
+  /* 
+   * configure your meta box
+   */
+  $config2 = array(
+    'id' => 'demo_meta_box2',          // meta box id, unique per meta box
+    'title' => 'Advanced Meta Box fields',          // meta box title
+    'pages' => array('post', 'page'),      // post types, accept custom post types as well, default is array('post'); optional
+    'context' => 'normal',            // where the meta box appear: normal (default), advanced, side; optional
+    'priority' => 'high',            // order of meta box: high (default), low; optional
+    'fields' => array(),            // list of meta fields (can be added by field arrays)
+    'local_images' => false,          // Use local or hosted images (meta box images for add/remove)
+    'use_with_theme' => false          //change path if used with theme set to true, false for a plugin or anything else for a custom path(default false).
+  );
+  
+  
+  /*
+   * Initiate your 2nd meta box
+   */
+  $my_meta2 =  new AT_Meta_Box($config2);
+  
+  /*
+   * Add fields to your 2nd meta box
+   */
+  //add checkboxes list 
+  $my_meta2->addCheckboxList($prefix.'CheckboxList_field_id',array('checkboxkey1'=>'checkbox Value1','checkboxkey2'=>'checkbox Value2'),array('name'=> 'My checkbox list ', 'std'=> array('checkboxkey2')));
+  //date field
+  $my_meta2->addDate($prefix.'date_field_id',array('name'=> 'My Date '));
+  //Time field
+  $my_meta2->addTime($prefix.'time_field_id',array('name'=> 'My Time '));
+  //Color field
+  $my_meta2->addColor($prefix.'color_field_id',array('name'=> 'My Color '));
   //wysiwyg field
-  $my_meta->addWysiwyg($prefix.'wysiwyg_field_id',array('name'=> 'My wysiwyg Editor '));
+  $my_meta2->addWysiwyg($prefix.'wysiwyg_field_id',array('name'=> 'My wysiwyg Editor '));
   //taxonomy field
-  $my_meta->addTaxonomy($prefix.'taxonomy_field_id',array('taxonomy' => 'category'),array('name'=> 'My Taxonomy '));
+  $my_meta2->addTaxonomy($prefix.'taxonomy_field_id',array('taxonomy' => 'category'),array('name'=> 'My Taxonomy '));
   //posts field
-  $my_meta->addPosts($prefix.'posts_field_id',array('post_type' => 'post'),array('name'=> 'My Posts '));
+  $my_meta2->addPosts($prefix.'posts_field_id',array('post_type' => 'post'),array('name'=> 'My Posts '));
   //add Code editor field
-  $my_meta->addCode($prefix.'code_field_id',array('name'=> 'Code editor Field', 'syntax' => 'php','theme' => 'light'));
+  $my_meta2->addCode($prefix.'code_field_id',array('name'=> 'Code editor Field', 'syntax' => 'php','theme' => 'light'));
     
   /*
    * To Create a reapeater Block first create an array of fields
    * use the same functions as above but add true as a last param
    */
   
-  $repeater_fields[] = $my_meta->addText($prefix.'re_text_field_id',array('name'=> 'My Text '),true);
-  $repeater_fields[] = $my_meta->addTextarea($prefix.'re_textarea_field_id',array('name'=> 'My Textarea '),true);
-  $repeater_fields[] = $my_meta->addCheckbox($prefix.'re_checkbox_field_id',array('name'=> 'My Checkbox '),true);
-  $repeater_fields[] = $my_meta->addImage($prefix.'image_field_id',array('name'=> 'My Image '),true);
+  $repeater_fields[] = $my_meta2->addText($prefix.'re_text_field_id',array('name'=> 'My Text '),true);
+  $repeater_fields[] = $my_meta2->addTextarea($prefix.'re_textarea_field_id',array('name'=> 'My Textarea '),true);
+  $repeater_fields[] = $my_meta2->addCheckbox($prefix.'re_checkbox_field_id',array('name'=> 'My Checkbox '),true);
+  $repeater_fields[] = $my_meta2->addImage($prefix.'image_field_id',array('name'=> 'My Image '),true);
   
   /*
    * Then just add the fields to the repeater block
    */
   //repeater block
-  $my_meta->addRepeaterBlock($prefix.'re_',array('inline' => true, 'name' => 'This is a Repeater Block','fields' => $repeater_fields, 'sortable'=> true));
+  $my_meta2->addRepeaterBlock($prefix.'re_',array('inline' => true, 'name' => 'This is a Repeater Block','fields' => $repeater_fields, 'sortable'=> true));
   /*
    * Don't Forget to Close up the meta box decleration
    */
   //Finish Meta Box Decleration
-  $my_meta->Finish();
+  $my_meta2->Finish();
 }
