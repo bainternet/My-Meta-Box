@@ -24,11 +24,15 @@ Other options are available for each field which can be see in the 'my-meta-box-
 
 Known Issues and Limitations
 -------------
-Reapater field can't handle WYSIWYG, Code Editor, Posts and Taxonomy for now
+Reapater field can't handle Posts and Taxonomy for now (and maybe even others).
 
 
 Changelog
 ---------
+= 2.8 =
+Fixed issue #10 by moving ajax hook to constructor.
+split demo meta box to 2 meta boxes.
+
 = 2.7 =
 Fixed Load js on edit pages only.
 
