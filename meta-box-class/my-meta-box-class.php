@@ -12,7 +12,7 @@
  * modify and change small things and adding a few field types that i needed to my personal preference. 
  * The original author did a great job in writing this class, so all props goes to him.
  * 
- * @version 2.7
+ * @version 2.8
  * @copyright 2011 - 2012
  * @author Ohad Raz (email: admin@bainternet.info)
  * @link http://en.bainternet.info
@@ -117,7 +117,7 @@ class AT_Meta_Box {
     
       
     
-    // Add Actions
+    // Add metaboxes
     add_action( 'add_meta_boxes', array( &$this, 'add' ) );
     //add_action( 'wp_insert_post', array( &$this, 'save' ) );
     add_action( 'save_post', array( &$this, 'save' ) );
@@ -128,6 +128,8 @@ class AT_Meta_Box {
     // Load common js, css files
     // Must enqueue for all pages as we need js for the media upload, too.
     add_action( 'admin_print_styles', array( &$this, 'load_scripts_styles' ) );
+    // Delete file via Ajax
+    add_action( 'wp_ajax_at_delete_mupload', array( $this, 'wp_ajax_delete_image' ) );
     
   }
   
@@ -198,8 +200,6 @@ class AT_Meta_Box {
     // Delete all attachments when delete custom post type.
     add_action( 'wp_ajax_at_delete_file',     array( &$this, 'delete_file' ) );
     add_action( 'wp_ajax_at_reorder_images',   array( &$this, 'reorder_images' ) );
-    // Delete file via Ajax
-    add_action( 'wp_ajax_at_delete_mupload', array( $this, 'wp_ajax_delete_image' ) );
   }
   
   /**
