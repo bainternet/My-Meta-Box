@@ -56,6 +56,13 @@ if (is_admin()){
   $my_meta->addImage($prefix.'image_field_id',array('name'=> 'My Image '));
   //file upload field
   $my_meta->addFile($prefix.'file_field_id',array('name'=> 'My File '));
+  //Embed YouTube Video
+    $my_meta->addVideoYouTube( $prefix . 'video_youtube_id', array(
+            'name' => 'URL [YouTube Only] ',
+            'width' => '255',
+            'height' => '200',
+            'size' => '40' )
+    );
   /*
    * Don't Forget to Close up the meta box decleration
    */
