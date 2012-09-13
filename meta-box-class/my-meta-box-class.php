@@ -12,7 +12,7 @@
  * modify and change small things and adding a few field types that i needed to my personal preference. 
  * The original author did a great job in writing this class, so all props goes to him.
  * 
- * @version 2.8
+ * @version 2.9
  * @copyright 2011 - 2012
  * @author Ohad Raz (email: admin@bainternet.info)
  * @link http://en.bainternet.info
@@ -514,7 +514,7 @@ class AT_Meta_Box {
       if (count($meta) > 0 && is_array($meta) ){
          foreach ($meta as $me){
            //for labling toggles
-           $mmm =  $me[$field['fields'][0]['id']];
+           $mmm =  ($me[$field])? $me[$field['fields'][0]['id']]: "";
            echo '<div class="at-repater-block">'.$mmm.'<br/><table class="repeater-table" style="display: none;">';
            if ($field['inline']){
              echo '<tr class="at-inline" VALIGN="top">';
@@ -1323,6 +1323,11 @@ class AT_Meta_Box {
     foreach ( $this->_fields as $field ) {
       if ( $type == $field['type'] ) 
         return true;
+      elseif('repeater' == $field['type'] ){
+        foreach((array)$field["fields"] as $repeater_field){
+            if($type == $repeater_field["type"]) return true;
+        }
+      }
     }
     return false;
   }

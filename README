@@ -29,6 +29,10 @@ Reapater field can't handle Posts and Taxonomy for now (and maybe even others).
 
 Changelog
 ---------
+= 2.9 =
+Fixed "array" when repater field has something other then text field :).
+has_field() now checks repeater fields as well.
+
 = 2.8 =
 Fixed issue #10 by moving ajax hook to constructor.
 split demo meta box to 2 meta boxes.
