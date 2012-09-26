@@ -29,6 +29,9 @@ Reapater field can't handle Posts and Taxonomy for now (and maybe even others).
 
 Changelog
 ---------
+= 2.9.1 =
+Fixed Typo in line 1812, issue #24
+
 = 2.9 =
 Fixed "array" when repater field has something other then text field :).
 has_field() now checks repeater fields as well.

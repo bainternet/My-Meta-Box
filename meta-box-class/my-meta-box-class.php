@@ -12,7 +12,7 @@
  * modify and change small things and adding a few field types that i needed to my personal preference. 
  * The original author did a great job in writing this class, so all props goes to him.
  * 
- * @version 2.9
+ * @version 2.9.1
  * @copyright 2011 - 2012
  * @author Ohad Raz (email: admin@bainternet.info)
  * @link http://en.bainternet.info
@@ -1809,7 +1809,7 @@ class AT_Meta_Box {
    *  @param $repeater bool  is this a field inside a repeatr? true|false(default)
    */
   public function addPosts($id,$options,$args,$repeater=false){
-    $post_type = isset($option['post_type'])? $option['post_type']: (isset($args['post_type']) ? $args['post_type']: 'post');
+    $post_type = isset($options['post_type'])? $options['post_type']: (isset($args['post_type']) ? $args['post_type']: 'post');
     $q = array('posts_per_page' => -1, 'post_type' => $post_type);
     $temp = array('post_type' =>$post_type,'type'=>'select','args'=>$q);
     $options = array_merge($temp,$options);
