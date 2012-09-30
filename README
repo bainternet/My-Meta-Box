@@ -2,7 +2,7 @@ My Wordpress Meta box Class
 =======================
 Contributors: bainternet
 Requires at least: 3.1
-Tested up to: 3.4.1
+Tested up to: 3.4.2
 
 Description
 -----------
@@ -29,6 +29,9 @@ Reapater field can't handle Posts and Taxonomy for now (and maybe even others).
 
 Changelog
 ---------
+= 2.9.2 =
+Fixed issue #25
+
 = 2.9.1 =
 Fixed Typo in line 1812, issue #24
 
