@@ -478,8 +478,9 @@ class AT_Meta_Box {
     wp_nonce_field( basename(__FILE__), 'at_meta_box_nonce' );
     echo '<table class="form-table">';
     foreach ( $this->_fields as $field ) {
+      $field['multiple'] = isset($field['multiple']) ? $field['multiple'] : false;
       $meta = get_post_meta( $post->ID, $field['id'], !$field['multiple'] );
-      $meta = ( $meta !== '' ) ? $meta : $field['std'];
+      $meta = ( $meta !== '' ) ? $meta : @$field['std'];
       if ('image' != $field['type'] && $field['type'] != 'repeater')
         $meta = is_array( $meta ) ? array_map( 'esc_attr', $meta ) : esc_attr( $meta );
       echo '<tr>';    
@@ -664,20 +665,20 @@ class AT_Meta_Box {
   public function show_field_end( $field, $meta=NULL ,$group = false) {
     if (isset($field['group'])){
       if ($group == 'end'){
-        if ( $field['desc'] != '' ) {
+        if ( isset($field['desc']) && $field['desc'] != '' ) {
           echo "<div class='desc-field'>{$field['desc']}</div></td>";
         } else {
           echo "</td>";
         }
       }else {
-        if ( $field['desc'] != '' ) {
+        if ( isset($field['desc']) && $field['desc'] != '' ) {
           echo "<div class='desc-field'>{$field['desc']}</div><br/>";  
         }else{
           echo '<br/>';
         }  
       }    
     }else{
-      if ( $field['desc'] != '' ) {
+      if ( isset($field['desc']) && $field['desc'] != '' ) {
         echo "<div class='desc-field'>{$field['desc']}</div></td>";
       } else {
         echo "</td>";
