@@ -12,7 +12,7 @@
  * modify and change small things and adding a few field types that i needed to my personal preference. 
  * The original author did a great job in writing this class, so all props goes to him.
  * 
- * @version 2.9.2
+ * @version 2.9.3
  * @copyright 2011 - 2012
  * @author Ohad Raz (email: admin@bainternet.info)
  * @link http://en.bainternet.info
@@ -401,8 +401,10 @@ class AT_Meta_Box {
     
     if ( $this->has_field( 'date' ) && $this->is_edit_page() ) {
       // Enqueu JQuery UI, use proper version.
-      wp_enqueue_style( 'at-jquery-ui-css', 'http://ajax.googleapis.com/ajax/libs/jqueryui/' . $this->get_jqueryui_ver() . '/themes/base/jquery-ui.css' );
-      wp_enqueue_script( 'at-jquery-ui', 'https://ajax.googleapis.com/ajax/libs/jqueryui/' . $this->get_jqueryui_ver() . '/jquery-ui.min.js', array( 'jquery' ) );
+	  $plugin_path = $this->SelfPath;
+      wp_enqueue_style( 'at-jquery-ui-css', $plugin_path .'/js/jquery-ui/jquery-ui.css' );
+      wp_enqueue_script( 'jquery-ui');
+	  wp_enqueue_script( 'jquery-ui-datepicker');
     }
     
   }
@@ -416,11 +418,11 @@ class AT_Meta_Box {
   public function check_field_time() {
     
     if ( $this->has_field( 'time' ) && $this->is_edit_page() ) {
-      
+      $plugin_path = $this->SelfPath;
       // Enqueu JQuery UI, use proper version.
-      wp_enqueue_style( 'at-jquery-ui-css', 'http://ajax.googleapis.com/ajax/libs/jqueryui/' . $this->get_jqueryui_ver() . '/themes/base/jquery-ui.css' );
-      wp_enqueue_script( 'at-jquery-ui', 'https://ajax.googleapis.com/ajax/libs/jqueryui/' . $this->get_jqueryui_ver() . '/jquery-ui.min.js', array( 'jquery' ) );
-      wp_enqueue_script( 'at-timepicker', 'https://github.com/trentrichardson/jQuery-Timepicker-Addon/raw/master/jquery-ui-timepicker-addon.js', array( 'at-jquery-ui' ),false,true );
+      wp_enqueue_style( 'at-jquery-ui-css', $plugin_path .'/js/jquery-ui/jquery-ui.css' );
+      wp_enqueue_script( 'jquery-ui');
+      wp_enqueue_script( 'at-timepicker', $plugin_path .'/js/jquery-ui/jquery-ui-timepicker-addon.js', array( 'jquery-ui-datepicker' ),false,true );
     
     }
     
