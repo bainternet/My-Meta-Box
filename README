@@ -2,7 +2,7 @@ My Wordpress Meta box Class
 =======================
 Contributors: bainternet
 Requires at least: 3.1
-Tested up to: 3.4.2
+Tested up to: 3.5
 
 Description
 -----------
@@ -29,6 +29,9 @@ Reapater field can't handle Posts and Taxonomy for now (and maybe even others).
 
 Changelog
 ---------
+= 2.9.4 = 
+Added localization support.
+
 = 2.9.3 =
 Fixed issue #27
 moved all external file calls to local

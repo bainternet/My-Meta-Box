@@ -253,7 +253,7 @@ class AT_Meta_Box {
       $li    = "<li id='item_{$attachment_id}'>";
       $li   .= "<img src='{$attachment['url']}' alt='image_{$attachment_id}' />";
       //$li   .= "<a title='" . __( 'Delete this image' ) . "' class='at-delete-file' href='#' rel='{$nonce}|{$post_id}|{$id}|{$attachment_id}'>" . __( 'Delete' ) . "</a>";
-      $li   .= "<a title='" . __( 'Delete this image' ) . "' class='at-delete-file' href='#' rel='{$nonce}|{$post_id}|{$id}|{$attachment_id}'><img src='" . $this->SelfPath. "/images/delete-16.png' alt='" . __( 'Delete' ) . "' /></a>";
+      $li   .= "<a title='" . __( 'Delete this image','mmb' ) . "' class='at-delete-file' href='#' rel='{$nonce}|{$post_id}|{$id}|{$attachment_id}'><img src='" . $this->SelfPath. "/images/delete-16.png' alt='" . __( 'Delete','mmb' ) . "' /></a>";
       $li   .= "<input type='hidden' name='{$id}[]' value='{$attachment_id}' />";
       $li   .= "</li>";
       $html .= $li;
@@ -345,7 +345,7 @@ class AT_Meta_Box {
       echo json_encode( array('status' => 'success' ));
       die();
     }else{
-      echo json_encode(array('message' => __( 'Cannot delete file. Something\'s wrong.')));
+      echo json_encode(array('message' => __( 'Cannot delete file. Something\'s wrong.','mmb')));
       die();
     }
   }
@@ -557,7 +557,7 @@ class AT_Meta_Box {
         }else{
           echo 'http://i.imgur.com/g8Duj.png';
         }
-        echo '" alt="'.__('Remove').'" title="'.__('Remove').'" id="remove-'.$field['id'].'"></div>';
+        echo '" alt="'.__('Remove','mmb').'" title="'.__('Remove','mmb').'" id="remove-'.$field['id'].'"></div>';
         $c = $c + 1;
         
         }
@@ -569,7 +569,7 @@ class AT_Meta_Box {
     }else{
       echo 'http://i.imgur.com/w5Tuc.png';
     }
-    echo '" alt="'.__('Add').'" title="'.__('Add').'" id="add-'.$field['id'].'"><br/></div>';
+    echo '" alt="'.__('Add','mmb').'" title="'.__('Add','mmb').'" id="add-'.$field['id'].'"><br/></div>';
     
     //create all fields once more for js function and catch with object buffer
     ob_start();
@@ -602,7 +602,7 @@ class AT_Meta_Box {
     }else{
       echo 'http://i.imgur.com/g8Duj.png';
     }
-    echo '" alt="'.__('Remove').'" title="'.__('Remove').'" id="remove-'.$field['id'].'"></div>';
+    echo '" alt="'.__('Remove','mmb'.'" title="'.__('Remove','mmb').'" id="remove-'.$field['id'].'"></div>';
     $counter = 'countadd_'.$field['id'];
     $js_code = ob_get_clean ();
     $js_code = str_replace("\n","",$js_code);
@@ -860,24 +860,24 @@ class AT_Meta_Box {
 
       if ( ! empty( $meta ) ) {
         $nonce = wp_create_nonce( 'at_ajax_delete' );
-        echo '<div style="margin-bottom: 10px"><strong>' . __('Uploaded files') . '</strong></div>';
+        echo '<div style="margin-bottom: 10px"><strong>' . __('Uploaded files','mmb') . '</strong></div>';
         echo '<ol class="at-upload">';
         foreach ( $meta as $att ) {
           // if (wp_attachment_is_image($att)) continue; // what's image uploader for?
-          echo "<li>" . wp_get_attachment_link( $att, '' , false, false, ' ' ) . " (<a class='at-delete-file' href='#' rel='{$nonce}|{$post->ID}|{$field['id']}|{$att}'>" . __( 'Delete' ) . "</a>)</li>";
+          echo "<li>" . wp_get_attachment_link( $att, '' , false, false, ' ' ) . " (<a class='at-delete-file' href='#' rel='{$nonce}|{$post->ID}|{$field['id']}|{$att}'>" . __( 'Delete' ,'mmb') . "</a>)</li>";
         }
         echo '</ol>';
       }
 
       // show form upload
       echo "<div class='at-file-upload-label'>";
-        echo "<strong>" . __( 'Upload new files' ) . "</strong>";
+        echo "<strong>" . __( 'Upload new files','mmb' ) . "</strong>";
       echo "</div>";
       echo "<div class='new-files'>";
         echo "<div class='file-input'>";
           echo "<input type='file' name='{$field['id']}[]' />";
         echo "</div><!-- End .file-input -->";
-        echo "<a class='at-add-file button' href='#'>" . __( 'Add more files' ) . "</a>";
+        echo "<a class='at-add-file button' href='#'>" . __( 'Add more files','mmb' ) . "</a>";
       echo "</div><!-- End .new-files -->";
     echo "</td>";
   }
@@ -927,7 +927,7 @@ class AT_Meta_Box {
     $this->show_field_begin( $field, $meta );
       echo "<input class='at-color' type='text' name='{$field['id']}' id='{$field['id']}' value='{$meta}' size='8' />";
     //  echo "<a href='#' class='at-color-select button' rel='{$field['id']}'>" . __( 'Select a color' ) . "</a>";
-      echo "<input type='button' class='at-color-select button' rel='{$field['id']}' value='" . __( 'Select a color' ) . "'/>";
+      echo "<input type='button' class='at-color-select button' rel='{$field['id']}' value='" . __( 'Select a color' ,'mmb') . "'/>";
       echo "<div style='display:none' class='at-color-picker' rel='{$field['id']}'></div>";
     $this->show_field_end($field, $meta);
     
@@ -1895,7 +1895,7 @@ class AT_Meta_Box {
    */
   public function load_textdomain(){
     //In themes/plugins/mu-plugins directory
-    load_textdomain( 'apc', $this->SelfPath . '/lang/' . get_locale() .'mo' );
+    load_textdomain( 'mmb', $this->SelfPath . '/lang/' . get_locale() .'mo' );
   }
 } // End Class
 
