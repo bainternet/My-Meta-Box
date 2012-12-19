@@ -12,7 +12,7 @@
  * modify and change small things and adding a few field types that i needed to my personal preference. 
  * The original author did a great job in writing this class, so all props goes to him.
  * 
- * @version 2.9.3
+ * @version 2.9.4
  * @copyright 2011 - 2012
  * @author Ohad Raz (email: admin@bainternet.info)
  * @link http://en.bainternet.info
@@ -95,7 +95,10 @@ class AT_Meta_Box {
     // If we are not in admin area exit.
     if ( ! is_admin() )
       return;
-      
+    
+    //load translation
+    add_filter('init', array($this,'load_textdomain'));
+
     // Assign meta box values to local variables and add it's missed values.
     $this->_meta_box = $meta_box;
     $this->_prefix = (isset($meta_box['prefix'])) ? $meta_box['prefix'] : ''; 
@@ -404,9 +407,8 @@ class AT_Meta_Box {
 	  $plugin_path = $this->SelfPath;
       wp_enqueue_style( 'at-jquery-ui-css', $plugin_path .'/js/jquery-ui/jquery-ui.css' );
       wp_enqueue_script( 'jquery-ui');
-	  wp_enqueue_script( 'jquery-ui-datepicker');
+      wp_enqueue_script( 'jquery-ui-datepicker');
     }
-    
   }
   
   /**
@@ -422,10 +424,8 @@ class AT_Meta_Box {
       // Enqueu JQuery UI, use proper version.
       wp_enqueue_style( 'at-jquery-ui-css', $plugin_path .'/js/jquery-ui/jquery-ui.css' );
       wp_enqueue_script( 'jquery-ui');
-      wp_enqueue_script( 'at-timepicker', $plugin_path .'/js/jquery-ui/jquery-ui-timepicker-addon.js', array( 'jquery-ui-datepicker' ),false,true );
-    
+      wp_enqueue_script( 'at-timepicker', $plugin_path .'/js/jquery-ui/jquery-ui-timepicker-addon.js', array( 'jquery-ui-slider','jquery-ui-datepicker' ),false,true );
     }
-    
   }
   
   /**
@@ -1884,6 +1884,18 @@ class AT_Meta_Box {
       }
     }
     return true;
+  }
+
+
+  /**
+   * load_textdomain 
+   * @author Ohad Raz
+   * @since 2.9.4
+   * @return void
+   */
+  public function load_textdomain(){
+    //In themes/plugins/mu-plugins directory
+    load_textdomain( 'apc', $this->SelfPath . '/lang/' . get_locale() .'mo' );
   }
 } // End Class
 
