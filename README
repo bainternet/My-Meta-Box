@@ -29,6 +29,9 @@ Reapater field can't handle Posts and Taxonomy for now (and maybe even others).
 
 Changelog
 ---------
+= 2.9.6 = 
+Fixed file upload issue #22
+
 = 2.9.5 = 
 Typo.
 

@@ -12,7 +12,7 @@
  * modify and change small things and adding a few field types that i needed to my personal preference. 
  * The original author did a great job in writing this class, so all props goes to him.
  * 
- * @version 2.9.5
+ * @version 2.9.6
  * @copyright 2011 - 2012
  * @author Ohad Raz (email: admin@bainternet.info)
  * @link http://en.bainternet.info
@@ -125,14 +125,17 @@ class AT_Meta_Box {
     //add_action( 'wp_insert_post', array( &$this, 'save' ) );
     add_action( 'save_post', array( &$this, 'save' ) );
     
-    // Check for special fields and add needed actions for them.
-    $this->check_field_upload();
+    
+    
     
     // Load common js, css files
     // Must enqueue for all pages as we need js for the media upload, too.
     add_action( 'admin_print_styles', array( &$this, 'load_scripts_styles' ) );
     // Delete file via Ajax
     add_action( 'wp_ajax_at_delete_mupload', array( $this, 'wp_ajax_delete_image' ) );
+    // Delete all attachments when delete custom post type.
+    add_action( 'wp_ajax_atm_delete_file',     array( &$this, 'delete_file' ) );
+    add_action( 'wp_ajax_atm_reorder_images',   array( &$this, 'reorder_images' ) );
     
   }
   
@@ -167,6 +170,7 @@ class AT_Meta_Box {
         wp_enqueue_script( 'jquery-ui-core' );
         wp_enqueue_script( 'jquery-ui-sortable' );
       }
+      // Check for special fields and add needed actions for them.
       //check for color field
       $this->check_field_color();
       //check for date field
@@ -175,6 +179,8 @@ class AT_Meta_Box {
       $this->check_field_time();
       //check for code editor field
       $this->check_field_code();
+      //check for image or file field
+      $this->check_field_upload();
 
     }
     
@@ -193,16 +199,14 @@ class AT_Meta_Box {
       return;
     
     // Add data encoding type for file uploading.  
-    add_action( 'post_edit_form_tag', array( &$this, 'add_enctype' ) );
+    add_action( 'post_edit_form_tag', array( $this, 'add_enctype' ) );
     
     // Add filters for media upload.
     add_filter( 'media_upload_gallery', array( &$this, 'insert_images' ) );
     add_filter( 'media_upload_library', array( &$this, 'insert_images' ) );
     add_filter( 'media_upload_image',   array( &$this, 'insert_images' ) );
       
-    // Delete all attachments when delete custom post type.
-    add_action( 'wp_ajax_at_delete_file',     array( &$this, 'delete_file' ) );
-    add_action( 'wp_ajax_at_reorder_images',   array( &$this, 'reorder_images' ) );
+    
   }
   
   /**
@@ -212,7 +216,7 @@ class AT_Meta_Box {
    * @access public
    */
   public function add_enctype () {
-    echo ' enctype="multipart/form-data"';
+    printf(' enctype="multipart/form-data" encoding="multipart/form-data" ');
   }
   
   /**
@@ -295,20 +299,29 @@ class AT_Meta_Box {
    * @access public 
    */
   public function delete_file() {
-    
     // If data is not set, die.
     if ( ! isset( $_POST['data'] ) )
-      die();
+      die('1');
       
-    list($nonce, $post_id, $key, $attach_id) = explode('|', $_POST['data']);
-    
-    if ( ! wp_verify_nonce( $nonce, 'at_ajax_delete' ) )
+    list($nonce, $term_id, $key, $attach_id) = explode('|', $_POST['data']);
+    $post_id = $_POST['tag_id'];
+    //$arrKey = (int)$_POST['idx'];
+    if ( ! wp_verify_nonce( $nonce, 'at_ajax_delete_file' ) )
       die( '1' );
-      
-    delete_post_meta( $post_id, $key, $attach_id );
     
+    $saved = get_post_meta($post_id,$key,true);
+
+    $index = array_search($attach_id, $saved);    
+    foreach ($saved as $k => $value) {
+      if ($value == $attach_id)
+        unset($saved[$k]);
+    }
+    if (count($saved) > 0){
+      update_post_meta($post_id,$key,$saved);
+      die('0');
+    }
+    delete_post_meta( $post_id, $key);
     die( '0' );
-  
   }
   /**
   * Ajax callback for deleting files.
@@ -483,7 +496,7 @@ class AT_Meta_Box {
       $field['multiple'] = isset($field['multiple']) ? $field['multiple'] : false;
       $meta = get_post_meta( $post->ID, $field['id'], !$field['multiple'] );
       $meta = ( $meta !== '' ) ? $meta : @$field['std'];
-      if ('image' != $field['type'] && $field['type'] != 'repeater')
+      if (!in_array($field['type'], array('image', 'repeater','file')))
         $meta = is_array( $meta ) ? array_map( 'esc_attr', $meta ) : esc_attr( $meta );
       echo '<tr>';    
       // Call Separated methods for displaying each type of field.
@@ -849,37 +862,39 @@ class AT_Meta_Box {
    * @access public
    */
   public function show_field_file( $field, $meta ) {
-    
-    global $post;
-
+    global $post; 
+/*
+    delete_post_meta($post->ID, $field['id']);
+    $meta = '';*/
     if ( ! is_array( $meta ) )
       $meta = (array) $meta;
 
     $this->show_field_begin( $field, $meta );
       echo "{$field['desc']}<br />";
-
-      if ( ! empty( $meta ) ) {
-        $nonce = wp_create_nonce( 'at_ajax_delete' );
+      if ( !empty( $meta )  && count($meta) > 0 && !$this->is_array_empty($meta) ) {
+        $nonce = wp_create_nonce( 'at_ajax_delete_file' );
         echo '<div style="margin-bottom: 10px"><strong>' . __('Uploaded files','mmb') . '</strong></div>';
         echo '<ol class="at-upload">';
-        foreach ( $meta as $att ) {
+        foreach ( (array)$meta[0] as $key => $att ) {
+          
           // if (wp_attachment_is_image($att)) continue; // what's image uploader for?
-          echo "<li>" . wp_get_attachment_link( $att, '' , false, false, ' ' ) . " (<a class='at-delete-file' href='#' rel='{$nonce}|{$post->ID}|{$field['id']}|{$att}'>" . __( 'Delete' ,'mmb') . "</a>)</li>";
+          echo "<li>" . wp_get_attachment_url( $att) . " (<a class='at-delete-file' href='#' rel='{$nonce}|$key|{$field['id']}|{$att}'>" . __( 'Delete','mmb' ) . "</a>)</li>";
         }
         echo '</ol>';
       }
 
       // show form upload
-      echo "<div class='at-file-upload-label'>";
-        echo "<strong>" . __( 'Upload new files','mmb' ) . "</strong>";
-      echo "</div>";
-      echo "<div class='new-files'>";
-        echo "<div class='file-input'>";
-          echo "<input type='file' name='{$field['id']}[]' />";
-        echo "</div><!-- End .file-input -->";
-        echo "<a class='at-add-file button' href='#'>" . __( 'Add more files','mmb' ) . "</a>";
-      echo "</div><!-- End .new-files -->";
+    echo "<div class='at-file-upload-label'> \n
+      <strong>" . __( 'Upload new files','mmb' ) . "</strong>\n
+    </div>\n";
+    echo "<div class='new-files'>\n
+      <div class='file-input'>\n
+        <input type='file' name='{$field['id']}[]' />\n
+      </div><!-- End .file-input -->\n
+      <a class='at-add-file button' href='#'>" . __( 'Add more files','mmb' ) . "</a>\n
+      </div><!-- End .new-files -->\n";
     echo "</td>";
+    $this->show_field_end( $field, $meta );
   }
   
   /**
@@ -1218,13 +1233,18 @@ class AT_Meta_Box {
    * @access public
    */
   public function save_field_file( $post_id, $field, $old, $new ) {
-  
+    
     $name = $field['id'];
-    if ( empty( $_FILES[$name] ) ) 
+    if ( empty( $_FILES[$name] ) && !is_array($old)){
+      delete_post_meta($post_id,$name);
       return;
-    $this->fix_file_array( $_FILES[$name] );
-    foreach ( $_FILES[$name] as $position => $fileitem ) {
-      
+    }
+    $temp = get_post_meta($post_id,$name,true);
+    $temp = is_array($temp) ? $temp : array();
+    $files = $this->fix_file_array( $_FILES[$name] );
+    
+    foreach ( $files as $fileitem ) {
+
       $file = wp_handle_upload( $fileitem, array( 'test_form' => false ) );
       if ( empty( $file['file'] ) ) 
         continue;
@@ -1233,22 +1253,21 @@ class AT_Meta_Box {
       $attachment = array(
         'post_mime_type' => $file['type'],
         'guid' => $file['url'],
-        'post_parent' => $post_id,
+        'post_parent' => $term_id,
         'post_title' => preg_replace('/\.[^.]+$/', '', basename( $filename ) ),
         'post_content' => ''
       );
-      
-      $id = wp_insert_attachment( $attachment, $filename, $post_id );
-      
+
+      $id = wp_insert_attachment( $attachment, $filename);
+
       if ( ! is_wp_error( $id ) ) {
-        
         wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $filename ) );
-        add_post_meta( $post_id, $name, $id, false );  // save file's url in meta fields
-      
+        $temp[] = $id;  // save file's url in meta fields
       } // End if
-      
     } // End foreach
-    
+    if (count($temp) > 0)
+      update_post_meta($post_id, $name, $temp);
+
   }
   
   /**
@@ -1369,7 +1388,7 @@ class AT_Meta_Box {
       }
     }
     
-    return $files = $output;
+    return $output;
   
   }
 
