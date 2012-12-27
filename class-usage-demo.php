@@ -3,7 +3,7 @@
 Plugin Name: Demo MetaBox
 Plugin URI: http://en.bainternet.info
 Description: My Meta Box Class usage demo
-Version: 2.9.6
+Version: 2.9.7
 Author: Bainternet, Ohad Raz
 Author URI: http://en.bainternet.info
 */
@@ -109,7 +109,6 @@ if (is_admin()){
    * To Create a reapeater Block first create an array of fields
    * use the same functions as above but add true as a last param
    */
-  
   $repeater_fields[] = $my_meta2->addText($prefix.'re_text_field_id',array('name'=> 'My Text '),true);
   $repeater_fields[] = $my_meta2->addTextarea($prefix.'re_textarea_field_id',array('name'=> 'My Textarea '),true);
   $repeater_fields[] = $my_meta2->addCheckbox($prefix.'re_checkbox_field_id',array('name'=> 'My Checkbox '),true);

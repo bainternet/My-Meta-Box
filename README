@@ -29,6 +29,13 @@ Reapater field can't handle Posts and Taxonomy for now (and maybe even others).
 
 Changelog
 ---------
+= 2.9.7 =
+Added class attribute to most fields. #33
+Added Style attribute to most fields. #33
+fixed Language Mo issue.
+improved has_filed logic for better performance.
+
+
 = 2.9.6 = 
 Fixed file upload issue #22
 
