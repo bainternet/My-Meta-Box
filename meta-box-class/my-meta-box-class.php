@@ -78,10 +78,17 @@ class AT_Meta_Box {
    *
    * @var string
    * @access protected
-   * $since 1.6
+   * @since 1.6
    */
   protected $SelfPath;
   
+  /**
+   * $field_types  holds used field types
+   * @var array
+   * @access public
+   * @since 2.9.7
+   */
+  public $field_types = array();
   /**
    * Constructor
    *
@@ -1341,17 +1348,27 @@ class AT_Meta_Box {
    * @since 1.0
    * @access public
    */
-  public function has_field( $type ) {
-    foreach ( $this->_fields as $field ) {
-      if ( $type == $field['type'] ) 
-        return true;
-      elseif('repeater' == $field['type'] ){
-        foreach((array)$field["fields"] as $repeater_field){
-            if($type == $repeater_field["type"]) return true;
+   public function has_field( $type ) {
+    //faster search in single dimention array.
+    if (count($this->field_types) > 0){
+      return in_array($type, $this->field_types);
+    }
+
+    //run once over all fields and store the types in a local array
+    $temp = array();
+    foreach ($this->_fields as $field) {
+      $temp[] = $field['type'];
+      if ('repeater' == $field['type']  || 'cond' == $field['type']){
+        foreach((array)$field["fields"] as $repeater_field) {
+          $temp[] = $repeater_field["type"];  
         }
       }
     }
-    return false;
+
+    //remove duplicates
+    $this->field_types = array_unique($temp);
+    //call this function one more time now that we have an array of field types
+    return $this->has_field($type);
   }
 
   /**
