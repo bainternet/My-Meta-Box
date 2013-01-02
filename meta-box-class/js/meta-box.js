@@ -166,10 +166,18 @@ function update_repeater_fields(){
      * @since 2.1
      */
     $('.repeater-sortable').sortable();
+    /**
+     * enable select2
+     */
+    fancySelect();
   
   }
 var Ed_array = Array;
 jQuery(document).ready(function($) {
+  /**
+   * enable select2
+   */
+  fancySelect();
 
   /**
    * repeater sortable
@@ -288,15 +296,52 @@ jQuery(document).ready(function($) {
    * better handler for color picker with repeater fields support
    * which now works both when button is clicked and when field gains focus.
    */
-  $('.at-color').live('focus', function() {
-    var $this = $(this);
-    $(this).siblings('.at-color-picker').farbtastic($this).toggle();
-  });
+  if ($.farbtastic){//since WordPress 3.5
+    $('.at-color').live('focus', function() {
+      load_colorPicker($(this).next());
+    });
 
-  $('.at-color').live('focusout', function() {
-    var $this = $(this);
-    $(this).siblings('.at-color-picker').farbtastic($this).toggle();
-  });
+    $('.at-color').live('focusout', function() {
+      hide_colorPicker($(this).next());
+    });
+
+    /**
+     * Select Color Field.
+     *
+     * @since 1.0
+     */
+    $('.at-color-select').live('click', function(){
+      if ($(this).next('div').css('display') == 'none')
+        load_colorPicker($(this));
+      else
+        hide_colorPicker($(this));
+    });
+
+    function load_colorPicker(ele){
+      colorPicker = $(ele).next('div');
+      input = $(ele).prev('input');
+
+      $.farbtastic($(colorPicker), function(a) { $(input).val(a).css('background', a); });
+
+      colorPicker.show();
+      //e.preventDefault();
+
+      //$(document).mousedown( function() { $(colorPicker).hide(); });
+    }
+
+    function hide_colorPicker(ele){
+      colorPicker = $(ele).next('div');
+      $(colorPicker).hide();
+    }
+    //issue #15
+    $('.at-color').each(function(){
+      var colo = $(this).val();
+      if (colo.length == 7)
+        $(this).css('background',colo);
+    });
+  }else{
+    $('.at-color-iris').wpColorPicker();
+  }
   
   /**
    * Add Files.
@@ -476,3 +521,13 @@ jQuery(document).ready(function($) {
   });
 });
 
+/**
+ * Select 2 enable function
+ * @since 2.9.8
+ */
+function fancySelect(){
+  $("select").each(function (){
+    if(! $(this).hasClass('no-fancy'))
+      $(this).select2();
+  });
+}

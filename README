@@ -29,6 +29,12 @@ Reapater field can't handle Posts and Taxonomy for now (and maybe even others).
 
 Changelog
 ---------
+= 2.9.8 =
+Fixed field groupping #32
+Added Select2 #31
+Added WordPress 3.5 color picker support.
+better field type checking algo.
+
 = 2.9.7 =
 Added class attribute to most fields. #33
 Added Style attribute to most fields. #33

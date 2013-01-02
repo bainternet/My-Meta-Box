@@ -12,8 +12,8 @@
  * modify and change small things and adding a few field types that i needed to my personal preference. 
  * The original author did a great job in writing this class, so all props goes to him.
  * 
- * @version 2.9.7
- * @copyright 2011 - 2012
+ * @version 2.9.8
+ * @copyright 2011 - 2013
  * @author Ohad Raz (email: admin@bainternet.info)
  * @link http://en.bainternet.info
  * 
@@ -89,6 +89,15 @@ class AT_Meta_Box {
    * @since 2.9.7
    */
   public $field_types = array();
+
+  /**
+   * $inGroup  holds groupping boolean
+   * @var boolean
+   * @access public
+   * @since 2.9.8
+   */
+  public $inGroup = false;
+
   /**
    * Constructor
    *
@@ -178,21 +187,37 @@ class AT_Meta_Box {
         wp_enqueue_script( 'jquery-ui-sortable' );
       }
       // Check for special fields and add needed actions for them.
-      //check for color field
-      $this->check_field_color();
-      //check for date field
-      $this->check_field_date();
-      //check for time field
-      $this->check_field_time();
-      //check for code editor field
-      $this->check_field_code();
-      //check for image or file field
-      $this->check_field_upload();
-
+      
+      //this replaces the ugly check fields methods calls
+      foreach (array('upload','color','date','time','code','select') as $type) {
+        call_user_func ( array( &$this, 'check_field_' . $type ));
+      }
     }
     
   }
   
+  /**
+   * Check the Field select, Add needed Actions
+   *
+   * @since 2.9.8
+   * @access public
+   */
+  public function check_field_select() {
+    
+    // Check if the field is an image or file. If not, return.
+    if ( ! $this->has_field( 'select' ))
+      return;
+      $plugin_path = $this->SelfPath;
+      // Enqueu JQuery UI, use proper version.
+      
+      // Enqueu JQuery select2 library, use proper version.
+      wp_enqueue_style('at-multiselect-select2-css', $plugin_path . '/js/select2/select2.css', array(), null);
+
+      wp_enqueue_script('at-multiselect-select2-js', $plugin_path . '/js/select2/select2.js', array('jquery'), false, true);
+      
+    
+  }
+
   /**
    * Check the Field Upload, Add needed Actions
    *
@@ -408,10 +433,15 @@ class AT_Meta_Box {
     
     if ( $this->has_field( 'color' ) && $this->is_edit_page() ) {
       // Enqueu built-in script and style for color picker.
-      wp_enqueue_style( 'farbtastic' );
-      wp_enqueue_script( 'farbtastic' );
-    }
-    
+      if( wp_style_is( 'wp-color-picker', 'registered' ) ) { //since WordPress 3.5
+          wp_enqueue_style( 'wp-color-picker' );
+          wp_enqueue_script( 'wp-color-picker' );
+      }else{
+        // Enqueu built-in script and style for color picker.
+        wp_enqueue_style( 'farbtastic' );
+        wp_enqueue_script( 'farbtastic' );
+      }
+    }    
   }
   
   /**
@@ -494,7 +524,7 @@ class AT_Meta_Box {
    * @access public 
    */
   public function show() {
-    
+    $this->inGroup = false;
     global $post;
     //var_dump($this->_fields);
     wp_nonce_field( basename(__FILE__), 'at_meta_box_nonce' );
@@ -505,10 +535,26 @@ class AT_Meta_Box {
       $meta = ( $meta !== '' ) ? $meta : @$field['std'];
       if (!in_array($field['type'], array('image', 'repeater','file')))
         $meta = is_array( $meta ) ? array_map( 'esc_attr', $meta ) : esc_attr( $meta );
-      echo '<tr>';    
+      
+      if ($this->inGroup !== true)
+        echo '<tr>';
+
+      if (isset($field['group']) && $field['group'] == 'start'){
+        $this->inGroup = true;
+        echo '<td><table class="form-table"><tr>';
+      }
+      
       // Call Separated methods for displaying each type of field.
       call_user_func ( array( &$this, 'show_field_' . $field['type'] ), $field, $meta );
-      echo '</tr>';
+
+      if ($this->inGroup === true){
+        if(isset($field['group']) && $field['group'] == 'end'){
+          echo '</tr></table></td></tr>';
+          $this->inGroup = false;
+        }
+      }else{
+        echo '</tr>';
+      }
     }
     echo '</table>';
   }
@@ -662,13 +708,7 @@ class AT_Meta_Box {
    * @access public
    */
   public function show_field_begin( $field, $meta) {
-    if (isset($field['group'])){
-      if ($field['group'] == "start"){
-        echo "<td class='at-field'>";
-      }
-    }else{
-      echo "<td class='at-field'>";
-    }
+    echo "<td class='at-field'".(($this->inGroup === true)? " valign='top'": "").">";
     if ( $field['name'] != '' || $field['name'] != FALSE ) {
       echo "<div class='at-label'>";
         echo "<label for='{$field['id']}'>{$field['name']}</label>";
@@ -685,27 +725,10 @@ class AT_Meta_Box {
    * @access public 
    */
   public function show_field_end( $field, $meta=NULL ,$group = false) {
-    if (isset($field['group'])){
-      if ($group == 'end'){
-        if ( isset($field['desc']) && $field['desc'] != '' ) {
-          echo "<div class='desc-field'>{$field['desc']}</div></td>";
-        } else {
-          echo "</td>";
-        }
-      }else {
-        if ( isset($field['desc']) && $field['desc'] != '' ) {
-          echo "<div class='desc-field'>{$field['desc']}</div><br/>";  
-        }else{
-          echo '<br/>';
-        }  
-      }    
-    }else{
-      if ( isset($field['desc']) && $field['desc'] != '' ) {
-        echo "<div class='desc-field'>{$field['desc']}</div></td>";
-      } else {
-        echo "</td>";
-      }
-    }
+    //print description
+    if ( isset($field['desc']) && $field['desc'] != '' )
+      echo "<div class='desc-field'>{$field['desc']}</div>";
+    echo "</td>";
   }
   
   /**
@@ -831,9 +854,11 @@ class AT_Meta_Box {
    * @access public
    */
   public function show_field_checkbox( $field, $meta ) {
-  
+    
+
     $this->show_field_begin($field, $meta);
-    echo "<input type='checkbox' ".( isset($field['style'])? "style='{$field['style']}' " : '' )." class='rw-checkbox".( isset($field['class'])? ' ' . $field['class'] : '' )."' name='{$field['id']}' id='{$field['id']}'" . checked(!empty($meta), true, false) . " /> {$field['desc']}</td>";
+    echo "<input type='checkbox' ".( isset($field['style'])? "style='{$field['style']}' " : '' )." class='rw-checkbox".( isset($field['class'])? ' ' . $field['class'] : '' )."' name='{$field['id']}' id='{$field['id']}'" . checked(!empty($meta), true, false) . " />";
+    $this->show_field_end( $field, $meta );
       
   }
   
@@ -947,10 +972,13 @@ class AT_Meta_Box {
       $meta = '#';
       
     $this->show_field_begin( $field, $meta );
-      echo "<input class='at-color".( isset($field['class'])? ' ' . $field['class'] : '' )."' type='text' name='{$field['id']}' id='{$field['id']}' value='{$meta}' size='8'  ".( isset($field['style'])? "style='{$field['style']}' " : '' )."/>";
-    //  echo "<a href='#' class='at-color-select button' rel='{$field['id']}'>" . __( 'Select a color' ) . "</a>";
-      echo "<input type='button' class='at-color-select button' rel='{$field['id']}' value='" . __( 'Select a color' ,'mmb') . "'/>";
+    if( wp_style_is( 'wp-color-picker', 'registered' ) ) { //iris color picker since 3.5
+      echo "<input class='at-color-iris".(isset($field['class'])? " {$field['class']}": "")."' type='text' name='{$field['id']}' id='{$field['id']}' value='{$meta}' size='8' />";  
+    }else{
+      echo "<input class='at-color".(isset($field['class'])? " {$field['class']}": "")."' type='text' name='{$field['id']}' id='{$field['id']}' value='{$meta}' size='8' />";
+      echo "<input type='button' class='at-color-select button' rel='{$field['id']}' value='" . __( 'Select a color' ,'apc') . "'/>";
       echo "<div style='display:none' class='at-color-picker' rel='{$field['id']}'></div>";
+    }
     $this->show_field_end($field, $meta);
     
   }
