@@ -12,7 +12,7 @@
  * modify and change small things and adding a few field types that i needed to my personal preference. 
  * The original author did a great job in writing this class, so all props goes to him.
  * 
- * @version 2.9.8
+ * @version 2.9.9
  * @copyright 2011 - 2013
  * @author Ohad Raz (email: admin@bainternet.info)
  * @link http://en.bainternet.info
@@ -1108,6 +1108,45 @@ class AT_Meta_Box {
     
     $this->show_field_end($field, $meta);
   }
+
+  /**
+   * Show conditinal Checkbox Field.
+   *
+   * @param string $field 
+   * @param string $meta 
+   * @since 2.9.9
+   * @access public
+   */
+  public function show_field_cond( $field, $meta ) {
+  
+    $this->show_field_begin($field, $meta);
+    $checked = false;
+    if (is_array($meta) && isset($meta['enabled']) && $meta['enabled'] == 'on'){
+      $checked = true;
+    }
+    echo "<input type='checkbox' class='conditinal_control' name='{$field['id']}[enabled]' id='{$field['id']}'" . checked($checked, true, false) . " />";
+    //start showing the fields
+    $display = ($checked)? '' :  ' style="display: none;"';
+    
+    echo '<div class="conditinal_container"'.$display.'><table>';
+    foreach ((array)$field['fields'] as $f){
+      //reset var $id for cond
+      $id = '';
+      $id = $field['id'].'['.$f['id'].']';
+      $m = '';
+      $m = (isset($meta[$f['id']])) ? $meta[$f['id']]: '';
+      $m = ( $m !== '' ) ? $m : (isset($f['std'])? $f['std'] : '');
+      if ('image' != $f['type'] && $f['type'] != 'repeater')
+        $m = is_array( $m) ? array_map( 'esc_attr', $m ) : esc_attr( $m);
+        //set new id for field in array format
+        $f['id'] = $id;
+        echo '<tr>';
+        call_user_func ( array( &$this, 'show_field_' . $f['type'] ), $f, $m);
+        echo '</tr>';
+    }
+    echo '</table></div>';
+    $this->show_field_end( $field, $meta );
+  }
   
   /**
    * Save Data from Metabox
@@ -1908,6 +1947,30 @@ class AT_Meta_Box {
     $new_field = array_merge($new_field, $args);
     $this->_fields[] = $new_field;
   }
+
+  /**
+   *  Add Checkbox conditional Field to Page
+   *  @author Ohad Raz
+   *  @since 2.9.9
+   *  @access public
+   *  @param $id string  field id, i.e. the key
+   *  @param $args mixed|array
+   *    'name' => // field name/label string optional
+   *    'desc' => // field description, string optional
+   *    'std' => // default value, string optional
+   *    'validate_func' => // validate function, string optional
+   *    'fields' => list of fields to show conditionally.
+   *  @param $repeater bool  is this a field inside a repeatr? true|false(default) 
+   */
+  public function addCondition($id,$args,$repeater=false){
+    $new_field = array('type' => 'cond','id'=> $id,'std' => '','desc' => '','style' =>'','name' => 'Conditional Field','fields' => array());
+    $new_field = array_merge($new_field, $args);
+    if(false === $repeater){
+      $this->_fields[] = $new_field;
+    }else{
+      return $new_field;
+    }
+  }
   
   
   /**
@@ -1918,11 +1981,6 @@ class AT_Meta_Box {
    */
   public function Finish() {
     $this->add_missed_values();
-    /*$this->check_field_upload();
-    $this->check_field_color();
-    $this->check_field_date();
-    $this->check_field_time();
-    $this->check_field_code();*/
   }
   
   /**

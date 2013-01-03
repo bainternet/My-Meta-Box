@@ -29,6 +29,11 @@ Reapater field can't handle Posts and Taxonomy for now (and maybe even others).
 
 Changelog
 ---------
+= 2.9.9 =
+Cleaned up some comments in the code.
+Added a conditional fields block #37 ,as can be seen in demo plugin.
+
+
 = 2.9.8 =
 Fixed field groupping #32
 Added Select2 #31

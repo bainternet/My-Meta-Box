@@ -3,14 +3,15 @@
  *
  * JS used for the custom metaboxes and other form items.
  *
- * Copyright 2011 Ohad Raz (admin@bainternet.info)
+ * Copyright 2011 - 2013 Ohad Raz (admin@bainternet.info)
  * @since 1.0
  */
 
 var $ =jQuery.noConflict();
 function update_repeater_fields(){
     
-      
+   
+
     /**
      * Datepicker Field.
      *
@@ -174,8 +175,22 @@ function update_repeater_fields(){
   }
 var Ed_array = Array;
 jQuery(document).ready(function($) {
+
+  /**
+   *  conditinal fields
+   *  @since 2.9.9
+   */
+  $(".conditinal_control").click(function(){
+    if($(this).is(':checked')){
+      $(this).next().show('fast');    
+    }else{
+      $(this).next().hide('fast');    
+    }
+  });
+
   /**
    * enable select2
+   * @since 2.9.8
    */
   fancySelect();
 

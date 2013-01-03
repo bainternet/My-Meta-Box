@@ -3,7 +3,7 @@
 Plugin Name: Demo MetaBox
 Plugin URI: http://en.bainternet.info
 Description: My Meta Box Class usage demo
-Version: 2.9.8
+Version: 2.9.9
 Author: Bainternet, Ohad Raz
 Author URI: http://en.bainternet.info
 */
@@ -119,6 +119,28 @@ if (is_admin()){
    */
   //repeater block
   $my_meta2->addRepeaterBlock($prefix.'re_',array('inline' => true, 'name' => 'This is a Repeater Block','fields' => $repeater_fields, 'sortable'=> true));
+  
+  /*
+   * To Create a conditinal Block first create an array of fields
+   * use the same functions as above but add true as a last param (like the repater block)
+   */
+  $Conditinal_fields[] = $my_meta2->addText($prefix.'con_text_field_id',array('name'=> 'My Text '),true);
+  $Conditinal_fields[] = $my_meta2->addTextarea($prefix.'con_textarea_field_id',array('name'=> 'My Textarea '),true);
+  $Conditinal_fields[] = $my_meta2->addCheckbox($prefix.'con_checkbox_field_id',array('name'=> 'My Checkbox '),true);
+  $Conditinal_fields[] = $my_meta2->addColor($prefix.'con_color_field_id',array('name'=> 'My color '),true);
+  
+  /*
+   * Then just add the fields to the repeater block
+   */
+  //repeater block
+  $my_meta2->addCondition('conditinal_fields',
+      array(
+        'name'=> __('Enable conditinal fields? ','mmb'),
+        'desc' => __('<small>Turn ON if you want to enable the <strong>conditinal fields</strong>.</small>','mmb'),
+        'fields' => $Conditinal_fields,
+        'std' => false
+      ));
+  
   /*
    * Don't Forget to Close up the meta box decleration
    */
