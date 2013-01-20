@@ -355,7 +355,7 @@ jQuery(document).ready(function($) {
         $(this).css('background',colo);
     });
   }else{
-    $('.at-color-iris').wpColorPicker();
+    if ($.wpColorPicker){ $('.at-color-iris').wpColorPicker(); }
   }
   
   /**
@@ -541,8 +541,10 @@ jQuery(document).ready(function($) {
  * @since 2.9.8
  */
 function fancySelect(){
-  $("select").each(function (){
-    if(! $(this).hasClass('no-fancy'))
-      $(this).select2();
-  });
+  if ($.select2){
+    $("select").each(function (){
+      if(! $(this).hasClass('no-fancy'))
+        $(this).select2();
+    });
+  }
 }

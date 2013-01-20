@@ -29,6 +29,9 @@ Reapater field can't handle Posts and Taxonomy for now (and maybe even others).
 
 Changelog
 ---------
+= 3.0.0 =
+fixed issues #45 #42
+
 = 2.9.9 =
 Cleaned up some comments in the code.
 Added a conditional fields block #37 ,as can be seen in demo plugin.
