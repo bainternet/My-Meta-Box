@@ -12,7 +12,7 @@
  * modify and change small things and adding a few field types that i needed to my personal preference. 
  * The original author did a great job in writing this class, so all props goes to him.
  * 
- * @version 3.0.0
+ * @version 3.0.1
  * @copyright 2011 - 2013
  * @author Ohad Raz (email: admin@bainternet.info)
  * @link http://en.bainternet.info
@@ -508,13 +508,10 @@ class AT_Meta_Box {
    * @since 1.0
    * @access public
    */
-  public function add() {
-    
-    // Loop through array
-    foreach ( $this->_meta_box['pages'] as $page ) {
-      add_meta_box( $this->_meta_box['id'], $this->_meta_box['title'], array( &$this, 'show' ), $page, $this->_meta_box['context'], $this->_meta_box['priority'] );
+  public function add($postType) {
+    if(in_array($postType, $this->_meta_box['pages'])){
+      add_meta_box( $this->_meta_box['id'], $this->_meta_box['title'], array( &$this, 'show' ),$postType, $this->_meta_box['context'], $this->_meta_box['priority'] );
     }
-    
   }
   
   /**

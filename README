@@ -29,6 +29,9 @@ Reapater field can't handle Posts and Taxonomy for now (and maybe even others).
 
 Changelog
 ---------
+= 3.0.1 = 
+Better add_meta_box logic
+
 = 3.0.0 =
 fixed issues #45 #42
 
