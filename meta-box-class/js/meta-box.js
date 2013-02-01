@@ -9,107 +9,34 @@
 
 var $ =jQuery.noConflict();
 function update_repeater_fields(){
-    
-   
-
     /**
      * Datepicker Field.
      *
      * @since 1.0
      */
-    $('.at-date').each( function() {
-      
-      var $this  = $(this),
-          format = $this.attr('rel');
-  
-      $this.datepicker( { showButtonPanel: true, dateFormat: format } );
-      
-    });
+    load_date_picker();
   
     /**
      * Timepicker Field.
      *
      * @since 1.0
      */
-    $('.at-time').each( function() {
-      
-      var $this   = $(this),
-          format   = $this.attr('rel'),
-          aampm    = $this.attr('data-ampm');
-      if ('true' == aampm)
-        aampm = true;
-      else
-        aampm = false;
-
-      $this.timepicker( { showSecond: true, timeFormat: format, ampm: aampm } );
-      
-    });
+    load_time_picker();
   
     /**
      * Colorpicker Field.
      *
      * @since 1.0
      */
-    /*
-    
-    
-    
-    /**
-     * Select Color Field.
-     *
-     * @since 1.0
-     */
-    $('.at-color-select').click( function(){
-      var $this = $(this);
-      var id = $this.attr('rel');
-      $(this).siblings('.at-color-picker').farbtastic("#" + id).toggle();
-      return false;
-    });
+    load_color_picker();
   
     /**
      * Add Files.
      *
      * @since 1.0
      */
-    $('.at-add-file').click( function() {
-      var $first = $(this).parent().find('.file-input:first');
-      $first.clone().insertAfter($first).show();
-      return false;
-    });
-  
-    /**
-     * Delete File.
-     *
-     * @since 1.0
-     */
-    $('.at-upload').delegate( '.at-delete-file', 'click' , function() {
-      
-      var $this   = $(this),
-        $parent = $this.parent(),
-        data = $this.attr('rel');
-          
-      $.post( ajaxurl, { action: 'atm_delete_file', data: data, tag_id: $('#post_ID').val() }, function(response) {
-        response == '0' ? ( alert( 'File has been successfully deleted.' ), $parent.remove() ) : alert( 'You do NOT have permission to delete this file.' );
-      });
-      
-      return false;
+    load_file_upload();
     
-    });
-    /*
-    $('.at-upload').delegate( '.at-delete-file', 'click' , function() {
-      
-      var $this   = $(this),
-          $parent = $this.parent(),
-          data     = $this.attr('rel');
-          
-      $.post( ajaxurl, { action: 'at_delete_file', data: data }, function(response) {
-        response == '0' ? ( alert( 'File has been successfully deleted.' ), $parent.remove() ) : alert( 'You do NOT have permission to delete this file.' );
-      });
-      
-      return false;
-    
-    });*/
-  
     /**
      * Reorder Images.
      *
@@ -180,13 +107,8 @@ jQuery(document).ready(function($) {
    *  conditinal fields
    *  @since 2.9.9
    */
-  $(".conditinal_control").click(function(){
-    if($(this).is(':checked')){
-      $(this).next().show('fast');    
-    }else{
-      $(this).next().hide('fast');    
-    }
-  });
+  load_conditinal();
+
 
   /**
    * enable select2
@@ -198,74 +120,20 @@ jQuery(document).ready(function($) {
    * repeater sortable
    * @since 2.1
    */
+  
   $('.repeater-sortable').sortable();
 
   /**
    * Code Editor Field
    * @since 2.1
    */
-   var e_d_count = 0;
-  $(".code_text").each(function() {
-    var lang = $(this).attr("data-lang");
-    //php application/x-httpd-php
-    //css text/css
-    //html text/html
-    //javascript text/javascript
-    switch(lang){
-      case 'php':
-        lang = 'application/x-httpd-php';
-        break;
-      case 'css':
-        lang = 'text/css';
-        break;
-      case 'html':
-        lang = 'text/html';
-        break;
-      case 'javascript':
-        lang = 'text/javascript';
-        break;
-      default:
-        lang = 'application/x-httpd-php';
-    }
-    var theme  = $(this).attr("data-theme");
-    switch(theme){
-      case 'default':
-        theme = 'default';
-        break;
-      case 'light':
-        theme = 'solarizedLight';
-        break;
-      case 'dark':
-        theme = 'solarizedDark';;
-        break;
-      default:
-        theme = 'default';
-    }
-    
-    var editor = CodeMirror.fromTextArea(document.getElementById($(this).attr('id')), {
-      lineNumbers: true,
-      matchBrackets: true,
-      mode: lang,
-      indentUnit: 4,
-      indentWithTabs: true,
-      enterMode: "keep",
-      tabMode: "shift"
-    });
-    editor.setOption("theme", theme);
-    $(editor.getScrollerElement()).width(100); // set this low enough
-    width = $(editor.getScrollerElement()).parent().width();
-    $(editor.getScrollerElement()).width(width); // set it to
-    editor.refresh();
-    Ed_array[e_d_count] = editor;
-    e_d_count++;
-  });
+  load_code_editor();
   
   
   /**
    * repater Field
    * @since 1.1
-   */
-  //edit
+   */  
   $(".at-re-toggle").live('click', function() {
     $(this).prev().toggle('slow');
   });
@@ -276,33 +144,14 @@ jQuery(document).ready(function($) {
    *
    * @since 1.0
    */
-  $('.at-date').each( function() {
-    
-    var $this  = $(this),
-        format = $this.attr('rel');
-
-    $this.datepicker( { showButtonPanel: true, dateFormat: format } );
-    
-  });
+  load_date_picker();
 
   /**
    * Timepicker Field.
    *
    * @since 1.0
    */
-  $('.at-time').each( function() {
-    
-    var $this   = $(this),
-          format   = $this.attr('rel'),
-          aampm    = $this.attr('data-ampm');
-      if ('true' == aampm)
-        aampm = true;
-      else
-        aampm = false;
-
-      $this.timepicker( { showSecond: true, timeFormat: format, ampm: aampm } );
-    
-  });
+  load_time_picker();
 
   /**
    * Colorpicker Field.
@@ -311,98 +160,15 @@ jQuery(document).ready(function($) {
    * better handler for color picker with repeater fields support
    * which now works both when button is clicked and when field gains focus.
    */
-  if ($.farbtastic){//since WordPress 3.5
-    $('.at-color').live('focus', function() {
-      load_colorPicker($(this).next());
-    });
+  load_color_picker();
 
-    $('.at-color').live('focusout', function() {
-      hide_colorPicker($(this).next());
-    });
-
-    /**
-     * Select Color Field.
-     *
-     * @since 1.0
-     */
-    $('.at-color-select').live('click', function(){
-      if ($(this).next('div').css('display') == 'none')
-        load_colorPicker($(this));
-      else
-        hide_colorPicker($(this));
-    });
-
-    function load_colorPicker(ele){
-      colorPicker = $(ele).next('div');
-      input = $(ele).prev('input');
-
-      $.farbtastic($(colorPicker), function(a) { $(input).val(a).css('background', a); });
-
-      colorPicker.show();
-      //e.preventDefault();
-
-      //$(document).mousedown( function() { $(colorPicker).hide(); });
-    }
-
-    function hide_colorPicker(ele){
-      colorPicker = $(ele).next('div');
-      $(colorPicker).hide();
-    }
-    //issue #15
-    $('.at-color').each(function(){
-      var colo = $(this).val();
-      if (colo.length == 7)
-        $(this).css('background',colo);
-    });
-  }else{
-    if ($.wpColorPicker){ $('.at-color-iris').wpColorPicker(); }
-  }
-  
   /**
    * Add Files.
    *
    * @since 1.0
    */
-  $('.at-add-file').click( function() {
-    var $first = $(this).parent().find('.file-input:first');
-    $first.clone().insertAfter($first).show();
-    return false;
-  });
-
-  /**
-   * Delete File.
-   *
-   * @since 1.0
-   */
-  $('.at-upload').delegate( '.at-delete-file', 'click' , function() {
-    
-    var $this   = $(this),
-        $parent = $this.parent(),
-        data = $this.attr('rel');
-    
-    var ind = $(this).index()
-    $.post( ajaxurl, { action: 'atm_delete_file', data: data, tag_id: $('#post_ID').val() }, function(response) {
-      response == '0' ? ( alert( 'File has been successfully deleted.' ), $parent.remove() ) : alert( 'You do NOT have permission to delete this file.' );
-    });
-    
-    return false;
-  
-  });
-  /*$('.at-upload').delegate( '.at-delete-file', 'click' , function() {
-    
-    var $this   = $(this),
-        $parent = $this.parent(),
-        data     = $this.attr('rel');
-        
-    $.post( ajaxurl, { action: 'at_delete_file', data: data }, function(response) {
-      response == '0' ? ( alert( 'File has been successfully deleted.' ), $parent.remove() ) : alert( 'You do NOT have permission to delete this file.' );
-    });
-    
-    return false;
-  
-  });*/
-
-    
+  load_file_upload();
+   
   /**
    * Thickbox Upload
    *
@@ -441,10 +207,8 @@ jQuery(document).ready(function($) {
    * @since 1.0
    */
   function get_query_var( name ) {
-
     var match = RegExp('[?&]' + name + '=([^&#]*)').exec(location.href);
     return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
-      
   }
   
   //new image upload field
@@ -547,4 +311,198 @@ function fancySelect(){
         $(this).select2();
     });
   }
+}
+
+/**
+ * Loads Codemirror code editor 
+ * @since 3.0.2
+ */
+var e_d_count = 0;
+function load_code_editor(){
+  $(".code_text").each(function() {
+    var lang = $(this).attr("data-lang");
+    //php application/x-httpd-php
+    //css text/css
+    //html text/html
+    //javascript text/javascript
+    switch(lang){
+      case 'php':
+        lang = 'application/x-httpd-php';
+        break;
+      case 'css':
+        lang = 'text/css';
+        break;
+      case 'html':
+        lang = 'text/html';
+        break;
+      case 'javascript':
+        lang = 'text/javascript';
+        break;
+      default:
+        lang = 'application/x-httpd-php';
+    }
+    var theme  = $(this).attr("data-theme");
+    switch(theme){
+      case 'default':
+        theme = 'default';
+        break;
+      case 'light':
+        theme = 'solarizedLight';
+        break;
+      case 'dark':
+        theme = 'solarizedDark';;
+        break;
+      default:
+        theme = 'default';
+    }
+    
+    var editor = CodeMirror.fromTextArea(document.getElementById($(this).attr('id')), {
+      lineNumbers: true,
+      matchBrackets: true,
+      mode: lang,
+      indentUnit: 4,
+      indentWithTabs: true,
+      enterMode: "keep",
+      tabMode: "shift"
+    });
+    editor.setOption("theme", theme);
+    $(editor.getScrollerElement()).width(100); // set this low enough
+    width = $(editor.getScrollerElement()).parent().width();
+    $(editor.getScrollerElement()).width(width); // set it to
+    editor.refresh();
+    Ed_array[e_d_count] = editor;
+    e_d_count++;
+  });
+}
+
+/**
+ * loads color picker 
+ * @since 3.0.2
+ */
+function load_color_picker(){
+  if ($.farbtastic){//since WordPress 3.5
+    $('.at-color').live('focus', function() {
+      load_colorPicker_enable($(this).next());
+    });
+
+    $('.at-color').live('focusout', function() {
+      hide_colorPicker($(this).next());
+    });
+
+    /**
+     * Select Color Field.
+     *
+     * @since 1.0
+     */
+    $('.at-color-select').live('click', function(){
+      if ($(this).next('div').css('display') == 'none')
+        load_colorPicker_enable($(this));
+      else
+        hide_colorPicker($(this));
+    });
+
+    function load_colorPicker_enable(ele){
+      colorPicker = $(ele).next('div');
+      input = $(ele).prev('input');
+
+      $.farbtastic($(colorPicker), function(a) { $(input).val(a).css('background', a); });
+
+      colorPicker.show();
+    }
+
+    function hide_colorPicker(ele){
+      colorPicker = $(ele).next('div');
+      $(colorPicker).hide();
+    }
+    //issue #15
+    $('.at-color').each(function(){
+      var colo = $(this).val();
+      if (colo.length == 7)
+        $(this).css('background',colo);
+    });
+  }else{
+    if ($('.at-color-iris').length>0){
+      $('.at-color-iris').wpColorPicker(); 
+    }
+  }
+}
+
+/**
+ * loadS conditinal field
+ * @since 3.0.2
+ */
+function load_conditinal(){
+  $(".conditinal_control").click(function(){
+    if($(this).is(':checked')){
+      $(this).next().show('fast');    
+    }else{
+      $(this).next().hide('fast');    
+    }
+  });
+}
+
+/**
+ * loads time picker
+ * @since 3.0.2
+ */
+function load_time_picker(){  
+  $('.at-time').each( function() {
+    
+    var $this   = $(this),
+          format   = $this.attr('rel'),
+          aampm    = $this.attr('data-ampm');
+      if ('true' == aampm)
+        aampm = true;
+      else
+        aampm = false;
+
+      $this.timepicker( { showSecond: true, timeFormat: format, ampm: aampm } );
+    
+  });
+}
+
+/**
+ * loads date picker 
+ * @since 3.0.2
+ */
+function load_date_picker() {
+  $('.at-date').each( function() {
+    
+    var $this  = $(this),
+        format = $this.attr('rel');
+
+    $this.datepicker( { showButtonPanel: true, dateFormat: format } );
+    
+  });
+}
+
+/**
+ * loads file upload 
+ * @since 3.0.2
+ */
+function load_file_upload(){
+  $('.at-add-file').click( function() {
+    var $first = $(this).parent().find('.file-input:first');
+    $first.clone().insertAfter($first).show();
+    return false;
+  });
+
+  /**
+   * Delete File.
+   *
+   * @since 1.0
+   */
+  $('.at-upload').delegate( '.at-delete-file', 'click' , function() {
+    
+    var $this   = $(this),
+        $parent = $this.parent(),
+        data = $this.attr('rel');
+    
+    var ind = $(this).index()
+    $.post( ajaxurl, { action: 'atm_delete_file', data: data, tag_id: $('#post_ID').val() }, function(response) {
+      response == '0' ? ( alert( 'File has been successfully deleted.' ), $parent.remove() ) : alert( 'You do NOT have permission to delete this file.' );
+    });
+    
+    return false;
+  });
 }
