@@ -12,7 +12,7 @@
  * modify and change small things and adding a few field types that i needed to my personal preference. 
  * The original author did a great job in writing this class, so all props goes to him.
  * 
- * @version 3.0.2
+ * @version 3.0.3
  * @copyright 2011 - 2013
  * @author Ohad Raz (email: admin@bainternet.info)
  * @link http://en.bainternet.info
@@ -743,6 +743,23 @@ class AT_Meta_Box {
   }
   
   /**
+   * Show Field number.
+   *
+   * @param string $field 
+   * @param string $meta 
+   * @since 1.0
+   * @access public
+   */
+  public function show_field_number( $field, $meta) {  
+    $this->show_field_begin( $field, $meta );
+    $step = (isset($field['step']) || $field['step'] != '1')? "step='".$field['step']."' ": '';
+    $min = isset($field['min'])? "min='".$field['min']."' ": '';
+    $max = isset($field['max'])? "max='".$field['max']."' ": '';
+    echo "<input type='number' class='at-number".( isset($field['class'])? ' ' . $field['class'] : '' )."' name='{$field['id']}' id='{$field['id']}' value='{$meta}' size='30' ".$step.$min.$max.( isset($field['style'])? "style='{$field['style']}'" : '' )."/>";
+    $this->show_field_end( $field, $meta );
+  }
+
+  /**
    * Show Field code editor.
    *
    * @param string $field 
@@ -873,7 +890,7 @@ class AT_Meta_Box {
     // Add TinyMCE script for WP version < 3.3
     global $wp_version;
     
-    if ( version_compare( $wp_version, '3.2.1' ) < 1 ||$in_repeater )
+    if ( version_compare( $wp_version, '3.2.1' ) < 1 || $in_repeater )
       echo "<textarea class='at-wysiwyg theEditor large-text".( isset($field['class'])? ' ' . $field['class'] : '' )."' name='{$field['id']}' id='{$field['id']}' cols='60' rows='10'>{$meta}</textarea>";
     else{
       // Use new wp_editor() since WP 3.3
@@ -1531,6 +1548,30 @@ class AT_Meta_Box {
     }
   }
   
+  /**
+   *  Add Number Field to meta box
+   *  @author Ohad Raz
+   *  @since 1.0
+   *  @access public
+   *  @param $id string  field id, i.e. the meta key
+   *  @param $args mixed|array
+   *    'name' => // field name/label string optional
+   *    'desc' => // field description, string optional
+   *    'std' => // default value, string optional
+   *    'style' =>   // custom style for field, string optional
+   *    'validate_func' => // validate function, string optional
+   *   @param $repeater bool  is this a field inside a repeatr? true|false(default) 
+   */
+  public function addNumber($id,$args,$repeater=false){
+    $new_field = array('type' => 'number','id'=> $id,'std' => '0','desc' => '','style' =>'','name' => 'Number Field','step' => '1','min' => '0');
+    $new_field = array_merge($new_field, $args);
+    if(false === $repeater){
+      $this->_fields[] = $new_field;
+    }else{
+      return $new_field;
+    }
+  }
+
   /**
    *  Add code Editor to meta box
    *  @author Ohad Raz
