@@ -29,6 +29,9 @@ Reapater field can't handle Posts and Taxonomy for now (and maybe even others).
 
 Changelog
 ---------
+= 3.0.4 =  
+Fixed #52
+
 = 3.0.3 =  
 Added html5 Number Field
 

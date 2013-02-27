@@ -305,7 +305,7 @@ jQuery(document).ready(function($) {
  * @since 2.9.8
  */
 function fancySelect(){
-  if ($.select2){
+  if ($().select2){
     $("select").each(function (){
       if(! $(this).hasClass('no-fancy'))
         $(this).select2();
