@@ -29,6 +29,9 @@ Reapater field can't handle Posts and Taxonomy for now (and maybe even others).
 
 Changelog
 ---------
+= 3.0.6 = 
+Fixed issue #74.
+
 = 3.0.5 = 
 Fixed issue #64
 

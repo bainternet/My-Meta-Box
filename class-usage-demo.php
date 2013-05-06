@@ -3,7 +3,7 @@
 Plugin Name: Demo MetaBox
 Plugin URI: http://en.bainternet.info
 Description: My Meta Box Class usage demo
-Version: 3.0.5
+Version: 3.0.6
 Author: Bainternet, Ohad Raz
 Author URI: http://en.bainternet.info
 */
@@ -22,13 +22,13 @@ if (is_admin()){
    * configure your meta box
    */
   $config = array(
-    'id' => 'demo_meta_box',          // meta box id, unique per meta box
-    'title' => 'Simple Meta Box fields',          // meta box title
-    'pages' => array('post', 'page'),      // post types, accept custom post types as well, default is array('post'); optional
-    'context' => 'normal',            // where the meta box appear: normal (default), advanced, side; optional
-    'priority' => 'high',            // order of meta box: high (default), low; optional
-    'fields' => array(),            // list of meta fields (can be added by field arrays)
-    'local_images' => false,          // Use local or hosted images (meta box images for add/remove)
+    'id'             => 'demo_meta_box',          // meta box id, unique per meta box
+    'title'          => 'Simple Meta Box fields',          // meta box title
+    'pages'          => array('post', 'page'),      // post types, accept custom post types as well, default is array('post'); optional
+    'context'        => 'normal',            // where the meta box appear: normal (default), advanced, side; optional
+    'priority'       => 'high',            // order of meta box: high (default), low; optional
+    'fields'         => array(),            // list of meta fields (can be added by field arrays)
+    'local_images'   => false,          // Use local or hosted images (meta box images for add/remove)
     'use_with_theme' => false          //change path if used with theme set to true, false for a plugin or anything else for a custom path(default false).
   );
   
@@ -57,9 +57,9 @@ if (is_admin()){
   //file upload field
   $my_meta->addFile($prefix.'file_field_id',array('name'=> 'My File '));
   /*
-   * Don't Forget to Close up the meta box decleration
+   * Don't Forget to Close up the meta box Declaration 
    */
-  //Finish Meta Box Decleration
+  //Finish Meta Box Declaration 
   $my_meta->Finish();
 
   /**
@@ -69,13 +69,13 @@ if (is_admin()){
    * configure your meta box
    */
   $config2 = array(
-    'id' => 'demo_meta_box2',          // meta box id, unique per meta box
-    'title' => 'Advanced Meta Box fields',          // meta box title
-    'pages' => array('post', 'page'),      // post types, accept custom post types as well, default is array('post'); optional
-    'context' => 'normal',            // where the meta box appear: normal (default), advanced, side; optional
-    'priority' => 'high',            // order of meta box: high (default), low; optional
-    'fields' => array(),            // list of meta fields (can be added by field arrays)
-    'local_images' => false,          // Use local or hosted images (meta box images for add/remove)
+    'id'             => 'demo_meta_box2',          // meta box id, unique per meta box
+    'title'          => 'Advanced Meta Box fields',          // meta box title
+    'pages'          => array('post', 'page'),      // post types, accept custom post types as well, default is array('post'); optional
+    'context'        => 'normal',            // where the meta box appear: normal (default), advanced, side; optional
+    'priority'       => 'high',            // order of meta box: high (default), low; optional
+    'fields'         => array(),            // list of meta fields (can be added by field arrays)
+    'local_images'   => false,          // Use local or hosted images (meta box images for add/remove)
     'use_with_theme' => false          //change path if used with theme set to true, false for a plugin or anything else for a custom path(default false).
   );
   
@@ -103,7 +103,11 @@ if (is_admin()){
   //posts field
   $my_meta2->addPosts($prefix.'posts_field_id',array('post_type' => 'post'),array('name'=> 'My Posts '));
   //add Code editor field
-  $my_meta2->addCode($prefix.'code_field_id',array('name'=> 'Code editor Field', 'syntax' => 'php','theme' => 'light'));
+  $my_meta2->addCode($prefix.'code_field_id',array(
+    'name'   => 'Code editor Field', 
+    'syntax' => 'php',
+    'theme'  => 'light'
+  ));
     
   /*
    * To Create a reapeater Block first create an array of fields
@@ -118,7 +122,12 @@ if (is_admin()){
    * Then just add the fields to the repeater block
    */
   //repeater block
-  $my_meta2->addRepeaterBlock($prefix.'re_',array('inline' => true, 'name' => 'This is a Repeater Block','fields' => $repeater_fields, 'sortable'=> true));
+  $my_meta2->addRepeaterBlock($prefix.'re_',array(
+    'inline'   => true, 
+    'name'     => 'This is a Repeater Block',
+    'fields'   => $repeater_fields, 
+    'sortable' => true
+  ));
   
   /*
    * To Create a conditinal Block first create an array of fields
@@ -135,28 +144,28 @@ if (is_admin()){
   //repeater block
   $my_meta2->addCondition('conditinal_fields',
       array(
-        'name'=> __('Enable conditinal fields? ','mmb'),
-        'desc' => __('<small>Turn ON if you want to enable the <strong>conditinal fields</strong>.</small>','mmb'),
+        'name'   => __('Enable conditinal fields? ','mmb'),
+        'desc'   => __('<small>Turn ON if you want to enable the <strong>conditinal fields</strong>.</small>','mmb'),
         'fields' => $Conditinal_fields,
-        'std' => false
+        'std'    => false
       ));
   
   /*
-   * Don't Forget to Close up the meta box decleration
+   * Don't Forget to Close up the meta box Declaration 
    */
-  //Finish Meta Box Decleration
+  //Finish Meta Box Declaration 
   $my_meta2->Finish();
   
   
   $prefix = "_groupped_";
   $config3 = array(
-    'id' => 'demo_meta_box3',          // meta box id, unique per meta box
-    'title' => 'Groupped Meta Box fields',          // meta box title
-    'pages' => array('post', 'page'),      // post types, accept custom post types as well, default is array('post'); optional
-    'context' => 'normal',            // where the meta box appear: normal (default), advanced, side; optional
-    'priority' => 'low',            // order of meta box: high (default), low; optional
-    'fields' => array(),            // list of meta fields (can be added by field arrays)
-    'local_images' => false,          // Use local or hosted images (meta box images for add/remove)
+    'id'             => 'demo_meta_box3',          // meta box id, unique per meta box
+    'title'          => 'Groupped Meta Box fields',          // meta box title
+    'pages'          => array('post', 'page'),      // post types, accept custom post types as well, default is array('post'); optional
+    'context'        => 'normal',            // where the meta box appear: normal (default), advanced, side; optional
+    'priority'       => 'low',            // order of meta box: high (default), low; optional
+    'fields'         => array(),            // list of meta fields (can be added by field arrays)
+    'local_images'   => false,          // Use local or hosted images (meta box images for add/remove)
     'use_with_theme' => false          //change path if used with theme set to true, false for a plugin or anything else for a custom path(default false).
   );
   
@@ -177,4 +186,10 @@ if (is_admin()){
   $my_meta3->addSelect($prefix.'select_field_id',array('selectkey1'=>'Select Value1','selectkey2'=>'Select Value2'),array('name'=> 'My select ', 'std'=> array('selectkey2')));
   //radio field
   $my_meta3->addRadio($prefix.'radio_field_id',array('radiokey1'=>'Radio Value1','radiokey2'=>'Radio Value2'),array('name'=> 'My Radio Filed', 'std'=> array('radionkey2'),'group' => 'end'));
+
+  /*
+   * Don't Forget to Close up the meta box Declaration 
+   */
+  //Finish Meta Box Declaration 
+  $my_meta3->Finish();
 }
