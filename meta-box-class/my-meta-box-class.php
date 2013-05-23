@@ -510,10 +510,17 @@ class AT_Meta_Box {
    */
   public function add($postType) {
     if(in_array($postType, $this->_meta_box['pages'])){
-      add_meta_box( $this->_meta_box['id'], $this->_meta_box['title'], array( &$this, 'show' ),$postType, $this->_meta_box['context'], $this->_meta_box['priority'] );
+        add_meta_box( $this->_meta_box['id'], $this->_meta_box['title'], array( &$this, 'show' ),$postType, $this->_meta_box['context'], $this->_meta_box['priority'] );
     }
   }
   
+  /**
+   * Remove all special characters from an id string
+   */
+  public function sanitize_id($string) {
+     return preg_replace('/[^A-Za-z0-9]/', '', $string);
+  }
+
   /**
    * Callback function to show fields in meta box.
    *
@@ -884,7 +891,7 @@ class AT_Meta_Box {
    * @since 1.0
    * @access public
    */
-  public function show_field_wysiwyg( $field, $meta,$in_repeater = false ) {
+  public function show_field_wysiwyg( $field, $meta, $in_repeater = false ) {
     $this->show_field_begin( $field, $meta );
     
     // Add TinyMCE script for WP version < 3.3
@@ -894,7 +901,13 @@ class AT_Meta_Box {
       echo "<textarea class='at-wysiwyg theEditor large-text".( isset($field['class'])? ' ' . $field['class'] : '' )."' name='{$field['id']}' id='{$field['id']}' cols='60' rows='10'>{$meta}</textarea>";
     else{
       // Use new wp_editor() since WP 3.3
-      wp_editor( html_entity_decode($meta), $field['id'], array( 'editor_class' => 'at-wysiwyg'.( isset($field['class'])? ' ' . $field['class'] : '' )) );
+      $field['settings']['editor_class'] = 'at-wysiwyg'.( isset($field['class'])? ' ' . $field['class'] : '' );
+      $field['settings']['textarea_name'] = $field['id'];
+      wp_editor(
+        html_entity_decode($meta),
+        $this->sanitize_id($field['id']),
+        $field['settings']
+      );
     }
     $this->show_field_end( $field, $meta );
   }
