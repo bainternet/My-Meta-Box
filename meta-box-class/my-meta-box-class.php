@@ -12,7 +12,7 @@
  * modify and change small things and adding a few field types that i needed to my personal preference. 
  * The original author did a great job in writing this class, so all props goes to him.
  * 
- * @version 3.0.6
+ * @version 3.0.7
  * @copyright 2011 - 2013
  * @author Ohad Raz (email: admin@bainternet.info)
  * @link http://en.bainternet.info
@@ -1068,7 +1068,6 @@ class AT_Meta_Box {
     $this->show_field_begin($field, $meta);
     $options = $field['options'];
     $posts = get_posts($options['args']);
-    
     // checkbox_list
     if ('checkbox_list' == $options['type']) {
       foreach ($posts as $p) {
@@ -1954,10 +1953,12 @@ class AT_Meta_Box {
    */
   public function addPosts($id,$options,$args,$repeater=false){
     $post_type = isset($options['post_type'])? $options['post_type']: (isset($args['post_type']) ? $args['post_type']: 'post');
+    $type = isset($options['type'])? $options['type']: 'select';
     $q = array('posts_per_page' => -1, 'post_type' => $post_type);
-    $temp = array('post_type' =>$post_type,'type'=>'select','args'=>$q);
-    $options = array_merge($temp,$options);
-    $new_field = array('type' => 'posts','id'=> $id,'desc' => '','name' => 'Posts Field','options'=> $options);
+    if (isset($options['args']) )
+      $q = array_merge($q,(array)$options['args']);
+    $options = array('post_type' =>$post_type,'type'=>$type,'args'=>$q);
+    $new_field = array('type' => 'posts','id'=> $id,'desc' => '','name' => 'Posts Field','options'=> $options,'multiple' => false);
     $new_field = array_merge($new_field, $args);
     if(false === $repeater){
       $this->_fields[] = $new_field;
