@@ -29,6 +29,27 @@ Reapater field can't handle Posts and Taxonomy for now (and maybe even others).
 
 Changelog
 ---------
+= 3.1.0 = 
+
+* All uploads hadled by wordpress and not by the class
+* Removed media upload functions
+* Replaced Image field to new media uploader
+* Replaced file field to new media uploader and added a type limiter.
+* Dropped supprot for farbtastic. and probbably wp < 3.5
+* Repeater field label is a counter if first field is an image or file field.
+* Fixed typo in css class name for post select field.
+* Deprecated  save_field_file_repeater method.
+* Fixed posts filed query args
+* Added WYSIWYG editor settings option.
+* Removed all refreance object calls (for php 5.4 prep).
+* Removed support for hosted icons.
+* Refreshed repeater block icons.
+* Cleaned repeater block.
+* Repeater block sortable now has an icon for sorting.
+* Added Repeater block sortable drop place holder.
+* Updated plugin version 
+* Added file field width type limitation.
+
 = 3.0.6 = 
 Fixed issue #74.
 
