@@ -3,7 +3,7 @@
 Plugin Name: Demo MetaBox
 Plugin URI: http://en.bainternet.info
 Description: My Meta Box Class usage demo
-Version: 3.0.7
+Version: 3.1.0
 Author: Bainternet, Ohad Raz
 Author URI: http://en.bainternet.info
 */
@@ -55,7 +55,9 @@ if (is_admin()){
   //Image field
   $my_meta->addImage($prefix.'image_field_id',array('name'=> 'My Image '));
   //file upload field
-  $my_meta->addFile($prefix.'file_field_id',array('name'=> 'My File '));
+  $my_meta->addFile($prefix.'file_field_id',array('name'=> 'My File'));
+  //file upload field with type limitation
+  $my_meta->addFile($prefix.'file_pdf_field_id',array('name'=> 'My File limited to PDF Only','ext' =>'pdf','mime_type' => 'application/pdf'));
   /*
    * Don't Forget to Close up the meta box Declaration 
    */
