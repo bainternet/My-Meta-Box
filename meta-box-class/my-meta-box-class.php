@@ -12,7 +12,7 @@
  * modify and change small things and adding a few field types that i needed to my personal preference. 
  * The original author did a great job in writing this class, so all props goes to him.
  * 
- * @version 3.0.7
+ * @version 3.1.0
  * @copyright 2011 - 2013
  * @author Ohad Raz (email: admin@bainternet.info)
  * @link http://en.bainternet.info
@@ -118,7 +118,7 @@ class AT_Meta_Box {
     // Assign meta box values to local variables and add it's missed values.
     $this->_meta_box = $meta_box;
     $this->_prefix = (isset($meta_box['prefix'])) ? $meta_box['prefix'] : ''; 
-    $this->_fields = &$this->_meta_box['fields'];
+    $this->_fields = $this->_meta_box['fields'];
     $this->_Local_images = (isset($meta_box['local_images'])) ? true : false;
     $this->add_missed_values();
     if (isset($meta_box['use_with_theme']))
@@ -133,26 +133,16 @@ class AT_Meta_Box {
       $this->SelfPath = plugins_url( 'meta-box-class', plugin_basename( dirname( __FILE__ ) ) );
     }
     
-    
-      
-    
     // Add metaboxes
-    add_action( 'add_meta_boxes', array( &$this, 'add' ) );
-    //add_action( 'wp_insert_post', array( &$this, 'save' ) );
-    add_action( 'save_post', array( &$this, 'save' ) );
-    
-    
-    
-    
+    add_action( 'add_meta_boxes', array( $this, 'add' ) );
+    //add_action( 'wp_insert_post', array( $this, 'save' ) );
+    add_action( 'save_post', array( $this, 'save' ) );
     // Load common js, css files
     // Must enqueue for all pages as we need js for the media upload, too.
-    add_action( 'admin_print_styles', array( &$this, 'load_scripts_styles' ) );
-    // Delete file via Ajax
-    add_action( 'wp_ajax_at_delete_mupload', array( $this, 'wp_ajax_delete_image' ) );
-    // Delete all attachments when delete custom post type.
-    add_action( 'wp_ajax_atm_delete_file',     array( &$this, 'delete_file' ) );
-    add_action( 'wp_ajax_atm_reorder_images',   array( &$this, 'reorder_images' ) );
-    
+    add_action( 'admin_print_styles', array( $this, 'load_scripts_styles' ) );
+    //limit File type at upload
+    add_filter('wp_handle_upload_prefilter', array($this,'Validate_upload_file_type'));
+
   }
   
   /**
@@ -190,7 +180,7 @@ class AT_Meta_Box {
       
       //this replaces the ugly check fields methods calls
       foreach (array('upload','color','date','time','code','select') as $type) {
-        call_user_func ( array( &$this, 'check_field_' . $type ));
+        call_user_func ( array( $this, 'check_field_' . $type ));
       }
     }
     
@@ -212,10 +202,7 @@ class AT_Meta_Box {
       
       // Enqueu JQuery select2 library, use proper version.
       wp_enqueue_style('at-multiselect-select2-css', $plugin_path . '/js/select2/select2.css', array(), null);
-
       wp_enqueue_script('at-multiselect-select2-js', $plugin_path . '/js/select2/select2.js', array('jquery'), false, true);
-      
-    
   }
 
   /**
@@ -233,12 +220,6 @@ class AT_Meta_Box {
     // Add data encoding type for file uploading.  
     add_action( 'post_edit_form_tag', array( $this, 'add_enctype' ) );
     
-    // Add filters for media upload.
-    add_filter( 'media_upload_gallery', array( &$this, 'insert_images' ) );
-    add_filter( 'media_upload_library', array( &$this, 'insert_images' ) );
-    add_filter( 'media_upload_image',   array( &$this, 'insert_images' ) );
-      
-    
   }
   
   /**
@@ -252,178 +233,6 @@ class AT_Meta_Box {
   }
   
   /**
-   * Process images added to meta field.
-   *
-   * Modified from Faster Image Insert plugin.
-   *
-   * @return void
-   * @author Cory Crowley
-   */
-  public function insert_images() {
-    
-    // If post variables are empty, return.
-    if ( ! isset( $_POST['at-insert'] ) || empty( $_POST['attachments'] ) )
-      return;
-    
-    // Security Check
-    check_admin_referer( 'media-form' );
-    
-    // Create Security Nonce
-    $nonce = wp_create_nonce( 'at_ajax_delete' );
-    
-    // Get Post Id and Field Id
-    $post_id = $_POST['post_id'];
-    $id = $_POST['field_id'];
-    
-    // Modify the insertion string
-    $html = '';
-    foreach( $_POST['attachments'] as $attachment_id => $attachment ) {
-      
-      // Strip Slashes
-      $attachment = stripslashes_deep( $attachment );
-      
-      // If not selected or url is empty, continue in loop.
-      if ( empty( $attachment['selected'] ) || empty( $attachment['url'] ) )
-        continue;
-        
-      $li    = "<li id='item_{$attachment_id}'>";
-      $li   .= "<img src='{$attachment['url']}' alt='image_{$attachment_id}' />";
-      //$li   .= "<a title='" . __( 'Delete this image' ) . "' class='at-delete-file' href='#' rel='{$nonce}|{$post_id}|{$id}|{$attachment_id}'>" . __( 'Delete' ) . "</a>";
-      $li   .= "<a title='" . __( 'Delete this image','mmb' ) . "' class='at-delete-file' href='#' rel='{$nonce}|{$post_id}|{$id}|{$attachment_id}'><img src='" . $this->SelfPath. "/images/delete-16.png' alt='" . __( 'Delete','mmb' ) . "' /></a>";
-      $li   .= "<input type='hidden' name='{$id}[]' value='{$attachment_id}' />";
-      $li   .= "</li>";
-      $html .= $li;
-      
-    } // End For Each
-    
-    return media_send_to_editor( $html );
-    
-  }
-  
-  /**
-   * Delete attachments associated with the post.
-   *
-   * @since 1.0
-   * @access public
-   *
-   * @param string $post_id 
-   */
-  public function delete_attachments( $post_id ) {
-    
-    // Get Attachments
-    $attachments = get_posts( array( 'numberposts' => -1, 'post_type' => 'attachment', 'post_parent' => $post_id ) );
-    
-    // Loop through attachments, if not empty, delete it.
-    if ( ! empty( $attachments ) ) {
-      foreach ( $attachments as $att ) {
-        wp_delete_attachment( $att->ID );
-      }
-    }
-    
-  }
-  
-  /**
-   * Ajax callback for deleting files.
-   * 
-   * Modified from a function used by "Verve Meta Boxes" plugin ( http://goo.gl/aw64H )
-   *
-   * @since 1.0
-   * @access public 
-   */
-  public function delete_file() {
-    // If data is not set, die.
-    if ( ! isset( $_POST['data'] ) )
-      die('1');
-      
-    list($nonce, $term_id, $key, $attach_id) = explode('|', $_POST['data']);
-    $post_id = $_POST['tag_id'];
-    //$arrKey = (int)$_POST['idx'];
-    if ( ! wp_verify_nonce( $nonce, 'at_ajax_delete_file' ) )
-      die( '1' );
-    
-    $saved = get_post_meta($post_id,$key,true);
-
-    $index = array_search($attach_id, $saved);    
-    foreach ($saved as $k => $value) {
-      if ($value == $attach_id)
-        unset($saved[$k]);
-    }
-    if (count($saved) > 0){
-      update_post_meta($post_id,$key,$saved);
-      die('0');
-    }
-    delete_post_meta( $post_id, $key);
-    die( '0' );
-  }
-  /**
-  * Ajax callback for deleting files.
-  * Modified from a function used by "Verve Meta Boxes" plugin (http://goo.gl/LzYSq)
-  * @since 1.7
-  * @access public
-  */
-  public function wp_ajax_delete_image() {
-    $post_id = isset( $_GET['post_id'] ) ? intval( $_GET['post_id'] ) : 0;
-    $field_id = isset( $_GET['field_id'] ) ? $_GET['field_id'] : 0;
-    $attachment_id = isset( $_GET['attachment_id'] ) ? intval( $_GET['attachment_id'] ) : 0;
-    $ok = false;
-    if (strpos($field_id, '[') === false){
-      check_admin_referer( "at-delete-mupload_".urldecode($field_id));
-      $ok = delete_post_meta( $post_id, $field_id );
-      $ok = $ok && wp_delete_attachment( $attachment_id );
-    }else{
-      $f = explode('[',urldecode($field_id));
-      $f_fiexed = array();
-      foreach ($f as $k => $v){
-        $f[$k] = str_replace(']','',$v);
-      }
-      $saved = get_post_meta($post_id,$f[0],true);
-      if (isset($saved[$f[1]][$f[2]])){
-        unset($saved[$f[1]][$f[2]]);
-        $ok = update_post_meta($post_id,$f[0],$saved);
-        $ok = $ok && wp_delete_attachment( $attachment_id );
-      }
-    }
-
-    
-    
-    if ( $ok ){
-      echo json_encode( array('status' => 'success' ));
-      die();
-    }else{
-      echo json_encode(array('message' => __( 'Cannot delete file. Something\'s wrong.','mmb')));
-      die();
-    }
-  }
-  
-  /**
-   * Ajax callback for reordering Images.
-   *
-   * @since 1.0
-   * @access public
-   */
-  public function reorder_images() {
-    
-    if ( ! isset( $_POST['data'] ) )
-      die();
-      
-    list( $order, $post_id, $key, $nonce ) = explode( '|', $_POST['data'] );
-    
-    if ( ! wp_verify_nonce( $nonce, 'at_ajax_reorder' ) )
-      die( '1' );
-      
-    parse_str( $order, $items );
-    $items = $items['item'];
-    $order = 1;
-    foreach ( $items as $item ) {
-      wp_update_post( array( 'ID' => $item, 'post_parent' => $post_id, 'menu_order' => $order ) );
-      $order++;
-    }
-    
-    die( '0' );
-  
-  }
-  
-  /**
    * Check Field Color
    *
    * @since 1.0
@@ -432,16 +241,9 @@ class AT_Meta_Box {
   public function check_field_color() {
     
     if ( $this->has_field( 'color' ) && $this->is_edit_page() ) {
-      // Enqueu built-in script and style for color picker.
-      if( wp_style_is( 'wp-color-picker', 'registered' ) ) { //since WordPress 3.5
-          wp_enqueue_style( 'wp-color-picker' );
-          wp_enqueue_script( 'wp-color-picker' );
-      }else{
-        // Enqueu built-in script and style for color picker.
-        wp_enqueue_style( 'farbtastic' );
-        wp_enqueue_script( 'farbtastic' );
-      }
-    }    
+      wp_enqueue_style( 'wp-color-picker' );
+      wp_enqueue_script( 'wp-color-picker' );
+    }
   }
   
   /**
@@ -510,7 +312,7 @@ class AT_Meta_Box {
    */
   public function add($postType) {
     if(in_array($postType, $this->_meta_box['pages'])){
-      add_meta_box( $this->_meta_box['id'], $this->_meta_box['title'], array( &$this, 'show' ),$postType, $this->_meta_box['context'], $this->_meta_box['priority'] );
+      add_meta_box( $this->_meta_box['id'], $this->_meta_box['title'], array( $this, 'show' ),$postType, $this->_meta_box['context'], $this->_meta_box['priority'] );
     }
   }
   
@@ -523,13 +325,14 @@ class AT_Meta_Box {
   public function show() {
     $this->inGroup = false;
     global $post;
-    //var_dump($this->_fields);
+
     wp_nonce_field( basename(__FILE__), 'at_meta_box_nonce' );
     echo '<table class="form-table">';
     foreach ( $this->_fields as $field ) {
       $field['multiple'] = isset($field['multiple']) ? $field['multiple'] : false;
       $meta = get_post_meta( $post->ID, $field['id'], !$field['multiple'] );
       $meta = ( $meta !== '' ) ? $meta : @$field['std'];
+
       if (!in_array($field['type'], array('image', 'repeater','file')))
         $meta = is_array( $meta ) ? array_map( 'esc_attr', $meta ) : esc_attr( $meta );
       
@@ -542,7 +345,7 @@ class AT_Meta_Box {
       }
       
       // Call Separated methods for displaying each type of field.
-      call_user_func ( array( &$this, 'show_field_' . $field['type'] ), $field, $meta );
+      call_user_func ( array( $this, 'show_field_' . $field['type'] ), $field, $meta );
 
       if ($this->inGroup === true){
         if(isset($field['group']) && $field['group'] == 'end'){
@@ -581,6 +384,8 @@ class AT_Meta_Box {
          foreach ($meta as $me){
            //for labling toggles
            $mmm =  isset($me[$field['fields'][0]['id']])? $me[$field['fields'][0]['id']]: "";
+           if ( in_array( $field['fields'][0]['type'], array('image','file') ) )
+            $mmm = $c +1 ;
            echo '<div class="at-repater-block">'.$mmm.'<br/><table class="repeater-table" style="display: none;">';
            if ($field['inline']){
              echo '<tr class="at-inline" VALIGN="top">';
@@ -598,7 +403,7 @@ class AT_Meta_Box {
           if (!$field['inline']){
             echo '<tr>';
           } 
-          call_user_func ( array( &$this, 'show_field_' . $f['type'] ), $f, $m);
+          call_user_func ( array( $this, 'show_field_' . $f['type'] ), $f, $m);
           if (!$field['inline']){
             echo '</tr>';
           } 
@@ -606,23 +411,15 @@ class AT_Meta_Box {
         if ($field['inline']){  
           echo '</tr>';
         }
-        echo '</table>
-        <span class="at-re-toggle"><img src="';
-           if ($this->_Local_images){
-             echo $plugin_path.'/images/edit.png';
-           }else{
-             echo 'http://i.imgur.com/ka0E2.png';
-           }
-           echo '" alt="Edit" title="Edit"/></span> 
-        <img src="';
-        if ($this->_Local_images){
-          echo $plugin_path.'/images/remove.png';
-        }else{
-          echo 'http://i.imgur.com/g8Duj.png';
-        }
-        echo '" alt="'.__('Remove','mmb').'" title="'.__('Remove','mmb').'" id="remove-'.$field['id'].'"></div>';
+        echo '</table>';
+        if ($field['sortable'])
+          echo '<span class="re-control"><img src="'.$plugin_path.'/images/move.png" alt="sort" title="sort" class="at_re_sort_handle" /></span>';
+
+        echo'
+        <span class="re-control at-re-toggle"><img src="'.$plugin_path.'/images/edit.png" alt="Edit" title="Edit"/></span> 
+        <span class="re-control"><img src="'.$plugin_path.'/images/remove.png" alt="'.__('Remove','mmb').'" title="'.__('Remove','mmb').'" id="remove-'.$field['id'].'"></span>
+        <span class="re-control-clear"></span></div>';
         $c = $c + 1;
-        
         }
       }
 
@@ -649,9 +446,9 @@ class AT_Meta_Box {
         echo '<tr>';
       }
       if ($f['type'] != 'wysiwyg')
-        call_user_func ( array( &$this, 'show_field_' . $f['type'] ), $f, '');
+        call_user_func ( array( $this, 'show_field_' . $f['type'] ), $f, '');
       else
-        call_user_func ( array( &$this, 'show_field_' . $f['type'] ), $f, '',true);
+        call_user_func ( array( $this, 'show_field_' . $f['type'] ), $f, '',true);
       if (!$field['inline']){
         echo '</tr>';
       }  
@@ -659,13 +456,7 @@ class AT_Meta_Box {
     if ($field['inline']){
       echo '</tr>';
     } 
-    echo '</table><img src="';
-    if ($this->_Local_images){
-      echo $plugin_path.'/images/remove.png';
-    }else{
-      echo 'http://i.imgur.com/g8Duj.png';
-    }
-    echo '" alt="'.__('Remove','mmb').'" title="'.__('Remove','mmb').'" id="remove-'.$field['id'].'"></div>';
+    echo '</table><img src="'.$plugin_path.'/images/remove.png" alt="'.__('Remove','mmb').'" title="'.__('Remove','mmb').'" id="remove-'.$field['id'].'"></div>';
     $counter = 'countadd_'.$field['id'];
     $js_code = ob_get_clean ();
     $js_code = str_replace("\n","",$js_code);
@@ -681,17 +472,21 @@ class AT_Meta_Box {
             update_repeater_fields();
           });
               jQuery("#remove-'.$field['id'].'").live(\'click\', function() {
-                  jQuery(this).parent().remove();
+                  jQuery(this).parent().parent().remove();
               });
           });
-        </script>';            
+        </script>';
     echo '<br/><style>
+.at_re_sort_highlight{min-height: 55px; background-color: #EEEEEE; margin: 2px;}
+.re-control-clear{clear: both; display: block;}
+.at_re_sort_handle{cursor: move;}
+.re-control{float: right; padding: 5px;}    
 .at-inline{line-height: 1 !important;}
 .at-inline .at-field{border: 0px !important;}
 .at-inline .at-label{margin: 0 0 1px !important;}
 .at-inline .at-text{width: 70px;}
 .at-inline .at-textarea{width: 100px; height: 75px;}
-.at-repater-block{background-color: #FFFFFF;border: 1px solid;margin: 2px;}
+.at-repater-block{background-color: #FFFFFF;border: 1px solid;margin: 2px; min-height: 50px}
 </style>';
     $this->show_field_end($field, $meta);
   }
@@ -887,14 +682,14 @@ class AT_Meta_Box {
   public function show_field_wysiwyg( $field, $meta,$in_repeater = false ) {
     $this->show_field_begin( $field, $meta );
     
-    // Add TinyMCE script for WP version < 3.3
-    global $wp_version;
-    
-    if ( version_compare( $wp_version, '3.2.1' ) < 1 || $in_repeater )
+    if ( $in_repeater )
       echo "<textarea class='at-wysiwyg theEditor large-text".( isset($field['class'])? ' ' . $field['class'] : '' )."' name='{$field['id']}' id='{$field['id']}' cols='60' rows='10'>{$meta}</textarea>";
     else{
       // Use new wp_editor() since WP 3.3
-      wp_editor( html_entity_decode($meta), $field['id'], array( 'editor_class' => 'at-wysiwyg'.( isset($field['class'])? ' ' . $field['class'] : '' )) );
+      $settings = ( isset($field['settings']) && is_array($field['settings'])? $field['settings']: array() );
+      $settings['editor_class'] = 'at-wysiwyg'.( isset($field['class'])? ' ' . $field['class'] : '' );
+      $id = str_replace( "_","",$this->stripNumeric( strtolower( $field['id']) ) );
+      wp_editor( html_entity_decode($meta), $id, $settings);
     }
     $this->show_field_end( $field, $meta );
   }
@@ -908,38 +703,30 @@ class AT_Meta_Box {
    * @access public
    */
   public function show_field_file( $field, $meta ) {
-    global $post; 
-/*
-    delete_post_meta($post->ID, $field['id']);
-    $meta = '';*/
-    if ( ! is_array( $meta ) )
-      $meta = (array) $meta;
-
+    wp_enqueue_media();
     $this->show_field_begin( $field, $meta );
-      echo "{$field['desc']}<br />";
-      if ( !empty( $meta )  && count($meta) > 0 && !$this->is_array_empty($meta) ) {
-        $nonce = wp_create_nonce( 'at_ajax_delete_file' );
-        echo '<div style="margin-bottom: 10px"><strong>' . __('Uploaded files','mmb') . '</strong></div>';
-        echo '<ol class="at-upload">';
-        foreach ( (array)$meta[0] as $key => $att ) {
-          
-          // if (wp_attachment_is_image($att)) continue; // what's image uploader for?
-          echo "<li>" . wp_get_attachment_url( $att) . " (<a class='at-delete-file' href='#' rel='{$nonce}|$key|{$field['id']}|{$att}'>" . __( 'Delete','mmb' ) . "</a>)</li>";
-        }
-        echo '</ol>';
-      }
 
-      // show form upload
-    echo "<div class='at-file-upload-label'> \n
-      <strong>" . __( 'Upload new files','mmb' ) . "</strong>\n
-    </div>\n";
-    echo "<div class='new-files'>\n
-      <div class='file-input'>\n
-        <input type='file' name='{$field['id']}[]' />\n
-      </div><!-- End .file-input -->\n
-      <a class='at-add-file button' href='#'>" . __( 'Add more files','mmb' ) . "</a>\n
-      </div><!-- End .new-files -->\n";
-    echo "</td>";
+    $std      = isset($field['std'])? $field['std'] : array('id' => '', 'url' => '');
+    $multiple = isset($field['multiple'])? $field['multiple'] : false;
+    $multiple = ($multiple)? "multiFile '" : "";
+    $name     = esc_attr( $field['id'] );
+    $value    = isset($meta['id']) ? $meta : $std;
+    $has_file = (empty($value['url']))? false : true;
+    $type     = isset($field['mime_type'])? $field['mime_type'] : '';
+    $ext      = isset($field['ext'])? $field['ext'] : '';
+    $type     = (is_array($type)? implode("|",$type) : $type);
+    $ext      = (is_array($ext)? implode("|",$ext) : $ext);
+    $id       = $field['id'];
+    $li       = ($has_file)? "<li><a href='{$value['url']}' target='_blank'>{$value['url']}</a></li>": "";
+
+    echo "<span class='simplePanelfilePreview'><ul>{$li}</ul></span>";
+    echo "<input type='hidden' name='{$name}[id]' value='{$value['id']}'/>";
+    echo "<input type='hidden' name='{$name}[url]' value='{$value['url']}'/>";
+    if ($has_file)
+      echo "<input type='button' class='{$multiple} button simplePanelfileUploadclear' id='{$id}' value='Remove File' data-mime_type='{$type}' data-ext='{$ext}'/>";
+    else
+      echo "<input type='button' class='{$multiple} button simplePanelfileUpload' id='{$id}' value='Upload File' data-mime_type='{$type}' data-ext='{$ext}'/>";
+
     $this->show_field_end( $field, $meta );
   }
   
@@ -952,24 +739,30 @@ class AT_Meta_Box {
    * @access public
    */
   public function show_field_image( $field, $meta ) {
+    wp_enqueue_media();
     $this->show_field_begin( $field, $meta );
-    $html = wp_nonce_field( "at-delete-mupload_{$field['id']}", "nonce-delete-mupload_".$field['id'], false, false );
-    if (is_array($meta)){
-      if(isset($meta[0]) && is_array($meta[0]))
-      $meta = $meta[0];
-    }
-    if (is_array($meta) && isset($meta['src']) && $meta['src'] != ''){
-      $html .= "<span class='mupload_img_holder'><img src='".$meta['src']."' style='height: 150px;width: 150px;' /></span>";
-      $html .= "<input type='hidden' name='".$field['id']."[id]' id='".$field['id']."[id]' value='".$meta['id']."' />";
-      $html .= "<input type='hidden' name='".$field['id']."[src]' id='".$field['id']."[src]' value='".$meta['src']."' />";
-      $html .= "<input class='at-delete_image_button' type='button' rel='".$field['id']."' value='Delete Image' />";
-    }else{
-      $html .= "<span class='mupload_img_holder'></span>";
-      $html .= "<input type='hidden' name='".$field['id']."[id]' id='".$field['id']."[id]' value='' />";
-      $html .= "<input type='hidden' name='".$field['id']."[src]' id='".$field['id']."[src]' value='' />";
-      $html .= "<input class='at-upload_image_button' type='button' rel='".$field['id']."' value='Upload Image' />";
-    }
-    echo $html;
+        
+    $std          = isset($field['std'])? $field['std'] : array('id' => '', 'url' => '');
+    $name         = esc_attr( $field['id'] );
+    $value        = isset($meta['id']) ? $meta : $std;
+    
+    $value['url'] = isset($meta['src'])? $meta['src'] : $value['url']; //backwords capability
+    $has_image    = empty($value['url'])? false : true;
+    $w            = isset($field['width'])? $field['width'] : 'auto';
+    $h            = isset($field['height'])? $field['height'] : 'auto';
+    $PreviewStyle = "style='width: $w; height: $h;". ( (!$has_image)? "display: none;'": "'");
+    $id           = $field['id'];
+    $multiple     = isset($field['multiple'])? $field['multiple'] : false;
+    $multiple     = ($multiple)? "multiFile " : "";
+
+    echo "<span class='simplePanelImagePreview'><img {$PreviewStyle} src='{$value['url']}'><br/></span>";
+    echo "<input type='hidden' name='{$name}[id]' value='{$value['id']}'/>";
+    echo "<input type='hidden' name='{$name}[url]' value='{$value['url']}'/>";
+    if ($has_image)
+      echo "<input class='{$multiple} button  simplePanelimageUploadclear' id='{$id}' value='Remove Image' type='button'/>";
+    else
+      echo "<input class='{$multiple} button simplePanelimageUpload' id='{$id}' value='Upload Image' type='button'/>";
+    $this->show_field_end( $field, $meta );
   }
   
   /**
@@ -1076,7 +869,7 @@ class AT_Meta_Box {
     }
     // select
     else {
-      echo "<select ".( isset($field['style'])? "style='{$field['style']}' " : '' )." class='at-posts-selec".( isset($field['class'])? ' ' . $field['class'] : '' )."' name='{$field['id']}" . ($field['multiple'] ? "[]' multiple='multiple' style='height:auto'" : "'") . ">";
+      echo "<select ".( isset($field['style'])? "style='{$field['style']}' " : '' )." class='at-posts-select".( isset($field['class'])? ' ' . $field['class'] : '' )."' name='{$field['id']}" . ($field['multiple'] ? "[]' multiple='multiple' style='height:auto'" : "'") . ">";
       foreach ($posts as $p) {
         echo "<option value='$p->ID'" . selected(in_array($p->ID, $meta), true, false) . ">$p->post_title</option>";
       }
@@ -1154,7 +947,7 @@ class AT_Meta_Box {
         //set new id for field in array format
         $f['id'] = $id;
         echo '<tr>';
-        call_user_func ( array( &$this, 'show_field_' . $f['type'] ), $f, $m);
+        call_user_func ( array( $this, 'show_field_' . $f['type'] ), $f, $m);
         echo '</tr>';
     }
     echo '</table></div>';
@@ -1169,16 +962,16 @@ class AT_Meta_Box {
    * @access public 
    */
   public function save( $post_id ) {
-    
+
     global $post_type;
     
     $post_type_object = get_post_type_object( $post_type );
 
-    if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )                // Check Autosave
+    if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )                      // Check Autosave
     || ( ! isset( $_POST['post_ID'] ) || $post_id != $_POST['post_ID'] )        // Check Revision
-    || ( ! in_array( $post_type, $this->_meta_box['pages'] ) )              // Check if current post type is supported.
-    || ( ! check_admin_referer( basename( __FILE__ ), 'at_meta_box_nonce') )      // Check nonce - Security
-    || ( ! current_user_can( $post_type_object->cap->edit_post, $post_id ) ) )       // Check permission
+    || ( ! in_array( $post_type, $this->_meta_box['pages'] ) )                  // Check if current post type is supported.
+    || ( ! check_admin_referer( basename( __FILE__ ), 'at_meta_box_nonce') )    // Check nonce - Security
+    || ( ! current_user_can( $post_type_object->cap->edit_post, $post_id ) ) )  // Check permission
     {
       return $post_id;
     }
@@ -1202,7 +995,7 @@ class AT_Meta_Box {
         // Call defined method to save meta value, if there's no methods, call common one.
         $save_func = 'save_field_' . $type;
         if ( method_exists( $this, $save_func ) ) {
-          call_user_func( array( &$this, 'save_field_' . $type ), $post_id, $field, $old, $new );
+          call_user_func( array( $this, 'save_field_' . $type ), $post_id, $field, $old, $new );
         } else {
           $this->save_field( $post_id, $field, $old, $new );
         }
@@ -1248,7 +1041,7 @@ class AT_Meta_Box {
   public function save_field_image( $post_id, $field, $old, $new ) {
     $name = $field['id'];
     delete_post_meta( $post_id, $name );
-    if ( $new === '' || $new === array() || $new['id'] == '' || $new['src'] == '') 
+    if ( $new === '' || $new === array() || $new['id'] == '' || $new['url'] == '')
       return;
     
     update_post_meta( $post_id, $name, $new );
@@ -1265,6 +1058,8 @@ class AT_Meta_Box {
    * @access public 
    */
   public function save_field_wysiwyg( $post_id, $field, $old, $new ) {
+    $id = str_replace( "_","",$this->stripNumeric( strtolower( $field['id']) ) );
+    $new = ( isset( $_POST[$id] ) ) ? $_POST[$id] : ( ( $field['multiple'] ) ? array() : '' );
     $this->save_field( $post_id, $field, $old, $new );
   }
   
@@ -1287,11 +1082,8 @@ class AT_Meta_Box {
             case 'wysiwyg':
                 $n[$f['id']] = wpautop( $n[$f['id']] ); 
                 break;
-              case 'file':
-                $n[$f['id']] = $this->save_field_file_repeater($post_id,$f,'',$n[$f['id']]);
-                break;
               default:
-                   break;
+                break;
           }
         }
         if(!$this->is_array_empty($n))
@@ -1322,39 +1114,11 @@ class AT_Meta_Box {
   public function save_field_file( $post_id, $field, $old, $new ) {
     
     $name = $field['id'];
-    if ( empty( $_FILES[$name] ) && !is_array($old)){
-      delete_post_meta($post_id,$name);
+    delete_post_meta( $post_id, $name );
+    if ( $new === '' || $new === array() || $new['id'] == '' || $new['url'] == '')
       return;
-    }
-    $temp = get_post_meta($post_id,$name,true);
-    $temp = is_array($temp) ? $temp : array();
-    $files = $this->fix_file_array( $_FILES[$name] );
     
-    foreach ( $files as $fileitem ) {
-
-      $file = wp_handle_upload( $fileitem, array( 'test_form' => false ) );
-      if ( empty( $file['file'] ) ) 
-        continue;
-      $filename = $file['file'];
-
-      $attachment = array(
-        'post_mime_type' => $file['type'],
-        'guid' => $file['url'],
-        'post_parent' => $term_id,
-        'post_title' => preg_replace('/\.[^.]+$/', '', basename( $filename ) ),
-        'post_content' => ''
-      );
-
-      $id = wp_insert_attachment( $attachment, $filename);
-
-      if ( ! is_wp_error( $id ) ) {
-        wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $filename ) );
-        $temp[] = $id;  // save file's url in meta fields
-      } // End if
-    } // End foreach
-    if (count($temp) > 0)
-      update_post_meta($post_id, $name, $temp);
-
+    update_post_meta( $post_id, $name, $new );
   }
   
   /**
@@ -1365,37 +1129,9 @@ class AT_Meta_Box {
    * @param string $new 
    * @since 1.0
    * @access public
+   * @deprecated 3.0.7
    */
-  public function save_field_file_repeater( $post_id, $field, $old, $new ) {
-  
-    $name = $field['id'];
-    if ( empty( $_FILES[$name] ) ) 
-      return;
-    $this->fix_file_array( $_FILES[$name] );
-    foreach ( $_FILES[$name] as $position => $fileitem ) {
-      
-      $file = wp_handle_upload( $fileitem, array( 'test_form' => false ) );
-      if ( empty( $file['file'] ) ) 
-        continue;
-      $filename = $file['file'];
-
-      $attachment = array(
-        'post_mime_type' => $file['type'],
-        'guid' => $file['url'],
-        'post_parent' => $post_id,
-        'post_title' => preg_replace('/\.[^.]+$/', '', basename( $filename ) ),
-        'post_content' => ''
-      );
-      
-      $id = wp_insert_attachment( $attachment, $filename, $post_id );
-      
-      if ( ! is_wp_error( $id ) ) {
-        
-        wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $filename ) );
-        return $id;  // return file's url in meta fields
-      } // End if
-    } // End foreach
-  }
+  public function save_field_file_repeater( $post_id, $field, $old, $new ) {}
   
   /**
    * Add missed values for meta box.
@@ -1847,7 +1583,7 @@ class AT_Meta_Box {
    *  @param $repeater bool  is this a field inside a repeatr? true|false(default) 
    */
   public function addImage($id,$args,$repeater=false){
-    $new_field = array('type' => 'image','id'=> $id,'desc' => '','name' => 'Image Field');
+    $new_field = array('type' => 'image','id'=> $id,'desc' => '','name' => 'Image Field','std' => array('id' => '', 'url' => ''),'multiple' => false);
     $new_field = array_merge($new_field, $args);
     if(false === $repeater){
       $this->_fields[] = $new_field;
@@ -1869,7 +1605,7 @@ class AT_Meta_Box {
    *  @param $repeater bool  is this a field inside a repeatr? true|false(default)
    */
   public function addFile($id,$args,$repeater=false){
-    $new_field = array('type' => 'file','id'=> $id,'desc' => '','name' => 'File Field');
+    $new_field = array('type' => 'file','id'=> $id,'desc' => '','name' => 'File Field','multiple' => false,'std' => array('id' => '', 'url' => ''));
     $new_field = array_merge($new_field, $args);
     if(false === $repeater){
       $this->_fields[] = $new_field;
@@ -1982,7 +1718,14 @@ class AT_Meta_Box {
    *    'fields' => //fields to repeater  
    */
   public function addRepeaterBlock($id,$args){
-    $new_field = array('type' => 'repeater','id'=> $id,'name' => 'Reapeater Field','fields' => array(),'inline'=> false,'sortable' => false);
+    $new_field = array(
+      'type'     => 'repeater',
+      'id'       => $id,
+      'name'     => 'Reapeater Field',
+      'fields'   => array(),
+      'inline'   => false,
+      'sortable' => false
+    );
     $new_field = array_merge($new_field, $args);
     $this->_fields[] = $new_field;
   }
@@ -2002,7 +1745,15 @@ class AT_Meta_Box {
    *  @param $repeater bool  is this a field inside a repeatr? true|false(default) 
    */
   public function addCondition($id,$args,$repeater=false){
-    $new_field = array('type' => 'cond','id'=> $id,'std' => '','desc' => '','style' =>'','name' => 'Conditional Field','fields' => array());
+    $new_field = array(
+      'type'   => 'cond',
+      'id'     => $id,
+      'std'    => '',
+      'desc'   => '',
+      'style'  =>'',
+      'name'   => 'Conditional Field',
+      'fields' => array()
+    );
     $new_field = array_merge($new_field, $args);
     if(false === $repeater){
       $this->_fields[] = $new_field;
@@ -2047,6 +1798,64 @@ class AT_Meta_Box {
     return true;
   }
 
+  /**
+   * Validate_upload_file_type 
+   *
+   * Checks if the uploaded file is of the expected format
+   * 
+   * @author Ohad Raz <admin@bainternet.info>
+   * @since 3.0.7
+   * @access public
+   * @uses get_allowed_mime_types() to check allowed types
+   * @param array $file uploaded file
+   * @return array file with error on mismatch
+   */
+  function Validate_upload_file_type($file) {
+    if (isset($_POST['uploadeType']) && !empty($_POST['uploadeType']) && isset($_POST['uploadeType']) && $_POST['uploadeType'] == 'my_meta_box'){
+      $allowed = explode("|", $_POST['uploadeType']);
+      $ext =  substr(strrchr($file['name'],'.'),1);
+
+      if (!in_array($ext, (array)$allowed)){
+        $file['error'] = __("Sorry, you cannot upload this file type for this field.");
+        return $file;
+      }
+
+      foreach (get_allowed_mime_types() as $key => $value) {
+        if (strpos($key, $ext) || $key == $ext)
+          return $file;
+      }
+      $file['error'] = __("Sorry, you cannot upload this file type for this field.");
+    }
+    return $file;
+  }
+
+  /**
+   * function to sanitize field id
+   * 
+   * @author Ohad Raz <admin@bainternet.info>
+   * @since 3.0.7
+   * @access public
+   * @param  string $str string to sanitize
+   * @return string      sanitized string
+   */
+  public function idfy($str){
+    return str_replace(" ", "_", $str);
+    
+  }
+
+  /**
+   * stripNumeric Strip number form string
+   *
+   * @author Ohad Raz <admin@bainternet.info>
+   * @since 3.0.7
+   * @access public
+   * @param  string $str
+   * @return string number less string
+   */
+  public function stripNumeric($str){
+    return trim(str_replace(range(0,9), '', $str) );
+  }
+
 
   /**
    * load_textdomain 
@@ -2059,5 +1868,4 @@ class AT_Meta_Box {
     load_textdomain( 'mmb', dirname(__FILE__) . '/lang/' . get_locale() .'mo' );
   }
 } // End Class
-
 endif; // End Check Class Exists
