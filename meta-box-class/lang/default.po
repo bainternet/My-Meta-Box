@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: My-MetaBox-Class\n"
-"POT-Creation-Date: 2012-12-20 01:36+0200\n"
-"PO-Revision-Date: 2012-12-20 01:36+0200\n"
-"Last-Translator: BaInternet <admin@bainternet.info>\n"
+"POT-Creation-Date: 2013-09-19 17:37-0300\n"
+"PO-Revision-Date: 2013-09-19 17:38-0300\n"
+"Last-Translator: Daniel Kossmann Ferraz <daniel@spirallab.com.br>\n"
 "Language-Team: WP-EX <admin@bainternet.info>\n"
 "Language: en_US\n"
 "MIME-Version: 1.0\n"
@@ -11,46 +11,24 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.5.4\n"
 "X-Poedit-KeywordsList: __;_e\n"
-"X-Poedit-Basepath: C:\\wamp\\www\\dev\\ttt\\wp-content\\plugins\\My-Meta-Box"
-"\\meta-box-class\n"
+"X-Poedit-Basepath: /home/kossmann/workspace/My-Meta-Box/meta-box-class\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-SearchPath-0: C:\\wamp\\www\\dev\\ttt\\wp-content\\plugins\\My-Meta-"
-"Box\\meta-box-class\n"
+"X-Poedit-SearchPath-0: /home/kossmann/workspace/My-Meta-Box/meta-box-class\n"
 
-#: C:\wamp\www\dev\ttt\wp-content\plugins\My-Meta-Box\meta-box-class/my-meta-box-class.php:256
-msgid "Delete this image"
-msgstr ""
-
-#: C:\wamp\www\dev\ttt\wp-content\plugins\My-Meta-Box\meta-box-class/my-meta-box-class.php:256
-#: C:\wamp\www\dev\ttt\wp-content\plugins\My-Meta-Box\meta-box-class/my-meta-box-class.php:867
-msgid "Delete"
-msgstr ""
-
-#: C:\wamp\www\dev\ttt\wp-content\plugins\My-Meta-Box\meta-box-class/my-meta-box-class.php:348
-msgid "Cannot delete file. Something's wrong."
-msgstr ""
-
-#: C:\wamp\www\dev\ttt\wp-content\plugins\My-Meta-Box\meta-box-class/my-meta-box-class.php:560
-#: C:\wamp\www\dev\ttt\wp-content\plugins\My-Meta-Box\meta-box-class/my-meta-box-class.php:605
+#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:420
+#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:459
 msgid "Remove"
 msgstr ""
 
-#: C:\wamp\www\dev\ttt\wp-content\plugins\My-Meta-Box\meta-box-class/my-meta-box-class.php:572
+#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:432
 msgid "Add"
 msgstr ""
 
-#: C:\wamp\www\dev\ttt\wp-content\plugins\My-Meta-Box\meta-box-class/my-meta-box-class.php:863
-msgid "Uploaded files"
-msgstr ""
-
-#: C:\wamp\www\dev\ttt\wp-content\plugins\My-Meta-Box\meta-box-class/my-meta-box-class.php:874
-msgid "Upload new files"
-msgstr ""
-
-#: C:\wamp\www\dev\ttt\wp-content\plugins\My-Meta-Box\meta-box-class/my-meta-box-class.php:880
-msgid "Add more files"
-msgstr ""
-
-#: C:\wamp\www\dev\ttt\wp-content\plugins\My-Meta-Box\meta-box-class/my-meta-box-class.php:930
+#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:786
 msgid "Select a color"
+msgstr ""
+
+#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:1819
+#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:1827
+msgid "Sorry, you cannot upload this file type for this field."
 msgstr ""
