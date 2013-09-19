@@ -1865,7 +1865,7 @@ class AT_Meta_Box {
    */
   public function load_textdomain(){
     //In themes/plugins/mu-plugins directory
-    load_textdomain( 'mmb', dirname(__FILE__) . '/lang/' . get_locale() .'mo' );
+    load_textdomain( 'mmb', dirname(__FILE__) . '/lang/' . get_locale() . '.mo' );
   }
 } // End Class
 endif; // End Check Class Exists
