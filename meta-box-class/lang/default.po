@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: My-MetaBox-Class\n"
-"POT-Creation-Date: 2013-09-19 17:37-0300\n"
-"PO-Revision-Date: 2013-09-19 17:38-0300\n"
+"POT-Creation-Date: 2013-09-24 15:59-0300\n"
+"PO-Revision-Date: 2013-09-24 15:59-0300\n"
 "Last-Translator: Daniel Kossmann Ferraz <daniel@spirallab.com.br>\n"
 "Language-Team: WP-EX <admin@bainternet.info>\n"
 "Language: en_US\n"
@@ -22,6 +22,22 @@ msgstr ""
 
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:432
 msgid "Add"
+msgstr ""
+
+#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:726
+msgid "Remove File"
+msgstr ""
+
+#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:728
+msgid "Upload File"
+msgstr ""
+
+#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:762
+msgid "Remove Image"
+msgstr ""
+
+#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:764
+msgid "Upload Image"
 msgstr ""
 
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:786
