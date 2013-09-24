@@ -531,9 +531,15 @@ class AT_Meta_Box {
    * @since 1.0
    * @access public
    */
-  public function show_field_text( $field, $meta) {  
+  public function show_field_text( $field, $meta) { 
+    if ($field['disable'] == true) {
+        $disable = 'readonly';
+    } else {
+        $disable = '';
+    }
+     
     $this->show_field_begin( $field, $meta );
-    echo "<input type='text' class='at-text".( isset($field['class'])? ' ' . $field['class'] : '' )."' name='{$field['id']}' id='{$field['id']}' value='{$meta}' size='30' ".( isset($field['style'])? "style='{$field['style']}'" : '' )."/>";
+    echo "<input type='text' class='at-text".( isset($field['class'])? ' ' . $field['class'] : '' )."' name='{$field['id']}' id='{$field['id']}' value='{$meta}' size='30' ".( isset($field['style'])? "style='{$field['style']}'" : '' )." ".$disable." />";
     $this->show_field_end( $field, $meta );
   }
   
@@ -1318,8 +1324,8 @@ class AT_Meta_Box {
   
   /**
    *  Add Text Field to meta box
-   *  @author Ohad Raz
-   *  @since 1.0
+   *  @author Ohad Raz, Filipe F. Kalicki
+   *  @since 1.1
    *  @access public
    *  @param $id string  field id, i.e. the meta key
    *  @param $args mixed|array
@@ -1330,12 +1336,20 @@ class AT_Meta_Box {
    *    'validate_func' => // validate function, string optional
    *   @param $repeater bool  is this a field inside a repeatr? true|false(default) 
    */
-  public function addText($id,$args,$repeater=false){
-    $new_field = array('type' => 'text','id'=> $id,'std' => '','desc' => '','style' =>'','name' => 'Text Field');
+  public function addText($id, $args, $repeater = false){
+    $new_field = array(
+        'type' => 'text',
+        'id'=> $id,
+        'std' => '',
+        'desc' => '',
+        'style' => '',
+        'disable' => '',
+        'name' => 'Text Field'
+    );
     $new_field = array_merge($new_field, $args);
-    if(false === $repeater){
+    if (false === $repeater) {
       $this->_fields[] = $new_field;
-    }else{
+    } else {
       return $new_field;
     }
   }
