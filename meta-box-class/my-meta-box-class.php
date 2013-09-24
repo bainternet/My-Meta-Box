@@ -596,7 +596,19 @@ class AT_Meta_Box {
     echo '<p>'.$field['value'].'</p>';
     //$this->show_field_end( $field, $meta );
   }
-    
+
+  /**
+   * Show Field Separator.
+   *
+   * @since 4.0
+   * @access public
+   */
+  public function show_field_separator( $field) {  
+    //$this->show_field_begin( $field, $meta );
+    echo '<tr><td><hr /></td></tr>'; 
+    //$this->show_field_end( $field, $meta ); 
+  }        
+        
   /**
    * Show Field Textarea.
    *
@@ -990,7 +1002,7 @@ class AT_Meta_Box {
       }
       
       //skip on Paragraph field
-      if ($type != "paragraph"){
+      if ($type != "paragraph" &&  $type != "separator"){
 
         // Call defined method to save meta value, if there's no methods, call common one.
         $save_func = 'save_field_' . $type;
@@ -1397,6 +1409,22 @@ class AT_Meta_Box {
       return $new_field;
     }
   }
+  
+  /**
+   *  Add Separator to meta box
+   *  @author Filipe F. Kalicki
+   *  @since 4.0
+   *  @access public
+   */
+  public function addSeparator($id, $args, $repeater=false) {
+    $new_field = array('type' => 'separator','id'=> $id,'value' => '');
+    $new_field = array_merge($new_field, $args);
+    if(false === $repeater){
+      $this->_fields[] = $new_field;
+    }else{
+      return $new_field;
+    }
+  }  
 
   /**
    *  Add CheckboxList Field to meta box
