@@ -56,6 +56,8 @@ if (is_admin()){
   $my_meta->addImage($prefix.'image_field_id',array('name'=> 'My Image '));
   //file upload field
   $my_meta->addFile($prefix.'file_field_id',array('name'=> 'My File'));
+  // separator field 
+  $my_meta->addSeparator();
   //file upload field with type limitation
   $my_meta->addFile($prefix.'file_pdf_field_id',array('name'=> 'My File limited to PDF Only','ext' =>'pdf','mime_type' => 'application/pdf'));
   /*
