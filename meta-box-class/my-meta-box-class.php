@@ -607,7 +607,52 @@ class AT_Meta_Box {
     //$this->show_field_begin( $field, $meta );
     echo '<tr><td><hr /></td></tr>'; 
     //$this->show_field_end( $field, $meta ); 
-  }        
+  }
+        
+    
+    /**
+   * Show Field Slider
+   *
+   * @param string $field 
+   * @param string $meta 
+   * @since 1.0
+   * @access public
+   */  
+  public function show_field_slider($field, $meta) {
+        
+    $this->show_field_begin($field, $meta);
+    
+    if($meta == "" && $field['value'])
+        $meta = $field['value'];
+        
+    if($field['value'] == "" && !$meta)
+        $meta = $field['min'];
+        
+    switch ($field['range']) {
+        case 'asc':
+            $field['range'] = 'min';
+        break;
+        case 'desc':
+            $field['range'] = 'max';
+        break;
+        case 'none':
+            $field['range'] = 'false';
+        break;
+    }
+    
+    if($field['info'])
+        echo '<span>' .$field['info']. '<span>';
+    
+      echo '<div class="at-slider" data-min="'.$field['min'].'" data-max="'.$field['max'].'" data-range="'.$field['range'].'" data-step="'.$field['step'].'" data-value="' .$meta. '">';
+        
+        echo '<div class="slider-ui"></div>';
+        echo '<input type="text" class="amount" name="' .$field['id']. '" id="' .$field['id']. '" value="' .$meta. '" readonly/>';
+        
+      echo '</div>';
+        
+    $this->show_field_end($field, $meta);
+  
+  }
         
   /**
    * Show Field Textarea.
@@ -1419,11 +1464,52 @@ class AT_Meta_Box {
   public function addSeparator($id, $args, $repeater=false) {
     $new_field = array('type' => 'separator','id'=> $id,'value' => '');
     $new_field = array_merge($new_field, $args);
-    if(false === $repeater){
-      $this->_fields[] = $new_field;
-    }else{
-      return $new_field;
+    if (false === $repeater) {
+        $this->_fields[] = $new_field;    
+    } else {
+        return $new_field;
     }
+  }
+  
+    /**
+   *  Add Slider Field to meta box
+   *  @author Filipe F. Kalicki
+   *  @since 1.0
+   *  @access public
+   *  @param $id string field id, i.e. the meta key
+   *  @param $options (array)  array of key => value pairs for select options  
+   *  @param $args mixed|array
+   *    'name' => // field name/label string optional
+   *    'desc' => // field description, string optional
+   *    'info' => // Text that is beside the select
+   *    'min' => // The minimum value of the slider
+   *    'max' => // The maximum value of the slider
+   *    'range' => // Whether the slider represents a range - Multiple types: 
+   *        - Boolean: If set to none (false), the slider will detect if you have two handles and don't will create a styleable range element between these two. optional, default
+   *        - String: Either asc (min) or desc (max). A asc range goes from the slider min to one handle. A desc range goes from one handle to the slider max.
+   *    'step' => // Determines the size or amount of each interval or step the slider takes between the min and max. The full specified value range of the slider (max - min) should be evenly divisible by the step.
+   *    'value' => // default value, optional
+   *  @param $repeater bool  is this a field inside a repeatr? true|false(default) 
+   */
+  public function addSlider($id, $args, $repeater = false) {
+    $new_field = array (
+        'type' => 'slider',
+        'id' => $id,
+        'desc' => '',
+        'info' => '',
+        'min' => '',
+        'max' => '',
+        'range' => '',
+        'step' => '',
+        'value' => '',
+        'style' =>'',
+        'name' => 'Slider Field',
+    );
+    $new_field = array_merge($new_field, $args);
+    if (false === $repeater)
+        $this->_fields[] = $new_field;
+    else
+        return $new_field;
   }  
 
   /**
