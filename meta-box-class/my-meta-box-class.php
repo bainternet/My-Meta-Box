@@ -168,6 +168,19 @@ class AT_Meta_Box {
       
       // Enqueue Meta Box Scripts
       wp_enqueue_script( 'at-meta-box', $plugin_path . '/js/meta-box.js', array( 'jquery' ), null, true );
+      wp_localize_script( 'at-meta-box', 'objectL10n', array(
+            'dateFormat'  => __( 'yy-mm-dd', 'mmb' ),
+            'dayNames' => __( "'Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'",'mmb' ),
+            'dayNamesMin' => __("'Su','Mo','Tu','We','Th','Fr','Sa'", 'mmb'),
+            'dayNamesShort' => __("'Sun','Mon','Tue','Wed','Thu','Fri','Sat'", 'mmb'),
+            'monthNames' => __("'January','February','March','April','May','June', 'July','August','September','October','November','December'", 'mmb'),
+            'monthNamesShort' => __("'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'", 'mmb'),
+            'nextText' => __("Next", 'mmb'),
+            'prevText' => __("Prev", 'mmb'),
+            'currentText' => __('Today', 'mmb'),
+            'closeText' => __('Done', 'mmb'),
+            'clearText' => __('Clear', 'mmb')
+      )); 
 
       // Make upload feature work event when custom post type doesn't support 'editor'
       if ($this->has_field('image') || $this->has_field('file')){
