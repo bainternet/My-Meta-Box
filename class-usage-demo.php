@@ -58,6 +58,19 @@ if (is_admin()){
   $my_meta->addFile($prefix.'file_field_id',array('name'=> 'My File'));
   // separator field 
   $my_meta->addSeparator();
+  // slider field
+  $my_meta->addSlider($prefix.'slider_field_id', 
+    array ( 
+        'name' => 'My Slider', 
+        'info' => 'Information that is above the Slider UI',
+        'desc' => 'information that is below the Slider UI',
+        'min' => '0', // value minimal
+        'max' => '100', // value maximal
+        'range' => 'asc', // asc (min) | desc (max) | none (false (default) )
+        'step' => '5', // Determines the size or amount of each interval or step the slider takes between the min and max. The full specified value range of the slider (max - min) should be evenly divisible by the step.
+        'value' => '' // default value, optional
+    ) 
+  );
   //file upload field with type limitation
   $my_meta->addFile($prefix.'file_pdf_field_id',array('name'=> 'My File limited to PDF Only','ext' =>'pdf','mime_type' => 'application/pdf'));
   /*
