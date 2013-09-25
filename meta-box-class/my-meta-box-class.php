@@ -349,31 +349,35 @@ class AT_Meta_Box {
     wp_nonce_field( basename(__FILE__), 'at_meta_box_nonce' );
     echo '<table class="form-table">';
     foreach ( $this->_fields as $field ) {
-      $field['multiple'] = isset($field['multiple']) ? $field['multiple'] : false;
-      $meta = get_post_meta( $post->ID, $field['id'], !$field['multiple'] );
-      $meta = ( $meta !== '' ) ? $meta : @$field['std'];
-
-      if (!in_array($field['type'], array('image', 'repeater','file')))
-        $meta = is_array( $meta ) ? array_map( 'esc_attr', $meta ) : esc_attr( $meta );
-      
-      if ($this->inGroup !== true)
-        echo '<tr>';
-
-      if (isset($field['group']) && $field['group'] == 'start'){
-        $this->inGroup = true;
-        echo '<td><table class="form-table"><tr>';
-      }
-      
-      // Call Separated methods for displaying each type of field.
-      call_user_func ( array( $this, 'show_field_' . $field['type'] ), $field, $meta );
-
-      if ($this->inGroup === true){
-        if(isset($field['group']) && $field['group'] == 'end'){
-          echo '</tr></table></td></tr>';
-          $this->inGroup = false;
-        }
-      }else{
-        echo '</tr>';
+      if( $field['type'] == "separator" ) {
+          call_user_func ( array( $this, 'show_field_' . $field['type'] ), $field, $meta );
+      } else {
+          $field['multiple'] = isset($field['multiple']) ? $field['multiple'] : false;
+          $meta = get_post_meta( $post->ID, $field['id'], !$field['multiple'] );
+          $meta = ( $meta !== '' ) ? $meta : @$field['std'];
+    
+          if (!in_array($field['type'], array('image', 'repeater','file')))
+            $meta = is_array( $meta ) ? array_map( 'esc_attr', $meta ) : esc_attr( $meta );
+          
+          if ($this->inGroup !== true)
+            echo '<tr>';
+    
+          if (isset($field['group']) && $field['group'] == 'start'){
+            $this->inGroup = true;
+            echo '<td><table class="form-table"><tr>';
+          }
+          
+          // Call Separated methods for displaying each type of field.
+          call_user_func ( array( $this, 'show_field_' . $field['type'] ), $field, $meta );
+    
+          if ($this->inGroup === true){
+            if(isset($field['group']) && $field['group'] == 'end'){
+              echo '</tr></table></td></tr>';
+              $this->inGroup = false;
+            }
+          } else {
+            echo '</tr>';
+          }
       }
     }
     echo '</table>';
@@ -1495,9 +1499,9 @@ class AT_Meta_Box {
    *  @since 4.0
    *  @access public
    */
-  public function addSeparator($id, $args, $repeater=false) {
-    $new_field = array('type' => 'separator','id'=> $id,'value' => '');
-    $new_field = array_merge($new_field, $args);
+ public function addSeparator($repeater=false) {
+    $new_field = array('type' => 'separator');
+    //$new_field = array_merge($new_field, $args);
     if (false === $repeater) {
         $this->_fields[] = $new_field;    
     } else {
