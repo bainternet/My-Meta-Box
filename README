@@ -34,6 +34,9 @@ Changelog
 * Fixed languague loader
 * Updated laguague files (Default, pt_BR)
 * Added separator field type
+* Fixed "Upload Image" and "Upload File" button text
+* Added translation support to Date Field
+
 [work in progress]
 
 
