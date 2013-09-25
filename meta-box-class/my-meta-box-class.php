@@ -798,9 +798,9 @@ class AT_Meta_Box {
     echo "<input type='hidden' name='{$name}[id]' value='{$value['id']}'/>";
     echo "<input type='hidden' name='{$name}[url]' value='{$value['url']}'/>";
     if ($has_file)
-      echo "<input type='button' class='{$multiple} button simplePanelfileUploadclear' id='{$id}' value='".__("Remove File","mmb")."' data-mime_type='{$type}' data-ext='{$ext}'/>";
+      echo "<input type='button' class='{$multiple} button simplePanelfileUploadclear' id='{$id}' value='".__('Remove File','mmb')."' data-mime_type='{$type}' data-ext='{$ext}'/>";
     else
-      echo "<input type='button' class='{$multiple} button simplePanelfileUpload' id='{$id}' value=''".__("Upload File","mmb")."'' data-mime_type='{$type}' data-ext='{$ext}'/>";
+      echo "<input type='button' class='{$multiple} button simplePanelfileUpload' id='{$id}' value='".__('Upload File','mmb')."' data-mime_type='{$type}' data-ext='{$ext}'/>";
 
     $this->show_field_end( $field, $meta );
   }
@@ -834,9 +834,9 @@ class AT_Meta_Box {
     echo "<input type='hidden' name='{$name}[id]' value='{$value['id']}'/>";
     echo "<input type='hidden' name='{$name}[url]' value='{$value['url']}'/>";
     if ($has_image)
-      echo "<input class='{$multiple} button  simplePanelimageUploadclear' id='{$id}' value=''".__("Remove Image","mmb")."'' type='button'/>";
+      echo "<input class='{$multiple} button  simplePanelimageUploadclear' id='{$id}' value='".__('Remove Image', 'mmb')."' type='button'/>";
     else
-      echo "<input class='{$multiple} button simplePanelimageUpload' id='{$id}' value=''".__("Upload Image","mmb")."'' type='button'/>";
+      echo "<input class='{$multiple} button simplePanelimageUpload' id='{$id}' value='".__('Upload Image', 'mmb')."' type='button'/>";
     $this->show_field_end( $field, $meta );
   }
   
