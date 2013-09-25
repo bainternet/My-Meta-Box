@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: My-MetaBox-Class\n"
-"POT-Creation-Date: 2013-09-24 15:59-0300\n"
-"PO-Revision-Date: 2013-09-24 15:59-0300\n"
+"POT-Creation-Date: 2013-09-24 18:03-0300\n"
+"PO-Revision-Date: 2013-09-24 18:03-0300\n"
 "Last-Translator: Daniel Kossmann Ferraz <daniel@spirallab.com.br>\n"
 "Language-Team: WP-EX <admin@bainternet.info>\n"
 "Language: en_US\n"
@@ -15,36 +15,78 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: /home/kossmann/workspace/My-Meta-Box/meta-box-class\n"
 
-#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:420
-#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:459
-msgid "Remove"
+#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:172
+msgid "'Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'"
+msgstr ""
+
+#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:173
+msgid "'Su','Mo','Tu','We','Th','Fr','Sa'"
+msgstr ""
+
+#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:174
+msgid "'Sun','Mon','Tue','Wed','Thu','Fri','Sat'"
+msgstr ""
+
+#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:175
+msgid ""
+"'January','February','March','April','May','June', "
+"'July','August','September','October','November','December'"
+msgstr ""
+
+#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:176
+msgid "'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'"
+msgstr ""
+
+#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:177
+msgid "Next"
+msgstr ""
+
+#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:178
+msgid "Prev"
+msgstr ""
+
+#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:179
+msgid "Today"
+msgstr ""
+
+#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:180
+msgid "Done"
+msgstr ""
+
+#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:181
+msgid "Clear"
 msgstr ""
 
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:432
+#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:471
+msgid "Remove"
+msgstr ""
+
+#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:444
 msgid "Add"
 msgstr ""
 
-#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:726
+#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:801
 msgid "Remove File"
 msgstr ""
 
-#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:728
+#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:803
 msgid "Upload File"
 msgstr ""
 
-#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:762
+#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:837
 msgid "Remove Image"
 msgstr ""
 
-#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:764
+#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:839
 msgid "Upload Image"
 msgstr ""
 
-#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:786
+#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:861
 msgid "Select a color"
 msgstr ""
 
-#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:1819
-#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:1827
+#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:1959
+#: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:1967
 msgid "Sorry, you cannot upload this file type for this field."
 msgstr ""

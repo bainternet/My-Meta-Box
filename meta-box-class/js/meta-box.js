@@ -157,10 +157,22 @@ var _metabox_fields = {
             var $this = $(this),
                 format = $this.attr('rel');
 
-            $this.datepicker({
-                showButtonPanel: true,
-                dateFormat: format
-            });
+            // Datapicker settings 
+            $this.datepicker( { 
+                showButtonPanel: true, 
+                dateFormat: format,
+                dateFormat: objectL10n.dateFormat,
+                dayNames: eval('[' + objectL10n.dayNames + ']'),
+                dayNamesMin: eval('[' + objectL10n.dayNamesMin + ']'),
+                dayNamesShort: eval('[' + objectL10n.dayNamesShort + ']'),
+                monthNames: eval('[' + objectL10n.monthNames + ']'),
+                monthNamesShort: eval('[' + objectL10n.monthNamesShort + ']'),
+                nextText: objectL10n.nextText,
+                prevText: objectL10n.prevText,
+                currentText: objectL10n.currentText,
+                closeText: objectL10n.closeText,
+                clearText: objectL10n.clearText  
+            });            
 
         });
     },
