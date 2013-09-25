@@ -146,9 +146,16 @@ var _metabox_fields = {
             $this.timepicker({
                 showSecond: true,
                 timeFormat: format,
-                ampm: aampm
+                ampm: aampm,
+                timeOnlyTitle: objectL10n.timeOnlyTitle,
+                timeText: objectL10n.timeText,
+                hourText: objectL10n.hourText,
+                minuteText: objectL10n.minuteText,
+                secondText: objectL10n.secondText,
+                millisecText: objectL10n.millisecText,
+                timezoneText: objectL10n.timezoneText,
+                currentText: objectL10n.currentTimeText
             });
-
         });
     },
     load_date_picker: function () {
