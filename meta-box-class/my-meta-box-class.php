@@ -178,7 +178,15 @@ class AT_Meta_Box {
             'prevText' => __("Prev", 'mmb'),
             'currentText' => __('Today', 'mmb'),
             'closeText' => __('Done', 'mmb'),
-            'clearText' => __('Clear', 'mmb')
+            'clearText' => __('Clear', 'mmb'),
+            'timeOnlyTitle' => __('Choose Time', 'mmb'),
+            'timeText' => __('Time', 'mmb'),
+            'hourText' => __('Hour', 'mmb'),
+            'minuteText' => __('Minute', 'mmb'),
+            'secondText' => __('Second', 'mmb'),
+            'millisecText' => __('Millisecond', 'mmb'),
+            'timezoneText' => __('Timezone', 'mmb'),
+            'currentTimeText' => __('Now', 'mmb'),
       )); 
 
       // Make upload feature work event when custom post type doesn't support 'editor'
