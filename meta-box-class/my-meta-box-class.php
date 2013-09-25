@@ -169,7 +169,6 @@ class AT_Meta_Box {
       // Enqueue Meta Box Scripts
       wp_enqueue_script( 'at-meta-box', $plugin_path . '/js/meta-box.js', array( 'jquery' ), null, true );
       wp_localize_script( 'at-meta-box', 'objectL10n', array(
-            'dateFormat'  => __( 'yy-mm-dd', 'mmb' ),
             'dayNames' => __( "'Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'",'mmb' ),
             'dayNamesMin' => __("'Su','Mo','Tu','We','Th','Fr','Sa'", 'mmb'),
             'dayNamesShort' => __("'Sun','Mon','Tue','Wed','Thu','Fri','Sat'", 'mmb'),
