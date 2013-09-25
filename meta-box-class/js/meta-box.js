@@ -37,6 +37,7 @@ var _metabox_fields = {
         }
         this.load_code_editor();
         this.load_conditinal();
+        this.load_slider();
         this.load_time_picker();
         this.load_date_picker();
         this.load_color_picker();
@@ -130,6 +131,29 @@ var _metabox_fields = {
             } else {
                 $(this).next().hide('fast');
             }
+        });
+    },
+    load_slider: function() {
+        $('.at-slider').each(function () {
+            
+            var $this = $(this),
+                min = $this.data('min'),
+                max = $this.data('max'),
+                range = $this.data('range'),
+                step = $this.data('step'),
+                value = $('.amount', $this).val();
+            
+            $('.slider-ui', $this).slider({
+                min: min,
+                max: max,
+                range: range,
+                step: step,
+                value: value,
+                animate: 'slow',
+                slide: function (event, ui) {
+                    $('.amount', $this).val(ui.value);
+                }
+            });
         });
     },
     load_time_picker: function () {
