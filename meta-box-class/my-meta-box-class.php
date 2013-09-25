@@ -186,7 +186,7 @@ class AT_Meta_Box {
             'secondText' => __('Second', 'mmb'),
             'millisecText' => __('Millisecond', 'mmb'),
             'timezoneText' => __('Timezone', 'mmb'),
-            'currentTimeText' => __('Now', 'mmb'),
+            'currentTimeText' => __('Now', 'mmb')
       )); 
 
       // Make upload feature work event when custom post type doesn't support 'editor'
