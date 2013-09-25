@@ -154,6 +154,7 @@ var _metabox_fields = {
                 secondText: objectL10n.secondText,
                 millisecText: objectL10n.millisecText,
                 timezoneText: objectL10n.timezoneText,
+                closeText: objectL10n.closeText,
                 currentText: objectL10n.currentTimeText
             });
         });
