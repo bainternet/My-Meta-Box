@@ -1,11 +1,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: My-MetaBox-Class\n"
-"POT-Creation-Date: 2013-09-25 13:45-0300\n"
-"PO-Revision-Date: 2013-09-25 13:45-0300\n"
+"POT-Creation-Date: 2013-09-25 13:46-0300\n"
+"PO-Revision-Date: 2013-09-25 13:48-0300\n"
 "Last-Translator: Daniel Kossmann Ferraz <daniel@spirallab.com.br>\n"
-"Language-Team: WP-EX <admin@bainternet.info>\n"
-"Language: en_US\n"
+"Language-Team: Spirallab <hello@spirallab.com.br>\n"
+"Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -17,108 +17,109 @@ msgstr ""
 
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:172
 msgid "'Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'"
-msgstr ""
+msgstr "'Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'"
 
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:173
 msgid "'Su','Mo','Tu','We','Th','Fr','Sa'"
-msgstr ""
+msgstr "'D','S','T','Q','Q','S','S','D'"
 
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:174
 msgid "'Sun','Mon','Tue','Wed','Thu','Fri','Sat'"
-msgstr ""
+msgstr "'Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'"
 
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:175
 msgid ""
 "'January','February','March','April','May','June', "
 "'July','August','September','October','November','December'"
-msgstr ""
+msgstr "'Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'"
 
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:176
 msgid "'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'"
-msgstr ""
+msgstr "'Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'"
 
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:177
 msgid "Next"
-msgstr ""
+msgstr "Próximo"
 
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:178
 msgid "Prev"
-msgstr ""
+msgstr "Anterior"
 
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:179
 msgid "Today"
-msgstr ""
+msgstr "Hoje"
 
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:180
 msgid "Done"
-msgstr ""
+msgstr "Feito"
 
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:181
 msgid "Clear"
-msgstr ""
+msgstr "Limpar"
 
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:182
 msgid "Choose Time"
-msgstr ""
+msgstr "Escolha o Horário"
 
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:183
 msgid "Time"
-msgstr ""
+msgstr "Horário"
 
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:184
 msgid "Hour"
-msgstr ""
+msgstr "Hora"
 
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:185
 msgid "Minute"
-msgstr ""
+msgstr "Minuto"
 
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:186
 msgid "Second"
-msgstr ""
+msgstr "Segundo"
 
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:187
 msgid "Millisecond"
-msgstr ""
+msgstr "Milisegundo"
 
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:188
 msgid "Timezone"
-msgstr ""
+msgstr "Fuso horário"
 
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:189
 msgid "Now"
-msgstr ""
+msgstr "Agora"
 
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:440
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:479
 msgid "Remove"
-msgstr ""
+msgstr "Remover"
 
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:452
 msgid "Add"
-msgstr ""
+msgstr "Adicionar"
 
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:809
 msgid "Remove File"
-msgstr ""
+msgstr "Remover Arquivo"
 
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:811
 msgid "Upload File"
-msgstr ""
+msgstr "Enviar Arquivo"
 
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:845
 msgid "Remove Image"
-msgstr ""
+msgstr "Remover Imagem"
 
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:847
 msgid "Upload Image"
-msgstr ""
+msgstr "Enviar Imagem"
 
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:869
 msgid "Select a color"
-msgstr ""
+msgstr "Escola uma cor"
 
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:1967
 #: /home/kossmann/workspace/My-Meta-Box/meta-box-class/my-meta-box-class.php:1975
 msgid "Sorry, you cannot upload this file type for this field."
 msgstr ""
+"Desculpe, mas você não pode enviar este tipo de arquivo para este campo."

@@ -168,6 +168,26 @@ class AT_Meta_Box {
       
       // Enqueue Meta Box Scripts
       wp_enqueue_script( 'at-meta-box', $plugin_path . '/js/meta-box.js', array( 'jquery' ), null, true );
+      wp_localize_script( 'at-meta-box', 'objectL10n', array(
+            'dayNames' => __( "'Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'",'mmb' ),
+            'dayNamesMin' => __("'Su','Mo','Tu','We','Th','Fr','Sa'", 'mmb'),
+            'dayNamesShort' => __("'Sun','Mon','Tue','Wed','Thu','Fri','Sat'", 'mmb'),
+            'monthNames' => __("'January','February','March','April','May','June', 'July','August','September','October','November','December'", 'mmb'),
+            'monthNamesShort' => __("'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'", 'mmb'),
+            'nextText' => __("Next", 'mmb'),
+            'prevText' => __("Prev", 'mmb'),
+            'currentText' => __('Today', 'mmb'),
+            'closeText' => __('Done', 'mmb'),
+            'clearText' => __('Clear', 'mmb'),
+            'timeOnlyTitle' => __('Choose Time', 'mmb'),
+            'timeText' => __('Time', 'mmb'),
+            'hourText' => __('Hour', 'mmb'),
+            'minuteText' => __('Minute', 'mmb'),
+            'secondText' => __('Second', 'mmb'),
+            'millisecText' => __('Millisecond', 'mmb'),
+            'timezoneText' => __('Timezone', 'mmb'),
+            'currentTimeText' => __('Now', 'mmb')
+      )); 
 
       // Make upload feature work event when custom post type doesn't support 'editor'
       if ($this->has_field('image') || $this->has_field('file')){
@@ -329,31 +349,35 @@ class AT_Meta_Box {
     wp_nonce_field( basename(__FILE__), 'at_meta_box_nonce' );
     echo '<table class="form-table">';
     foreach ( $this->_fields as $field ) {
-      $field['multiple'] = isset($field['multiple']) ? $field['multiple'] : false;
-      $meta = get_post_meta( $post->ID, $field['id'], !$field['multiple'] );
-      $meta = ( $meta !== '' ) ? $meta : @$field['std'];
-
-      if (!in_array($field['type'], array('image', 'repeater','file')))
-        $meta = is_array( $meta ) ? array_map( 'esc_attr', $meta ) : esc_attr( $meta );
-      
-      if ($this->inGroup !== true)
-        echo '<tr>';
-
-      if (isset($field['group']) && $field['group'] == 'start'){
-        $this->inGroup = true;
-        echo '<td><table class="form-table"><tr>';
-      }
-      
-      // Call Separated methods for displaying each type of field.
-      call_user_func ( array( $this, 'show_field_' . $field['type'] ), $field, $meta );
-
-      if ($this->inGroup === true){
-        if(isset($field['group']) && $field['group'] == 'end'){
-          echo '</tr></table></td></tr>';
-          $this->inGroup = false;
-        }
-      }else{
-        echo '</tr>';
+      if( $field['type'] == "separator" ) {
+          call_user_func ( array( $this, 'show_field_' . $field['type'] ), $field, $meta );
+      } else {
+          $field['multiple'] = isset($field['multiple']) ? $field['multiple'] : false;
+          $meta = get_post_meta( $post->ID, $field['id'], !$field['multiple'] );
+          $meta = ( $meta !== '' ) ? $meta : @$field['std'];
+    
+          if (!in_array($field['type'], array('image', 'repeater','file')))
+            $meta = is_array( $meta ) ? array_map( 'esc_attr', $meta ) : esc_attr( $meta );
+          
+          if ($this->inGroup !== true)
+            echo '<tr>';
+    
+          if (isset($field['group']) && $field['group'] == 'start'){
+            $this->inGroup = true;
+            echo '<td><table class="form-table"><tr>';
+          }
+          
+          // Call Separated methods for displaying each type of field.
+          call_user_func ( array( $this, 'show_field_' . $field['type'] ), $field, $meta );
+    
+          if ($this->inGroup === true){
+            if(isset($field['group']) && $field['group'] == 'end'){
+              echo '</tr></table></td></tr>';
+              $this->inGroup = false;
+            }
+          } else {
+            echo '</tr>';
+          }
       }
     }
     echo '</table>';
@@ -423,13 +447,7 @@ class AT_Meta_Box {
         }
       }
 
-    echo '<img src="';
-    if ($this->_Local_images){
-      echo $plugin_path.'/images/add.png';
-    }else{
-      echo 'http://i.imgur.com/w5Tuc.png';
-    }
-    echo '" alt="'.__('Add','mmb').'" title="'.__('Add','mmb').'" id="add-'.$field['id'].'"><br/></div>';
+    echo '<input type="button" class="button" id="add-'.$field['id'].'" value="'.__('Add','mmb').'">';
     
     //create all fields once more for js function and catch with object buffer
     ob_start();
@@ -456,7 +474,7 @@ class AT_Meta_Box {
     if ($field['inline']){
       echo '</tr>';
     } 
-    echo '</table><img src="'.$plugin_path.'/images/remove.png" alt="'.__('Remove','mmb').'" title="'.__('Remove','mmb').'" id="remove-'.$field['id'].'"></div>';
+    echo '</table><input type="button" class="button" id="remove-'.$field['id'].'" value="'.__('Remove','mmb').'"></div>';
     $counter = 'countadd_'.$field['id'];
     $js_code = ob_get_clean ();
     $js_code = str_replace("\n","",$js_code);
@@ -500,12 +518,13 @@ class AT_Meta_Box {
    * @access public
    */
   public function show_field_begin( $field, $meta) {
-    echo "<td class='at-field'".(($this->inGroup === true)? " valign='top'": "").">";
+    echo "<td class='at-field-title'".(($this->inGroup === true)? " valign='top'": "").">";
     if ( $field['name'] != '' || $field['name'] != FALSE ) {
-      echo "<div class='at-label'>";
+      //echo "<div class='at-label'>";
         echo "<label for='{$field['id']}'>{$field['name']}</label>";
-      echo "</div>";
+      //echo "</div>";
     }
+    echo "</td> <td class='at-field-content'".(($this->inGroup === true)? " valign='top'": "").">";
   }
   
   /**
@@ -531,9 +550,15 @@ class AT_Meta_Box {
    * @since 1.0
    * @access public
    */
-  public function show_field_text( $field, $meta) {  
+  public function show_field_text( $field, $meta) { 
+    if ($field['disable'] == true) {
+        $disable = 'readonly';
+    } else {
+        $disable = '';
+    }
+     
     $this->show_field_begin( $field, $meta );
-    echo "<input type='text' class='at-text".( isset($field['class'])? ' ' . $field['class'] : '' )."' name='{$field['id']}' id='{$field['id']}' value='{$meta}' size='30' ".( isset($field['style'])? "style='{$field['style']}'" : '' )."/>";
+    echo "<input type='text' class='at-text".( isset($field['class'])? ' ' . $field['class'] : '' )."' name='{$field['id']}' id='{$field['id']}' value='{$meta}' size='30' ".( isset($field['style'])? "style='{$field['style']}'" : '' )." ".$disable." />";
     $this->show_field_end( $field, $meta );
   }
   
@@ -596,7 +621,64 @@ class AT_Meta_Box {
     echo '<p>'.$field['value'].'</p>';
     //$this->show_field_end( $field, $meta );
   }
+
+  /**
+   * Show Field Separator.
+   *
+   * @since 4.0
+   * @access public
+   */
+  public function show_field_separator( $field) {  
+    //$this->show_field_begin( $field, $meta );
+    echo '<tr class="separator"><td><hr></td><td><hr></td></tr>'; 
+    //$this->show_field_end( $field, $meta ); 
+  }
+        
     
+    /**
+   * Show Field Slider
+   *
+   * @param string $field 
+   * @param string $meta 
+   * @since 1.0
+   * @access public
+   */  
+  public function show_field_slider($field, $meta) {
+        
+    $this->show_field_begin($field, $meta);
+    
+    if($meta == "" && $field['value'])
+        $meta = $field['value'];
+        
+    if($field['value'] == "" && !$meta)
+        $meta = $field['min'];
+        
+    switch ($field['range']) {
+        case 'asc':
+            $field['range'] = 'min';
+        break;
+        case 'desc':
+            $field['range'] = 'max';
+        break;
+        case 'none':
+            $field['range'] = 'false';
+        break;
+    }
+    
+    if($field['info'])
+        echo '<span>' .$field['info']. '<span>';
+    
+      echo '<div class="at-slider" data-min="'.$field['min'].'" data-max="'.$field['max'].'" data-range="'.$field['range'].'" data-step="'.$field['step'].'" data-value="' .$meta. '">';
+        
+        echo '<div class="slider-ui"></div>';
+        echo '<input type="text" class="amount" name="' .$field['id']. '" id="' .$field['id']. '" value="' .$meta. '" readonly/>';
+        
+      echo '</div>';
+        
+    $this->show_field_end($field, $meta);
+  
+  }
+        
   /**
    * Show Field Textarea.
    *
@@ -723,9 +805,9 @@ class AT_Meta_Box {
     echo "<input type='hidden' name='{$name}[id]' value='{$value['id']}'/>";
     echo "<input type='hidden' name='{$name}[url]' value='{$value['url']}'/>";
     if ($has_file)
-      echo "<input type='button' class='{$multiple} button simplePanelfileUploadclear' id='{$id}' value='Remove File' data-mime_type='{$type}' data-ext='{$ext}'/>";
+      echo "<input type='button' class='{$multiple} button simplePanelfileUploadclear' id='{$id}' value='".__('Remove File','mmb')."' data-mime_type='{$type}' data-ext='{$ext}'/>";
     else
-      echo "<input type='button' class='{$multiple} button simplePanelfileUpload' id='{$id}' value='Upload File' data-mime_type='{$type}' data-ext='{$ext}'/>";
+      echo "<input type='button' class='{$multiple} button simplePanelfileUpload' id='{$id}' value='".__('Upload File','mmb')."' data-mime_type='{$type}' data-ext='{$ext}'/>";
 
     $this->show_field_end( $field, $meta );
   }
@@ -759,9 +841,9 @@ class AT_Meta_Box {
     echo "<input type='hidden' name='{$name}[id]' value='{$value['id']}'/>";
     echo "<input type='hidden' name='{$name}[url]' value='{$value['url']}'/>";
     if ($has_image)
-      echo "<input class='{$multiple} button  simplePanelimageUploadclear' id='{$id}' value='Remove Image' type='button'/>";
+      echo "<input class='{$multiple} button  simplePanelimageUploadclear' id='{$id}' value='".__('Remove Image', 'mmb')."' type='button'/>";
     else
-      echo "<input class='{$multiple} button simplePanelimageUpload' id='{$id}' value='Upload Image' type='button'/>";
+      echo "<input class='{$multiple} button simplePanelimageUpload' id='{$id}' value='".__('Upload Image', 'mmb')."' type='button'/>";
     $this->show_field_end( $field, $meta );
   }
   
@@ -990,7 +1072,7 @@ class AT_Meta_Box {
       }
       
       //skip on Paragraph field
-      if ($type != "paragraph"){
+      if ($type != "paragraph" &&  $type != "separator"){
 
         // Call defined method to save meta value, if there's no methods, call common one.
         $save_func = 'save_field_' . $type;
@@ -1261,8 +1343,8 @@ class AT_Meta_Box {
   
   /**
    *  Add Text Field to meta box
-   *  @author Ohad Raz
-   *  @since 1.0
+   *  @author Ohad Raz, Filipe F. Kalicki
+   *  @since 1.1
    *  @access public
    *  @param $id string  field id, i.e. the meta key
    *  @param $args mixed|array
@@ -1273,12 +1355,20 @@ class AT_Meta_Box {
    *    'validate_func' => // validate function, string optional
    *   @param $repeater bool  is this a field inside a repeatr? true|false(default) 
    */
-  public function addText($id,$args,$repeater=false){
-    $new_field = array('type' => 'text','id'=> $id,'std' => '','desc' => '','style' =>'','name' => 'Text Field');
+  public function addText($id, $args, $repeater = false){
+    $new_field = array(
+        'type' => 'text',
+        'id'=> $id,
+        'std' => '',
+        'desc' => '',
+        'style' => '',
+        'disable' => '',
+        'name' => 'Text Field'
+    );
     $new_field = array_merge($new_field, $args);
-    if(false === $repeater){
+    if (false === $repeater) {
       $this->_fields[] = $new_field;
-    }else{
+    } else {
       return $new_field;
     }
   }
@@ -1397,6 +1487,63 @@ class AT_Meta_Box {
       return $new_field;
     }
   }
+  
+  /**
+   *  Add Separator to meta box
+   *  @author Filipe F. Kalicki
+   *  @since 4.0
+   *  @access public
+   */
+ public function addSeparator($repeater=false) {
+    $new_field = array('type' => 'separator');
+    //$new_field = array_merge($new_field, $args);
+    if (false === $repeater) {
+        $this->_fields[] = $new_field;    
+    } else {
+        return $new_field;
+    }
+  }
+  
+    /**
+   *  Add Slider Field to meta box
+   *  @author Filipe F. Kalicki
+   *  @since 1.0
+   *  @access public
+   *  @param $id string field id, i.e. the meta key
+   *  @param $options (array)  array of key => value pairs for select options  
+   *  @param $args mixed|array
+   *    'name' => // field name/label string optional
+   *    'desc' => // field description, string optional
+   *    'info' => // Text that is beside the select
+   *    'min' => // The minimum value of the slider
+   *    'max' => // The maximum value of the slider
+   *    'range' => // Whether the slider represents a range - Multiple types: 
+   *        - Boolean: If set to none (false), the slider will detect if you have two handles and don't will create a styleable range element between these two. optional, default
+   *        - String: Either asc (min) or desc (max). A asc range goes from the slider min to one handle. A desc range goes from one handle to the slider max.
+   *    'step' => // Determines the size or amount of each interval or step the slider takes between the min and max. The full specified value range of the slider (max - min) should be evenly divisible by the step.
+   *    'value' => // default value, optional
+   *  @param $repeater bool  is this a field inside a repeatr? true|false(default) 
+   */
+  public function addSlider($id, $args, $repeater = false) {
+    $new_field = array (
+        'type' => 'slider',
+        'id' => $id,
+        'desc' => '',
+        'info' => '',
+        'min' => '',
+        'max' => '',
+        'range' => '',
+        'step' => '',
+        'value' => '',
+        'style' =>'',
+        'name' => 'Slider Field',
+    );
+    $new_field = array_merge($new_field, $args);
+    if (false === $repeater)
+        $this->_fields[] = $new_field;
+    else
+        return $new_field;
+  }  
 
   /**
    *  Add CheckboxList Field to meta box
@@ -1865,7 +2012,7 @@ class AT_Meta_Box {
    */
   public function load_textdomain(){
     //In themes/plugins/mu-plugins directory
-    load_textdomain( 'mmb', dirname(__FILE__) . '/lang/' . get_locale() .'mo' );
+    load_textdomain( 'mmb', dirname(__FILE__) . '/lang/' . get_locale() . '.mo' );
   }
 } // End Class
 endif; // End Check Class Exists

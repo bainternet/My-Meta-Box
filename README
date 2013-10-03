@@ -29,6 +29,18 @@ Reapater field can't handle Posts and Taxonomy for now (and maybe even others).
 
 Changelog
 ---------
+= 4.0 =
+
+* Fixed languague loader
+* Updated laguague files (Default, pt_BR)
+* Added Separator field type
+* Fixed bug: "Upload Image" and "Upload File" button was empty
+* Added translation support to Date Field and Time Field
+* Added Slider field type
+
+[work in progress]
+
+
 = 3.1.0 = 
 
 * All uploads hadled by wordpress and not by the class
