@@ -518,13 +518,13 @@ class AT_Meta_Box {
    * @access public
    */
   public function show_field_begin( $field, $meta) {
-    echo "<th class='at-field'".(($this->inGroup === true)? " valign='top'": "").">";
+    echo "<td class='at-field-title'".(($this->inGroup === true)? " valign='top'": "").">";
     if ( $field['name'] != '' || $field['name'] != FALSE ) {
       //echo "<div class='at-label'>";
         echo "<label for='{$field['id']}'>{$field['name']}</label>";
       //echo "</div>";
     }
-    echo '</th> <td>';
+    echo "</td> <td class='at-field-content'".(($this->inGroup === true)? " valign='top'": "").">";
   }
   
   /**
@@ -630,7 +630,7 @@ class AT_Meta_Box {
    */
   public function show_field_separator( $field) {  
     //$this->show_field_begin( $field, $meta );
-    echo '<tr><td><hr /></td></tr>'; 
+    echo '<tr class="separator"><td><hr></td><td><hr></td></tr>'; 
     //$this->show_field_end( $field, $meta ); 
   }
         
