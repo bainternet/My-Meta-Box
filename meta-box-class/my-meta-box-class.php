@@ -447,13 +447,7 @@ class AT_Meta_Box {
         }
       }
 
-    echo '<img src="';
-    if ($this->_Local_images){
-      echo $plugin_path.'/images/add.png';
-    }else{
-      echo 'http://i.imgur.com/w5Tuc.png';
-    }
-    echo '" alt="'.__('Add','mmb').'" title="'.__('Add','mmb').'" id="add-'.$field['id'].'"><br/></div>';
+    echo '<input type="button" class="button" id="add-'.$field['id'].'" value="'.__('Add','mmb').'">';
     
     //create all fields once more for js function and catch with object buffer
     ob_start();
@@ -480,7 +474,7 @@ class AT_Meta_Box {
     if ($field['inline']){
       echo '</tr>';
     } 
-    echo '</table><img src="'.$plugin_path.'/images/remove.png" alt="'.__('Remove','mmb').'" title="'.__('Remove','mmb').'" id="remove-'.$field['id'].'"></div>';
+    echo '</table><input type="button" class="button" id="remove-'.$field['id'].'" value="'.__('Remove','mmb').'"></div>';
     $counter = 'countadd_'.$field['id'];
     $js_code = ob_get_clean ();
     $js_code = str_replace("\n","",$js_code);
@@ -524,12 +518,13 @@ class AT_Meta_Box {
    * @access public
    */
   public function show_field_begin( $field, $meta) {
-    echo "<td class='at-field'".(($this->inGroup === true)? " valign='top'": "").">";
+    echo "<th class='at-field'".(($this->inGroup === true)? " valign='top'": "").">";
     if ( $field['name'] != '' || $field['name'] != FALSE ) {
-      echo "<div class='at-label'>";
+      //echo "<div class='at-label'>";
         echo "<label for='{$field['id']}'>{$field['name']}</label>";
-      echo "</div>";
+      //echo "</div>";
     }
+    echo '</th> <td>';
   }
   
   /**
