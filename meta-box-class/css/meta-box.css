@@ -8,7 +8,7 @@
 
 /* =Common Rules for all fields.
 ----------------------------------------------- */
-.form-table td.at-field {
+.form-table td.at-field-content {
     font-family: "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
@@ -49,22 +49,36 @@ input[disabled] {
     background: #ddd;
 }
 
-.amount {
-	float: left;
+.separator td { padding: 0; }
+
+hr {
+    display: block;
+    width: 100%;
+    border: 0;
+    border-top: 1px solid #dfdfdf;
+    border-bottom: 1px solid #fff;
+    clear: both;
 }
 
 /* =Form Fields
 ----------------------------------------------- */
-.postbox .at-field input:not(.button),
-.postbox .at-field textarea {
+.postbox .at-field-title, .postbox .at-field-content {
+    vertical-align: top;
+    text-align: left;
+}
+
+.postbox .at-field-content input:not(.button),
+.postbox .at-field-content textarea {
+    width: 100%;
     padding: 5px;
     line-height: 18px;
 }
 
-.postbox .at-field input.at-radio {
+.postbox .at-field-content input[type="radio"], .postbox .at-field-content input[type="checkbox"] {
+    width: auto;
 }
 
-.postbox .at-field input.at-color {
+.postbox .at-field-content input.at-color {
     border: 0px;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
@@ -73,8 +87,8 @@ input[disabled] {
     min-width: 100px;
 }
 
-.at-field input:focus, 
-.at-field textarea:focus {
+.at-field-content input:focus, 
+.at-field-content textarea:focus {
     background: #fffff8;
 }
 
@@ -85,7 +99,7 @@ input[disabled] {
     min-width: 200px;
 }
 
-.at-field .desc-field {
+.at-field-content .desc-field {
     color: #AAA;
     font-style: italic;
     margin: 5px 0 0 3px !important;
@@ -93,13 +107,18 @@ input[disabled] {
     clear: both;
 }
 
-.at-field .wp_themeSkin table.mceLayout {
+.at-field-content .wp_themeSkin table.mceLayout {
     border: 1px solid #DFDFDF;
 }
 
-#post-body .at-field .wp_themeSkin .mceStatusbar a.mceResize {
+#post-body .at-field-content .wp_themeSkin .mceStatusbar a.mceResize {
     top: -25px;
 } 
+
+.postbox .at-field-content .amount:not(.button) {
+	float: left;
+    width: 19%;
+}
 
 /* =Uploaded Images
 ----------------------------------------------- */
