@@ -69,6 +69,10 @@ var _metabox_fields = {
   },
   load_code_editor: function(){
     $(".code_text").each(function() {
+
+      // if a code editor is already present, do nothing... #94
+      if($(this).next('.CodeMirror').length) return;
+
       var lang = $(this).attr("data-lang");
       //php application/x-httpd-php
       //css text/css
