@@ -870,6 +870,8 @@ class AT_Meta_Box {
     // select
     else {
       echo "<select ".( isset($field['style'])? "style='{$field['style']}' " : '' )." class='at-posts-select".( isset($field['class'])? ' ' . $field['class'] : '' )."' name='{$field['id']}" . ($field['multiple'] ? "[]' multiple='multiple' style='height:auto'" : "'") . ">";
+      if (isset($field['emptylabel']))
+        echo '<option value="-1">'.(isset($field['emptylabel'])? $field['emptylabel']: __('Select ...','mmb')).'</option>';
       foreach ($posts as $p) {
         echo "<option value='$p->ID'" . selected(in_array($p->ID, $meta), true, false) . ">$p->post_title</option>";
       }
@@ -1865,7 +1867,7 @@ class AT_Meta_Box {
    */
   public function load_textdomain(){
     //In themes/plugins/mu-plugins directory
-    load_textdomain( 'mmb', dirname(__FILE__) . '/lang/' . get_locale() .'mo' );
+    load_textdomain( 'mmb', dirname(__FILE__) . '/lang/' . get_locale() .'.mo' );
   }
 } // End Class
 endif; // End Check Class Exists
