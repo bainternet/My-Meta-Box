@@ -2,7 +2,7 @@ My Wordpress Meta box Class
 =======================
 Contributors: bainternet
 Requires at least: 3.1
-Tested up to: 3.5.1
+Tested up to: 3.7.1
 
 Description
 -----------
@@ -29,6 +29,13 @@ Reapater field can't handle Posts and Taxonomy for now (and maybe even others).
 
 Changelog
 ---------
+= 3.1.1 =
+
+* Fixed  #94.
+* Fixed #92.
+* Fixed #93. added an option to show an empty select option to posts field using `emptylabel` in the field config array.
+* Fixed #88.
+
 = 3.1.0 = 
 
 * All uploads hadled by wordpress and not by the class
