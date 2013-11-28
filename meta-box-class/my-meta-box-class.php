@@ -472,7 +472,10 @@ class AT_Meta_Box {
             update_repeater_fields();
           });
               jQuery("#remove-'.$field['id'].'").live(\'click\', function() {
-                  jQuery(this).parent().remove();
+                  if (jQuery(this).parent().hasClass("re-control"))
+                    jQuery(this).parent().parent().remove();
+                  else
+                    jQuery(this).parent().remove();
               });
           });
         </script>';
