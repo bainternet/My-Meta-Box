@@ -1154,7 +1154,7 @@ class AT_Meta_Box {
 
       $multiple = in_array( $field['type'], array( 'checkbox_list', 'file', 'image' ) );
       $std = $multiple ? array() : '';
-      $format = 'date' == $field['type'] ? 'yy-mm-dd' : ( 'time' == $field['type'] ? 'HH:mm' : '' );
+      $format = 'date' == $field['type'] ? 'yy-mm-dd' : ( 'time' == $field['type'] ? 'hh:mm' : '' );
 
       $field = array_merge( array( 'multiple' => $multiple, 'std' => $std, 'desc' => '', 'format' => $format, 'validate_func' => '' ), $field );
 
@@ -1539,11 +1539,11 @@ class AT_Meta_Box {
    *    'desc' => // field description, string optional
    *    'std' => // default value, string optional
    *    'validate_func' => // validate function, string optional
-   *    'format' => // time format, default HH:mm. Optional. See more formats here: http://goo.gl/83woX
+   *    'format' => // time format, default hh:mm. Optional. See more formats here: http://goo.gl/83woX
    *  @param $repeater bool  is this a field inside a repeatr? true|false(default)
    */
   public function addTime($id,$args,$repeater=false){
-    $new_field = array('type' => 'time','id'=> $id,'std' => '','desc' => '','format'=>'HH:mm','name' => 'Time Field', 'ampm' => false);
+    $new_field = array('type' => 'time','id'=> $id,'std' => '','desc' => '','format'=>'hh:mm','name' => 'Time Field', 'ampm' => false);
     $new_field = array_merge($new_field, $args);
     if(false === $repeater){
       $this->_fields[] = $new_field;
