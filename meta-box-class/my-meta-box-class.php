@@ -341,15 +341,17 @@ class AT_Meta_Box {
 
       if (isset($field['group']) && $field['group'] == 'start'){
         $this->inGroup = true;
-        echo '<td><table class="form-table"><tr>';
+        echo '<td><table class="form-table">';
       }
 
+      echo '<tr>';
       // Call Separated methods for displaying each type of field.
       call_user_func ( array( $this, 'show_field_' . $field['type'] ), $field, $meta );
+      echo '</tr>';
 
       if ($this->inGroup === true){
         if(isset($field['group']) && $field['group'] == 'end'){
-          echo '</tr></table></td></tr>';
+          echo '</table></td></tr>';
           $this->inGroup = false;
         }
       }else{
@@ -507,7 +509,8 @@ class AT_Meta_Box {
     if ( $field['name'] != '' || $field['name'] != FALSE ) {
       echo "<div class='at-label'>";
         echo "<label for='{$field['id']}'>{$field['name']}</label>";
-      echo "</div>";
+      echo "</div></td>";
+      echo "<td class='at-field'".(($this->inGroup === true)? " valign='top'": "").">";
     }
   }
 
@@ -1515,11 +1518,11 @@ class AT_Meta_Box {
    *    'desc' => // field description, string optional
    *    'std' => // default value, string optional
    *    'validate_func' => // validate function, string optional
-   *    'format' => // date format, default yy-mm-dd. Optional. Default "'d MM, yy'"  See more formats here: http://goo.gl/Wcwxn
+   *    'format' => // date format, default yy-mm-dd. Optional. Default "'yy-mm-dd'"  See more formats here: http://goo.gl/Wcwxn
    *  @param $repeater bool  is this a field inside a repeatr? true|false(default)
    */
   public function addDate($id,$args,$repeater=false){
-    $new_field = array('type' => 'date','id'=> $id,'std' => '','desc' => '','format'=>'d MM, yy','name' => 'Date Field');
+    $new_field = array('type' => 'date','id'=> $id,'std' => '','desc' => '','format'=>'yy-mm-dd','name' => 'Date Field');
     $new_field = array_merge($new_field, $args);
     if(false === $repeater){
       $this->_fields[] = $new_field;
