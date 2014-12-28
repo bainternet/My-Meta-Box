@@ -1824,7 +1824,7 @@ class AT_Meta_Box {
       $ext =  substr(strrchr($file['name'],'.'),1);
 
       if (!in_array($ext, (array)$allowed)){
-        $file['error'] = __("Sorry, you cannot upload this file type for this field.");
+        $file['error'] = __("Sorry, you cannot upload this file type for this field.",'mmb');
         return $file;
       }
 
@@ -1832,7 +1832,7 @@ class AT_Meta_Box {
         if (strpos($key, $ext) || $key == $ext)
           return $file;
       }
-      $file['error'] = __("Sorry, you cannot upload this file type for this field.");
+      $file['error'] = __("Sorry, you cannot upload this file type for this field.",'mmb');
     }
     return $file;
   }
