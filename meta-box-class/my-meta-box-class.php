@@ -753,6 +753,7 @@ class AT_Meta_Box {
     $value        = isset($meta['id']) ? $meta : $std;
 
     $value['url'] = isset($meta['src'])? $meta['src'] : $value['url']; //backwords capability
+
     $has_image    = empty($value['url'])? false : true;
     $w            = isset($field['width'])? $field['width'] : 'auto';
     $h            = isset($field['height'])? $field['height'] : 'auto';
@@ -932,7 +933,7 @@ class AT_Meta_Box {
    * @access public
    */
   public function show_field_cond( $field, $meta ) {
-
+    global $post;
     $this->show_field_begin($field, $meta);
     $checked = false;
     if (is_array($meta) && isset($meta['enabled']) && $meta['enabled'] == 'on'){
@@ -950,13 +951,22 @@ class AT_Meta_Box {
       $m = '';
       $m = (isset($meta[$f['id']])) ? $meta[$f['id']]: '';
       $m = ( $m !== '' ) ? $m : (isset($f['std'])? $f['std'] : '');
-      if ('image' != $f['type'] && $f['type'] != 'repeater')
+
+
+      if ('image' != $f['type'] && $f['type'] != 'repeater'){
         $m = is_array( $m) ? array_map( 'esc_attr', $m ) : esc_attr( $m);
+      }elseif('image' == $f['type']){
+        $saved_data = get_post_meta($post->ID, $field['id']);
+        if(is_array($saved_data[0][$f['id']])){
+          $m = $saved_data[0][$f['id']];
+        }
+      }
         //set new id for field in array format
         $f['id'] = $id;
         echo '<tr>';
         call_user_func ( array( $this, 'show_field_' . $f['type'] ), $f, $m);
         echo '</tr>';
+
     }
     echo '</table></div>';
     $this->show_field_end( $field, $meta );
