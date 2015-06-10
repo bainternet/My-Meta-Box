@@ -11,14 +11,14 @@ Author URI: http://en.bainternet.info
 //include the main class file
 require_once("meta-box-class/my-meta-box-class.php");
 if (is_admin()){
-  /* 
+  /*
    * prefix of meta keys, optional
    * use underscore (_) at the beginning to make keys hidden, for example $prefix = '_ba_';
    *  you also can make prefix empty to disable it
-   * 
+   *
    */
   $prefix = 'ba_';
-  /* 
+  /*
    * configure your meta box
    */
   $config = array(
@@ -31,17 +31,17 @@ if (is_admin()){
     'local_images'   => false,          // Use local or hosted images (meta box images for add/remove)
     'use_with_theme' => false          //change path if used with theme set to true, false for a plugin or anything else for a custom path(default false).
   );
-  
-  
+
+
   /*
    * Initiate your meta box
    */
   $my_meta =  new AT_Meta_Box($config);
-  
+
   /*
    * Add fields to your meta box
    */
-  
+
   //text field
   $my_meta->addText($prefix.'text_field_id',array('name'=> 'My Text '));
   //textarea field
@@ -59,15 +59,15 @@ if (is_admin()){
   //file upload field with type limitation
   $my_meta->addFile($prefix.'file_pdf_field_id',array('name'=> 'My File limited to PDF Only','ext' =>'pdf','mime_type' => 'application/pdf'));
   /*
-   * Don't Forget to Close up the meta box Declaration 
+   * Don't Forget to Close up the meta box Declaration
    */
-  //Finish Meta Box Declaration 
+  //Finish Meta Box Declaration
   $my_meta->Finish();
 
   /**
    * Create a second metabox
    */
-  /* 
+  /*
    * configure your meta box
    */
   $config2 = array(
@@ -80,17 +80,17 @@ if (is_admin()){
     'local_images'   => false,          // Use local or hosted images (meta box images for add/remove)
     'use_with_theme' => false          //change path if used with theme set to true, false for a plugin or anything else for a custom path(default false).
   );
-  
-  
+
+
   /*
    * Initiate your 2nd meta box
    */
   $my_meta2 =  new AT_Meta_Box($config2);
-  
+
   /*
    * Add fields to your 2nd meta box
    */
-  //add checkboxes list 
+  //add checkboxes list
   $my_meta2->addCheckboxList($prefix.'CheckboxList_field_id',array('checkboxkey1'=>'checkbox Value1','checkboxkey2'=>'checkbox Value2'),array('name'=> 'My checkbox list ', 'std'=> array('checkboxkey2')));
   //date field
   $my_meta2->addDate($prefix.'date_field_id',array('name'=> 'My Date '));
@@ -106,11 +106,11 @@ if (is_admin()){
   $my_meta2->addPosts($prefix.'posts_field_id',array('post_type' => 'post'),array('name'=> 'My Posts '));
   //add Code editor field
   $my_meta2->addCode($prefix.'code_field_id',array(
-    'name'   => 'Code editor Field', 
+    'name'   => 'Code editor Field',
     'syntax' => 'php',
     'theme'  => 'light'
   ));
-    
+
   /*
    * To Create a reapeater Block first create an array of fields
    * use the same functions as above but add true as a last param
@@ -124,12 +124,12 @@ if (is_admin()){
    */
   //repeater block
   $my_meta2->addRepeaterBlock($prefix.'re_',array(
-    'inline'   => true, 
+    'inline'   => true,
     'name'     => 'This is a Repeater Block',
-    'fields'   => $repeater_fields, 
+    'fields'   => $repeater_fields,
     'sortable' => true
   ));
-  
+
   /*
    * To Create a conditinal Block first create an array of fields
    * use the same functions as above but add true as a last param (like the repater block)
@@ -138,7 +138,7 @@ if (is_admin()){
   $Conditinal_fields[] = $my_meta2->addTextarea($prefix.'con_textarea_field_id',array('name'=> 'My Textarea '),true);
   $Conditinal_fields[] = $my_meta2->addCheckbox($prefix.'con_checkbox_field_id',array('name'=> 'My Checkbox '),true);
   $Conditinal_fields[] = $my_meta2->addColor($prefix.'con_color_field_id',array('name'=> 'My color '),true);
-  
+
   /*
    * Then just add the fields to the repeater block
    */
@@ -150,14 +150,14 @@ if (is_admin()){
         'fields' => $Conditinal_fields,
         'std'    => false
       ));
-  
+
   /*
-   * Don't Forget to Close up the meta box Declaration 
+   * Don't Forget to Close up the meta box Declaration
    */
-  //Finish Meta Box Declaration 
+  //Finish Meta Box Declaration
   $my_meta2->Finish();
-  
-  
+
+
   $prefix = "_groupped_";
   $config3 = array(
     'id'             => 'demo_meta_box3',          // meta box id, unique per meta box
@@ -169,14 +169,14 @@ if (is_admin()){
     'local_images'   => false,          // Use local or hosted images (meta box images for add/remove)
     'use_with_theme' => false          //change path if used with theme set to true, false for a plugin or anything else for a custom path(default false).
   );
-  
-  
+
+
   /*
    * Initiate your 3rd meta box
    */
   $my_meta3 =  new AT_Meta_Box($config3);
   //first field of the group has 'group' => 'start' and last field has 'group' => 'end'
-  
+
   //text field
   $my_meta3->addText($prefix.'text_field_id',array('name'=> 'My Text ','group' => 'start'));
   //textarea field
@@ -189,8 +189,8 @@ if (is_admin()){
   $my_meta3->addRadio($prefix.'radio_field_id',array('radiokey1'=>'Radio Value1','radiokey2'=>'Radio Value2'),array('name'=> 'My Radio Filed', 'std'=> array('radionkey2'),'group' => 'end'));
 
   /*
-   * Don't Forget to Close up the meta box Declaration 
+   * Don't Forget to Close up the meta box Declaration
    */
-  //Finish Meta Box Declaration 
+  //Finish Meta Box Declaration
   $my_meta3->Finish();
 }

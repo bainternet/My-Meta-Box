@@ -8,7 +8,7 @@
 
 /* =Common Rules for all fields.
 ----------------------------------------------- */
-.form-table td.at-field{ border: 1px solid #DDD; padding: 10px 10px 20px; margin: 0px; font-family: "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue", Helvetica, Arial, sans-serif; width:100px; vertical-align: top;}
+.form-table td.at-field{ border: 1px solid #DDD; padding: 10px 10px 20px; margin: 0px; font-family: "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue", Helvetica, Arial, sans-serif; width:0; vertical-align: top;}
 .at-label { margin: 0 0 5px 0; padding: 5px 0 0 0;
 						font: 20px/31px "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue", Helvetica, Arial, sans-serif;
 						text-shadow: rgba(255, 255, 255, 1) 0 1px 0; width: auto; }
