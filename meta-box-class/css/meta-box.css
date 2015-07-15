@@ -15,6 +15,9 @@
 .at-radio-label{ padding-right: 10px; }
 .at-file-upload-label{ clear: both; margin: 5px 0px 5px 1px; }
 
+table.repeater-table{ width:100%; }
+
+
 
 /* =Form Fields
 ----------------------------------------------- */
