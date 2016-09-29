@@ -753,7 +753,8 @@ class AT_Meta_Box {
     $has_image    = empty($value['url'])? false : true;
     $w            = isset($field['width'])? $field['width'] : 'auto';
     $h            = isset($field['height'])? $field['height'] : 'auto';
-    $PreviewStyle = "style='width: $w; height: $h;". ( (!$has_image)? "display: none;'": "'");
+    $customStyle  = isset($field['style'])? $field['style'] : '';
+    $PreviewStyle = "style='width: $w; height: $h;$customStyle". ( (!$has_image)? "display: none;'": "'");
     $id           = $field['id'];
     $multiple     = isset($field['multiple'])? $field['multiple'] : false;
     $multiple     = ($multiple)? "multiFile " : "";
