@@ -1,15 +1,12 @@
-on: 
-  push:
-    branches:
-    - master
-
+on: [push, pull_request]
+name: Test
 jobs:
-  Lint:
-    name: Lint test
+  phpstan:
+    name: PHPStan
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: Eslint
-      uses: docker://pojome/php-js-lints
+    - uses: actions/checkout@master
+    - name: PHPStan
+      uses: docker://oskarstark/phpstan-ga
       with:
-        entrypoint: /bin/bash eslint .
+        args: analyse src/
