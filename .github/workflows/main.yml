@@ -1,12 +1,12 @@
 on: [push, pull_request]
 name: Test
 jobs:
-  phpstan:
+  Lint:
     name: PHPStan
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - name: PHPStan
-      uses: docker://oskarstark/phpstan-ga
+    - name: Eslint
+      uses: docker://pojome/php-js-lints
       with:
-        args: analyse src/ --level=5
+        entrypoint: /bin/bash eslint .
