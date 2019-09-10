@@ -2,11 +2,11 @@ on: [push, pull_request]
 name: Test
 jobs:
   Lint:
-    name: PHPStan
+    name: Lint
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
     - name: Eslint
       uses: docker://pojome/php-js-lints
       with:
-        entrypoint: /bin/bash eslint .
+        entrypoint: /bin/sh -c "eslint ."
