@@ -1,12 +1,15 @@
-on: [push, pull_request]
-name: Test
+on: 
+  push:
+    branches:
+    - master
+
 jobs:
   Lint:
-    name: Lint
+    name: Lint test
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v1
     - name: Eslint
       uses: docker://pojome/php-js-lints
       with:
-        entrypoint: /bin/sh -c "eslint ."
+        entrypoint: /bin/bash eslint .
