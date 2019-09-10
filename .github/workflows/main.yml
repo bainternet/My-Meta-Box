@@ -1,15 +1,12 @@
-name: CI
-
-on: [push]
-
+on: [push, pull_request]
+name: Test
 jobs:
-  build:
-
+  phpstan:
+    name: PHPStan
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v1
-    - name: ESlint
-    - uses: docker://pojome/php-js-lints
-      run: |
-        eslint .
+    - uses: actions/checkout@master
+    - name: PHPStan
+      uses: docker://oskarstark/phpstan-ga
+      with:
+        args: analyse src/ --level=5
