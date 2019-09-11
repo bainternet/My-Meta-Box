@@ -1,12 +1,9 @@
 on: [push, pull_request]
 name: Test
 jobs:
-  phpstan:
-    name: PHPStan
-    runs-on: ubuntu-latest
+  LintPHP:
+    name: PHPlint
     steps:
     - uses: actions/checkout@master
-    - name: PHPStan
-      uses: docker://oskarstark/phpstan-ga
-      with:
-        args: analyse src/
+    - name: PHP Lint
+      uses: michaelw90/PHP-Lint@1.0.0
