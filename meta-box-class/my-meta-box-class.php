@@ -413,23 +413,17 @@ class AT_Meta_Box {
         }
         echo '</table>';
         if ($field['sortable'])
-          echo '<span class="re-control"><img src="'.$plugin_path.'/images/move.png" alt="sort" title="sort" class="at_re_sort_handle" /></span>';
+          echo '<span class="re-control dashicons dashicons-randomize at_re_sort_handle"></span>';
 
         echo'
-        <span class="re-control at-re-toggle"><img src="'.$plugin_path.'/images/edit.png" alt="Edit" title="Edit"/></span> 
-        <span class="re-control"><img src="'.$plugin_path.'/images/remove.png" alt="'.__('Remove','mmb').'" title="'.__('Remove','mmb').'" id="remove-'.$field['id'].'"></span>
+        <span class="re-control at-re-toggle dashicons dashicons-welcome-write-blog"></span> 
+        <span class="re-control dashicons dashicons-no" id="remove-'.$field['id'].'"></span>
         <span class="re-control-clear"></span></div>';
         $c = $c + 1;
         }
       }
 
-    echo '<img src="';
-    if ($this->_Local_images){
-      echo $plugin_path.'/images/add.png';
-    }else{
-      echo 'http://i.imgur.com/w5Tuc.png';
-    }
-    echo '" alt="'.__('Add','mmb').'" title="'.__('Add','mmb').'" id="add-'.$field['id'].'"><br/></div>';
+    echo '<div class="dashicons dashicons-plus" id="add-'.$field['id'].'"></div></div>';
     
     //create all fields once more for js function and catch with object buffer
     ob_start();
@@ -456,7 +450,7 @@ class AT_Meta_Box {
     if ($field['inline']){
       echo '</tr>';
     } 
-    echo '</table><img src="'.$plugin_path.'/images/remove.png" alt="'.__('Remove','mmb').'" title="'.__('Remove','mmb').'" id="remove-'.$field['id'].'"></div>';
+    echo '</table><div class="dashicons dashicons-no" id="remove-'.$field['id'].'"></div></div>';
     $counter = 'countadd_'.$field['id'];
     $js_code = ob_get_clean ();
     $js_code = str_replace("\n","",$js_code);
