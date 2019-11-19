@@ -8,26 +8,29 @@
 
 /* =Common Rules for all fields.
 ----------------------------------------------- */
-.form-table td.at-field{ border: 1px solid #DDD; padding: 10px 10px 20px; margin: 0px; font-family: "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue", Helvetica, Arial, sans-serif; }
-.at-label { margin: 0 0 5px 0; padding: 5px 0 0 0; 
-						font: 20px/31px "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue", Helvetica, Arial, sans-serif; 
+.form-table td.at-field{ border: 1px solid #DDD; padding: 10px 10px 20px; margin: 0px; font-family: "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue", Helvetica, Arial, sans-serif; width:0; vertical-align: top;}
+.at-label { margin: 0 0 5px 0; padding: 5px 0 0 0;
+						font: 20px/31px "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue", Helvetica, Arial, sans-serif;
 						text-shadow: rgba(255, 255, 255, 1) 0 1px 0; width: auto; }
-.at-radio-label{ padding-right: 10px; }				
-.at-file-upload-label{ clear: both; margin: 5px 0px 5px 1px; }	
+.at-radio-label{ padding-right: 10px; }
+.at-file-upload-label{ clear: both; margin: 5px 0px 5px 1px; }
+
+table.repeater-table{ width:100%; }
+
 
 
 /* =Form Fields
 ----------------------------------------------- */
 .postbox .at-field input,
-.postbox .at-field textarea { padding: 5px; line-height: 18px; } 
+.postbox .at-field textarea { padding: 5px; line-height: 18px; }
 .postbox .at-field input.at-radio{}
 .postbox .at-field input.at-color{ border: 0px; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; margin-right: 10px; min-width: 100px; }
-.at-field input:focus, 
+.at-field input:focus,
 .at-field textarea:focus { background: #fffff8; }
 #wpcontent select.at-select { height: 30px !important; padding: 5px; display: block; min-width: 200px; }
 .at-field .desc-field { color: #AAA; font-style: italic; margin: 5px 0 0 3px !important; font-size: 13px; }
 .at-field .wp_themeSkin table.mceLayout{ border: 1px solid #DFDFDF; }
-#post-body .at-field .wp_themeSkin .mceStatusbar a.mceResize{ top: -25px; } 
+#post-body .at-field .wp_themeSkin .mceStatusbar a.mceResize{ top: -25px; }
 
 /* =Uploaded Images
 ----------------------------------------------- */
@@ -40,7 +43,7 @@
 ----------------------------------------------- */
 .at-upload-button { float: left; clear: both; margin-top: 10px; }
 .at-add-file { float: left; clear: both; margin-top: 10px; }
- 
+
 /* =Time Picker
 ----------------------------------------------- */
 .ui-timepicker-div { font-size: 0.9em; }
@@ -60,3 +63,10 @@
 .CodeMirror{
 	background-color: #fff;
 }
+
+td.at-field .simplePanelImagePreview img{
+  max-width: 100% !important;
+  height: auto;
+}
+
+.conditinal_container table{ width: 100% !important; max-width: 100% !important; }

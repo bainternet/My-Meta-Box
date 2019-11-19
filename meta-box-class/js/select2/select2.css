@@ -34,6 +34,9 @@ Version: @@ver@@ Timestamp: @@timestamp@@
     overflow: hidden;
     position: relative;
 
+    min-width: 200px !important;
+    max-width: 100% !important;
+
     border: 1px solid #aaa;
     white-space: nowrap;
     line-height: 26px;
@@ -75,7 +78,7 @@ Version: @@ver@@ Timestamp: @@timestamp@@
 }
 
 .select2-container .select2-choice span {
-    margin-right: 26px;
+    margin-right: 0/* 26px */;
     display: block;
     overflow: hidden;
 
@@ -91,7 +94,7 @@ Version: @@ver@@ Timestamp: @@timestamp@@
     width: 12px;
     height: 12px;
     position: absolute;
-    right: 26px;
+    right: 6px/* 26px */;
     top: 8px;
 
     font-size: 1px;
@@ -442,6 +445,8 @@ disabled look for already selected choices in the results dropdown
     height: 15px;
     padding: 5px;
     margin: 1px 0;
+    max-width: 100% !important;
+    min-width: 200px !important;
 
     font-family: sans-serif;
     font-size: 100%;
