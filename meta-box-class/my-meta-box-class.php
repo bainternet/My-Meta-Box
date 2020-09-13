@@ -380,7 +380,7 @@ class AT_Meta_Box {
     $c = 0;
     $meta = get_post_meta($post->ID,$field['id'],true);
     
-      if (count($meta) > 0 && is_array($meta) ){
+      if ( is_array($meta) && count($meta) > 0 ){
          foreach ($meta as $me){
            //for labling toggles
            $mmm =  isset($me[$field['fields'][0]['id']])? $me[$field['fields'][0]['id']]: "";
